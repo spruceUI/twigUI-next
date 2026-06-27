@@ -59,6 +59,11 @@ RK3326:
 	PROJECT=ROCKNIX DEVICE=RK3326 ARCH=arm ./scripts/build_distro
 	PROJECT=ROCKNIX DEVICE=RK3326 ARCH=aarch64 ./scripts/build_distro
 
+RK3326S:
+	unset DEVICE_ROOT
+	PROJECT=twigUI DISTRO=twigUI DEVICE=RK3326S ARCH=arm ./scripts/build_distro
+	PROJECT=twigUI DISTRO=twigUI DEVICE=RK3326S ARCH=aarch64 ./scripts/build_distro
+
 RK3399:
 	unset DEVICE_ROOT
 	PROJECT=ROCKNIX DEVICE=RK3399 ARCH=arm ./scripts/build_distro

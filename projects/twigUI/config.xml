@@ -1,0 +1,5 @@
+<rocknix>
+  <RK3326S mkimage_options="dtb,extlinux,uboot" fdt="rk3326s-gkd-pixel2.dtb" fdt_type="fdt" dtb_prefix="rockchip">
+    <file>rk3326s-gkd-pixel2</file>
+  </RK3326S>
+</rocknix>
