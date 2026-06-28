@@ -22,7 +22,7 @@ PKG_FONTS="corefonts"
 
 PKG_MULTIMEDIA="ffmpeg-rockchip mpv"
 
-PKG_SOUND="espeak libao alsa pulseaudio pipewire wireplumber SDL2_mixer"
+PKG_SOUND="libao alsa pulseaudio pipewire wireplumber SDL2_mixer"
 
 PKG_TOOLS="patchelf i2c-tools evtest rsync show_msg"
 
