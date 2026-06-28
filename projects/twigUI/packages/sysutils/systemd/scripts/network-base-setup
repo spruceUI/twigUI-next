@@ -1,6 +1,6 @@
 #!/bin/sh
 . /etc/profile
-HOSTNAME=$(get_setting system.hostname)
+HOSTNAME="$HW_DEVICE"
 echo ${HOSTNAME} >/proc/sys/kernel/hostname
 hostnamectl --transient hostname ${HOSTNAME}
 avahi-set-host-name ${HOSTNAME}

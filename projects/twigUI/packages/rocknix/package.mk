@@ -44,8 +44,10 @@ post_install() {
   cat <<EOF >> ${INSTALL}/etc/issue
 ... Version: ${OS_VERSION} (${OS_BUILD})
 ... Built: ${BUILD_DATE}
-
 EOF
+
+  cat ${INSTALL}/etc/issue >> ${INSTALL}/etc/motd
+
   cp ${PKG_DIR}/sources/scripts/* ${INSTALL}/usr/bin
   chmod 0755 ${INSTALL}/usr/bin/* 2>/dev/null ||:
 
