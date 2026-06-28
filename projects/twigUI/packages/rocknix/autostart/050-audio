@@ -1,0 +1,24 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (C) 2023 JELOS (https://github.com/JustEnoughLinuxOS)
+
+# Minimal OS variable loading for performance
+. /etc/profile.d/001-functions
+
+tocon "Configuring Audio..."
+
+STATE=$(systemctl is-active pipewire-pulse)
+if [ "${STATE}" = "inactive" ]
+then
+  systemctl start pipewire-pulse
+fi
+
+### Set the default audio path, needed for some devices
+if [ ! -z "${DEVICE_PLAYBACK_PATH_SPK}" ]
+then
+  if [ -z "${DEVICE_PLAYBACK_PATH}" ]
+  then
+    export DEVICE_PLAYBACK_PATH="Playback Path"
+  fi
+  amixer -c ${ALSA_PRIMARY_CARD:-0} cset name="${DEVICE_PLAYBACK_PATH}" ${DEVICE_PLAYBACK_PATH_SPK} 2>/dev/null
+fi

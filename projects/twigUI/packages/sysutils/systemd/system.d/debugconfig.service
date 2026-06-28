@@ -1,0 +1,14 @@
+[Unit]
+Description=Setup debug config
+DefaultDependencies=no
+After=systemd-tmpfiles-setup.service
+ConditionKernelCommandLine=|debugging
+ConditionPathExists=|/storage/.cache/debug.rocknix
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'cp /usr/share/debugconf/*.conf /run/rocknix/debug'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=sysinit.target

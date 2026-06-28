@@ -1,0 +1,12 @@
+diff -rupN sway.orig/sway/desktop/render.c sway/sway/desktop/render.c
+--- sway.orig/sway/desktop/render.c	2024-02-24 05:39:26.000000000 -0400
++++ sway/sway/desktop/render.c	2026-06-25 19:09:49.169225781 -0400
+@@ -1092,7 +1092,7 @@ void output_render(struct render_context
+ 	} else {
+ 		wlr_render_pass_add_rect(ctx->pass, &(struct wlr_render_rect_options){
+ 			.box = { .width = wlr_output->width, .height = wlr_output->height },
+-			.color = { .r = 0.25f, .g = 0.25f, .b = 0.25f, .a = 1 },
++			.color = { .r = 0.0f, .g = 0.0f, .b = 0.0f, .a = 1 },
+ 			.clip = &transformed_damage,
+ 		});
+ 

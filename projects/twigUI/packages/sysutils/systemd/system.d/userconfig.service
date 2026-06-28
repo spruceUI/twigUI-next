@@ -1,0 +1,14 @@
+[Unit]
+Description=Setup User config dir
+DefaultDependencies=no
+After=systemd-tmpfiles-setup.service
+Before=autostart.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/userconfig-setup
+RemainAfterExit=yes
+StandardOutput=journal+console
+
+[Install]
+WantedBy=sysinit.target

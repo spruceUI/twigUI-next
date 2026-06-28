@@ -1,0 +1,15 @@
+[Unit]
+Description=twigUI-entrypoint
+Requires=sway.service
+After=sway.service
+
+[Service]
+Type=simple
+Environment=HOME=/mnt/SDCARD
+EnvironmentFile=/etc/profile
+ExecStart=/usr/bin/start_spruce.sh
+WorkingDirectory=/mnt/SDCARD
+Restart=on-abnormal
+
+[Install]
+WantedBy=rocknix.target

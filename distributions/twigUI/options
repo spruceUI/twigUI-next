@@ -42,7 +42,7 @@
 
 # Define package sets to clean based on the type of build being executed.
 # This should be updated to be more dynamic in the future.
-  CLEAN_OS_BASE="emulators system-utils modules quirks autostart rocknix kernel-firmware"
+  CLEAN_OS_BASE="emulators modules quirks autostart rocknix kernel-firmware"
   CLEAN_NETWORK=""
   CLEAN_EMU_32BIT="lib32 arm"
   # Sway depends on it, weston will use it if it's built but we don't want that.
@@ -75,7 +75,7 @@
   AVAHI_DAEMON="yes"
 
 # build with NFS support (mounting nfs shares via the OS) (yes / no)
-  NFS_SUPPORT="yes"
+  NFS_SUPPORT="no"
 
 # build with Samba Client support (mounting samba shares via the OS) (yes / no)
   SAMBA_SUPPORT="no"
@@ -101,7 +101,7 @@
 # build and install diskmounter support (udevil)
 # this service provide auto mounting support for external drives in the
 # mediacenter also automount internally drives at boottime via udev (yes / no)
-  UDEVIL="yes"
+  UDEVIL="no"
 
 # build and install exFAT fuse support (yes / no)
   EXFAT="yes"
@@ -199,7 +199,7 @@
   GET_HANDLER_SUPPORT="archive git file"
 
 # Partition labels for USB/SD installation media
-  DISTRO_BOOTLABEL="ROCKNIX"
+  DISTRO_BOOTLABEL="BOOT"
   DISTRO_DISKLABEL="STORAGE"
 
 # Settings package name - blank if not required

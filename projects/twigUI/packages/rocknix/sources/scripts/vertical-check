@@ -1,0 +1,139 @@
+#!/bin/sh
+
+. /etc/profile
+
+ARCADEROMS_XML="/usr/config/emulationstation/resources/arcaderoms.xml"
+BOTTOM_SCREEN_UI_DIR="/usr/share/lowerdeck"
+BOTTOM_SCREEN_PID_FILE="/run/lowerdeck.pid"
+
+RUNEMU_LINE=$(ps aux | grep '[r]unemu.sh' | head -n 1)
+CURRENT_CORE=$(echo "${RUNEMU_LINE}" | sed -n 's/.*--core=\([^ ]*\).*/\1/p')
+PLATFORM=$(echo "${RUNEMU_LINE}" | sed -n 's/.* -P *\([^ ]*\).*/\1/p')
+ROM_PATH=$(echo "${RUNEMU_LINE}" | sed '
+    s|.*runemu\.sh ||
+    s/\\ /__ESC_SP__/g
+    s/ .*//
+    s/__ESC_SP__/ /g
+    s/\\\(.\)/\1/g
+')
+
+if [ -z "${CURRENT_CORE}" ] || [ -z "${ROM_PATH}" ]; then
+    exit 0
+fi
+
+ROM_NAME=$(basename "${ROM_PATH}" | sed 's/\.[^.]*$//')
+EXTERNAL_DISPLAY_CONNECTED=false
+if grep -q "^connected$" /sys/class/drm/card*-HDMI*/status 2>/dev/null || grep -q "^connected$" /sys/class/drm/card*-DP*/status 2>/dev/null; then
+    EXTERNAL_DISPLAY_CONNECTED=true
+fi
+IS_VERTICAL=false
+
+case "${CURRENT_CORE}" in
+    # Unconditionally vertical
+    melonds*|desmume|vecx)
+        IS_VERTICAL=true
+        ;;
+    # Might not be vertical
+    mame*|fbneo|fbalpha*)
+        if grep -q "id=\"${ROM_NAME}\"[^>]*vert=\"true\"" "${ARCADEROMS_XML}" 2>/dev/null; then
+            IS_VERTICAL=true
+        fi
+        ;;
+esac
+
+case "${ROM_NAME}" in
+    # Also check for some specific roms that aren't marked vert
+    punchout*|spnchout*|pc_*|mp_*)
+        IS_VERTICAL=true
+        ;;
+esac
+
+if [ "${IS_VERTICAL}" = "true" ]; then
+    if [ "${QUIRK_DEVICE}" = "AYN Thor" ]; then
+        # Needs two separate swaymsg calls. Screen cannot move and have windows moved to it in the same line.
+        swaymsg '[title="RetroArch.*"] output DSI-2 pos 0 0, output DSI-1 pos 340 1080'
+        swaymsg '[title="RetroArch.*"] floating enable, fullscreen disable, resize set 1240 2160, move to output DSI-2, move absolute position 340 0'
+    elif [ "${QUIRK_DEVICE}" = "AYN Thor Lite" ]; then
+        # Same notes from above apply here.
+        swaymsg '[title="RetroArch.*"] output DSI-1 pos 0 0, output DSI-2 power on pos 340 1080'
+        swaymsg '[title="RetroArch.*"] floating enable, fullscreen disable, resize set 1240 2160, move to output DSI-1, move absolute position 340 0'
+    elif [ "${QUIRK_DEVICE}" = "Anbernic RG DS" ]; then
+        # Same notes from above apply here.
+        swaymsg '[title="RetroArch.*"] output DSI-2 pos 0 0, output DSI-1 power on pos 0 480'
+        swaymsg '[title="RetroArch.*"] floating enable, fullscreen disable, resize set 640 960, move to output DSI-2, move absolute position 0 0'
+        swaymsg 'input "1046:911:Goodix_Capacitive_TouchScreen" calibration_matrix 1 0 0 0 0.5 0.5'
+    elif [ "${QUIRK_DEVICE}" = "AYANEO Pocket DS" ]; then
+        swaymsg output DSI-1 scale 1.40
+        swaymsg output DSI-2 transform 270
+        swaymsg '[title="RetroArch.*"] output DSI-1 pos 0 0, output DSI-2 power on pos 160 776'
+        swaymsg '[title="RetroArch.*"] floating enable, fullscreen disable, resize set 1024 1544, move to output DSI-1, move absolute position 160 0'
+    elif [[ "${QUIRK_DEVICE}" == "Retroid Pocket 5" || "${QUIRK_DEVICE}" == "Retroid Pocket Flip2" || "${QUIRK_DEVICE}" == "Retroid Pocket Mini" || "${QUIRK_DEVICE}" == "Retroid Pocket Mini V2" ]]; then
+        case "${QUIRK_DEVICE}" in
+            "Retroid Pocket 5" | "Retroid Pocket Flip2")
+                DSI_X="0"
+                RA_WIDTH="1920"
+                RA_HEIGHT="2160" # 1080 + 1080
+                ;;
+            "Retroid Pocket Mini")
+                DSI_X="340"
+                RA_WIDTH="1240"
+                RA_HEIGHT="2010" # 1080 + 930
+                ;;
+            "Retroid Pocket Mini V2")
+                DSI_X="340"
+                RA_WIDTH="1240"
+                RA_HEIGHT="2160" # 1080 + 1080
+                ;;
+        esac
+
+        # Setup vertical stack using external DP-1 as the top screen.
+        swaymsg "[title=\"RetroArch.*\"] output DP-1 pos 0 0, output DSI-1 pos ${DSI_X} 1080"
+        swaymsg "[title=\"RetroArch.*\"] floating enable, fullscreen disable, resize set ${RA_WIDTH} ${RA_HEIGHT}, move to output DP-1, move absolute position ${DSI_X} 0"
+
+        swaymsg input "0:0:generic_ft5x06_(a0)" map_to_output DSI-1
+        swaymsg input "0:0:generic_ft5x06_(a0)" events enabled
+        swaymsg input "0:0:generic_ft5x06_(8d)" map_to_output DSI-1
+        swaymsg input "0:0:generic_ft5x06_(8d)" events enabled
+    fi
+elif [ "${DEVICE_HAS_DUAL_SCREEN}" = "true" ] && [ "${EXTERNAL_DISPLAY_CONNECTED}" = "false" ]; then
+    BOTTOM_SCREEN_TYPE=$(get_setting rocknix.bottomscreen.type 2>/dev/null)
+    if [ -z "${BOTTOM_SCREEN_TYPE}" ]; then
+        set_setting rocknix.bottomscreen.type vc 2>/dev/null
+        BOTTOM_SCREEN_TYPE=vc
+    fi
+    if [ "${BOTTOM_SCREEN_TYPE}" = "vc" ] && [ -d "${BOTTOM_SCREEN_UI_DIR}" ]; then
+        if [ -f "${BOTTOM_SCREEN_PID_FILE}" ] && kill -0 "$(cat "${BOTTOM_SCREEN_PID_FILE}" 2>/dev/null)" 2>/dev/null; then
+            exit 0
+        fi
+        if pgrep -f 'python3 .*/lowerdeck/main\.py' >/dev/null 2>&1; then
+            exit 0
+        fi
+
+        case "${QUIRK_DEVICE}" in
+            "AYANEO Pocket DS"|"AYN Thor Lite") OUTPUT="DSI-2" ;;
+            *)                  OUTPUT="DSI-1" ;;
+        esac
+
+        swaymsg "output ${OUTPUT} power on" >/dev/null 2>&1
+        RA_PID=$(pgrep -f '/usr/bin/retroarch' | head -n 1)
+        USE_CHEEVOS=$(get_setting "retroachievements" 2>/dev/null)
+
+        ( cd "${BOTTOM_SCREEN_UI_DIR}" && \
+          exec python3 "${BOTTOM_SCREEN_UI_DIR}/main.py" \
+              --rom      "${ROM_PATH}" \
+              --core     "${CURRENT_CORE}" \
+              --platform "${PLATFORM}" \
+              --ra-pid   "${RA_PID:-0}" \
+              --cheevos-enabled  "${USE_CHEEVOS:-1}" \
+          >/dev/null 2>&1 ) &
+        echo $! > "${BOTTOM_SCREEN_PID_FILE}"
+
+        for _ in 1 2 3 4 5 6 7 8 9 10; do
+            if swaymsg -t get_tree 2>/dev/null | grep -q '"app_id": "lowerdeck"'; then
+                break
+            fi
+            sleep 0.05
+        done
+        swaymsg "[app_id=\"lowerdeck\"] move container to output ${OUTPUT}, fullscreen enable" >/dev/null 2>&1 ||:
+    fi
+fi

@@ -1,0 +1,31 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (C) 2023 JELOS (https://github.com/JustEnoughLinuxOS)
+
+# Minimal OS variable loading for performance
+. /etc/profile.d/001-functions
+
+if [ -d "/storage/cache/.cores" ]
+then
+  rm -rf /storage/cache/.cores
+fi
+
+if [ ! -d "/tmp/cache" ]
+then
+  mkdir -p /tmp/cache
+fi
+
+ln -sf /tmp/cache /storage/cache/.cores
+
+if [ ! -d "/storage/.config/profile.d" ]
+then
+  mkdir -p /storage/.config/profile.d
+fi
+
+### Set up the runtime directory.
+if [ ! -d "/var/run/0-runtime-dir" ]
+then
+  mkdir -p /var/run/0-runtime-dir
+fi
+
+chmod 0700 /var/run/0-runtime-dir

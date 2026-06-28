@@ -20,10 +20,10 @@ RUN adduser --disabled-password --gecos '' docker \
 
 RUN apt-get update \
  && apt-get install -y \
-    curl bash bc gcc-12 sed patch patchutils tar bzip2 gzip xz-utils zstd perl gawk gperf zip \
+    curl bash bc gcc-12 sed jq patch patchutils tar bzip2 gzip xz-utils zstd perl gawk gperf zip \
       unzip diffutils lzop make file g++-12 xfonts-utils xsltproc default-jre-headless python3 \
       libc6-dev libncurses5-dev libjson-perl libxml-parser-perl libparse-yapp-perl rdfind \
-      golang-1.23-go git openssh-client rsync upx-ucl \
+      golang-1.23-go git openssh-client rsync upx-ucl p7zip-full \
       python-is-python3 python3 parted wget xxd automake xmlstarlet rsync \
     --no-install-recommends \
     && ln -s /usr/lib/go-1.23 /usr/lib/go \
