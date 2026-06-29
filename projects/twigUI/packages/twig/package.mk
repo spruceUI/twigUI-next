@@ -2,10 +2,10 @@
 # Copyright (C) 2023 JELOS (https://github.com/JustEnoughLinuxOS)
 
 PKG_NAME="twig"
-PKG_VERSION="259c5b5d9e788418f7264542413e5f9623e47970"
+PKG_VERSION="686832224e51a3c57eb39e9bb393c3a603dc4550"
 PKG_LICENSE="Public Domain"
-PKG_SITE="https://github.com/spruceUI/spruceOS/"
-PKG_URL="https://github.com/spruceUI/spruceOS/archive/${PKG_VERSION}.tar.gz"
+PKG_SITE="https://github.com/Hairo/spruceOS/"
+PKG_URL="https://github.com/Hairo/spruceOS/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain Python3"
 PKG_LONGDESC="twigUI SD card package"
 PKG_TOOLCHAIN="manual"
@@ -33,6 +33,8 @@ make_target() {
   cat "${CONF_FILE}" | jq '.menuOptions."System Settings".useZRAM.selected = "True"' | tee "${CONF_FILE}"
   cat "${CONF_FILE}" | jq '.menuOptions."Battery Settings".idlemonChargingInMenu.selected = "30s"' | tee "${CONF_FILE}"
   cat "${CONF_FILE}" | jq '.menuOptions."Battery Settings".shutdownFromSleep.selected = "Off"' | tee "${CONF_FILE}"
+
+  # TODO: Download themes
 
   # TODO: Check if this is needed
   PS_CONF="${SPRUCE_DIR}/Emu/PS/config.json"
