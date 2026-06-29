@@ -10,31 +10,37 @@ PKG_DEPENDS_TARGET="toolchain Python3"
 PKG_LONGDESC="twigUI SD card package"
 PKG_TOOLCHAIN="manual"
 
+unpack() {
+  mkdir -p "${PKG_BUILD}/spruce"
+  tar --strip-components=1 -xf ${SOURCES}/${PKG_NAME}/${PKG_NAME}-${PKG_VERSION}.tar.gz -C "${PKG_BUILD}/spruce"
+}
+
 make_target() {
+  SPRUCE_DIR="${PKG_BUILD}/spruce"
+
   # Copy new files
-  cp -rf ${PKG_DIR}/install/SDCARD/* "${PKG_BUILD}"
+  cp -rf ${PKG_DIR}/install/SDCARD/* "${SPRUCE_DIR}"
 
   # Remove uneeded files for other devices
   shopt -s extglob
-
   for f in $(cat ${PKG_DIR}/install/delete.txt) ; do
-    rm -r "${PKG_BUILD}/$f"
+    rm -r "${SPRUCE_DIR}"/$f
   done
 
   # Adjust default configs
-  CONF_FILE="${PKG_BUILD}/Saves/spruce/spruce-config.json"
+  CONF_FILE="${SPRUCE_DIR}/Saves/spruce/spruce-config.json"
 
   cat "${CONF_FILE}" | jq '.menuOptions."System Settings".useZRAM.selected = "True"' | tee "${CONF_FILE}"
   cat "${CONF_FILE}" | jq '.menuOptions."Battery Settings".idlemonChargingInMenu.selected = "30s"' | tee "${CONF_FILE}"
   cat "${CONF_FILE}" | jq '.menuOptions."Battery Settings".shutdownFromSleep.selected = "Off"' | tee "${CONF_FILE}"
 
   # TODO: Check if this is needed
-  PS_CONF="${PKG_BUILD}/Emu/PS/config.json"
+  PS_CONF="${SPRUCE_DIR}/Emu/PS/config.json"
   cat "${PS_CONF}" | jq '.menuOptions.Governor.selected = "Performance"' | tee "${PS_CONF}"
 
   # TODO: developer_mode flag
-  ARCHIVE_FILE=${PKG_DIR}/install/twigUI_V"$(cat ${PKG_DIR}/install/SDCARD/spruce/twig)".7z
-  7z a -t7z -mx=7 -mf- "${ARCHIVE_FILE}" "${PKG_BUILD}"/.
+  ARCHIVE_FILE=${PKG_BUILD}/twigUI_V"$(cat ${SPRUCE_DIR}/spruce/twig)".7z
+  7z a -t7z -mx=7 -mf- "${ARCHIVE_FILE}" "${SPRUCE_DIR}"/.
 }
 
 makeinstall_target() {

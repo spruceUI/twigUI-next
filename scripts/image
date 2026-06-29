@@ -294,9 +294,10 @@ if [ "${1}" = "release" -o "${1}" = "mkimage" -o "${1}" = "noobs" ]; then
   cp ${TARGET_IMG}/${IMAGE_NAME}.system ${RELEASE_DIR}/target/SYSTEM
   cp ${TARGET_IMG}/${IMAGE_NAME}.kernel ${RELEASE_DIR}/target/KERNEL
 
-  TWIG_DIR="$(get_pkg_directory twig)"
-  cp "${TWIG_DIR}"/install/twigUI_V*.7z ${RELEASE_DIR}/target/
-  rm "${TWIG_DIR}"/install/twigUI_V*.7z
+  # twigUI files
+  TWIG_DIR="$(get_build_dir twig)"
+  cp "${TWIG_DIR}"/twigUI_V*.7z ${RELEASE_DIR}/target/
+  rm "${TWIG_DIR}"/twigUI_V*.7z
 
   # Create md5sum's
   (

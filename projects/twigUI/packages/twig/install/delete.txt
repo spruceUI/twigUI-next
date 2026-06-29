@@ -1,6 +1,5 @@
 To-Do.txt
-.git*
-.rock*
+.git*/
 create_*
 App/-FirmwareUpdate-/
 App/adbd/
