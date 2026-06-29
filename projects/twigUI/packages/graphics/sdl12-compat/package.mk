@@ -11,14 +11,3 @@ PKG_LONGDESC="An SDL-1.2 compatibility layer that uses SDL 2.0 behind the scenes
 PKG_TOOLCHAIN="cmake"
 
 PKG_CMAKE_OPTS_TARGET+=" -DCMAKE_BUILD_TYPE=Release -DSDL12DEVEL=ON -DSTATICDEVEL=ON"
-
-# makeinstall_target() {
-#   mkdir -p ${INSTALL}/usr/lib
-#   cp -r ${PKG_BUILD}/.${TARGET_NAME}/libSDL-1.2.* ${INSTALL}/usr/lib
-# }
-
-# post_makeinstall_target() {
-#   safe_remove ${INSTALL}/usr/include
-#   safe_remove ${INSTALL}/usr/lib/pkgconfig
-#   safe_remove ${INSTALL}/usr/lib/pkgconfig
-# }
