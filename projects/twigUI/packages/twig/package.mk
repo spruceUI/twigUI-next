@@ -6,13 +6,41 @@ PKG_VERSION="686832224e51a3c57eb39e9bb393c3a603dc4550"
 PKG_LICENSE="Public Domain"
 PKG_SITE="https://github.com/Hairo/spruceOS/"
 PKG_URL="https://github.com/Hairo/spruceOS/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain Python3"
+PKG_DEPENDS_TARGET="toolchain Python3 emulators"
 PKG_LONGDESC="twigUI SD card package"
 PKG_TOOLCHAIN="manual"
 
 unpack() {
   mkdir -p "${PKG_BUILD}/spruce"
   tar --strip-components=1 -xf ${SOURCES}/${PKG_NAME}/${PKG_NAME}-${PKG_VERSION}.tar.gz -C "${PKG_BUILD}/spruce"
+}
+
+copy_ra_cores() {
+  jsonf=$(cat "${PKG_DIR}"/install/emulators.json)
+
+  while read -r jvalue
+  do
+    package=$(echo "$jvalue" | jq -r '.package')
+
+    for file in $(echo "$jvalue" | jq -c '.files[]')
+    do
+      src=$(echo "$file" | jq -r '.src')
+      dest=$(echo "$file" | jq -r '.dest')
+      build_dir="$(get_build_dir $package)"
+
+      # ???????????????????
+      if [[ "$build_dir" == *"PKG_DEPENDS_TARGET"* ]]; then
+        clean=$(echo $build_dir | sed 's/PKG_DEPENDS_TARGET//')
+        first=$(echo $clean | cut -d' ' -f1)
+        last=$(echo ${build_dir##* })
+
+        build_dir="${first}""${last}"
+      fi
+
+      cp "$build_dir"/"$src" "${SPRUCE_DIR}"/"$dest"
+    done
+
+  done < <(echo "$jsonf" | jq -c '.emulators[]')
 }
 
 make_target() {
@@ -24,8 +52,13 @@ make_target() {
   # Remove uneeded files for other devices
   shopt -s extglob
   for f in $(cat ${PKG_DIR}/install/delete.txt) ; do
-    rm -r "${SPRUCE_DIR}"/$f
+    rm -rf "${SPRUCE_DIR}"/$f
   done
+
+  # TODO: developer_mode flag
+  # TODO: Download themes
+  cp "$(get_build_dir retroarch)"/ra64.pixel2 "${SPRUCE_DIR}"/RetroArch/ra64.pixel2
+  copy_ra_cores
 
   # Adjust default configs
   CONF_FILE="${SPRUCE_DIR}/Saves/spruce/spruce-config.json"
@@ -34,15 +67,12 @@ make_target() {
   cat "${CONF_FILE}" | jq '.menuOptions."Battery Settings".idlemonChargingInMenu.selected = "30s"' | tee "${CONF_FILE}"
   cat "${CONF_FILE}" | jq '.menuOptions."Battery Settings".shutdownFromSleep.selected = "Off"' | tee "${CONF_FILE}"
 
-  # TODO: Download themes
-
   # TODO: Check if this is needed
   PS_CONF="${SPRUCE_DIR}/Emu/PS/config.json"
   cat "${PS_CONF}" | jq '.menuOptions.Governor.selected = "Performance"' | tee "${PS_CONF}"
 
-  # TODO: developer_mode flag
   ARCHIVE_FILE=${PKG_BUILD}/twigUI_V"$(cat ${SPRUCE_DIR}/spruce/twig)".7z
-  7z a -t7z -mx=7 -mf- "${ARCHIVE_FILE}" "${SPRUCE_DIR}"/.
+  7z a -t7z -mx=7 -mf- "${ARCHIVE_FILE}" "${SPRUCE_DIR}"/. > /dev/null
 }
 
 makeinstall_target() {

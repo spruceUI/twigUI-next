@@ -32,7 +32,7 @@ PKG_GAMESUPPORT="rocknix-hotkey jstest-sdl gamecontrollerdb sdljoytest control-g
 
 PKG_NETWORK="iwd networkmanager netbase ethtool openssh iw wireless-regdb"
 
-PKG_EXTRA="portmaster psutil pyserial Pillow py-sdl2 rumble sdl12-compat"
+PKG_EXTRA="psutil pyserial Pillow py-sdl2 rumble sdl12-compat"
 
 PKG_DEPENDS_TARGET+=" ${PKG_TOOLS} ${PKG_FONTS} ${PKG_SOUND} ${PKG_GRAPHICS} ${PKG_MULTIMEDIA} misc-packages"
 PKG_DEPENDS_TARGET+=" ${PKG_UI_TOOLS} ${PKG_DEBUG} ${PKG_GAMESUPPORT} ${PKG_NETWORK} ${PKG_EXTRA}"
