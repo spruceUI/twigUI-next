@@ -297,7 +297,6 @@ if [ "${1}" = "release" -o "${1}" = "mkimage" -o "${1}" = "noobs" ]; then
   # twigUI files
   TWIG_DIR="$(get_build_dir twig)"
   cp "${TWIG_DIR}"/twigUI_V*.7z ${RELEASE_DIR}/target/
-  rm "${TWIG_DIR}"/twigUI_V*.7z
 
   # Create md5sum's
   (

@@ -71,8 +71,11 @@ make_target() {
   PS_CONF="${SPRUCE_DIR}/Emu/PS/config.json"
   cat "${PS_CONF}" | jq '.menuOptions.Governor.selected = "Performance"' | tee "${PS_CONF}"
 
+  # Create spruce 7z file
   ARCHIVE_FILE=${PKG_BUILD}/twigUI_V"$(cat ${SPRUCE_DIR}/spruce/twig)".7z
   7z a -t7z -mx=7 -mf- "${ARCHIVE_FILE}" "${SPRUCE_DIR}"/. > /dev/null
+
+  rm -rf "${SPRUCE_DIR}"
 }
 
 makeinstall_target() {
