@@ -1,7 +1,6 @@
 ################################################################################
 #      This file is part of OpenELEC - http://www.openelec.tv
 #      Copyright (C) 2009-2012 Stephan Raue (stephan@openelec.tv)
-#      Copyright (C) 2020      351ELEC team (https://github.com/fewtarius/351ELEC)
 #
 #  This Program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -19,16 +18,18 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="crocods-lr"
-PKG_VERSION="a320f6e38af49af84a63f81329a1bdb9322022b4"
-PKG_LICENSE="MIT"
-PKG_SITE="https://github.com/libretro/libretro-crocods"
-PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain core-info"
-PKG_LONGDESC="Amstrad CPC emulator"
-PKG_TOOLCHAIN="make"
+PKG_NAME="libxmp-lite"
+PKG_VERSION="4.5.0"
+PKG_SITE="http://sourceforge.net/projects/xmp"
+PKG_URL="${PKG_SITE}/files/libxmp/${PKG_VERSION}/libxmp-lite-${PKG_VERSION}.tar.gz"
+PKG_DEPENDS_TARGET="toolchain"
+PKG_LONGDESC="Libxmp is a library that renders module files to PCM data."
 
-makeinstall_target() {
-  cp "$(get_build_dir core-info)"/crocods_libretro.info "${PKG_BUILD}"/
-  ${STRIP} "${PKG_BUILD}"/crocods_libretro.so
+
+PKG_TOOLCHAIN="configure"
+
+pre_configure_target() {
+  cd ${PKG_BUILD}
 }
+
+

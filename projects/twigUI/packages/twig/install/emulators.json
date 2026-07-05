@@ -50,10 +50,31 @@
             ]
         },
         {
+            "package": "crocods-lr",
+            "files": [
+                {"src": "crocods_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "crocods_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
+            ]
+        },
+        {
             "package": "dosbox-pure-lr",
             "files": [
                 {"src": "dosbox_pure_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
                 {"src": "dosbox_pure_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
+            ]
+        },
+        {
+            "package": "easyrpg-lr",
+            "files": [
+                {"src": "easyrpg_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "easyrpg_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
+            ]
+        },
+        {
+            "package": "ecwolf-lr",
+            "files": [
+                {"src": "ecwolf_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "ecwolf_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
@@ -432,13 +453,6 @@
             "files": [
                 {"src": "vecx_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
                 {"src": "vecx_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
-            ]
-        },
-        {
-            "package": "vemulator-lr",
-            "files": [
-                {"src": "vemulator_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
-                {"src": "vemulator_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {

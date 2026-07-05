@@ -18,15 +18,11 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="vemulator-lr"
-PKG_VERSION="7fade95506201aed83316cc3f2efe3d7cecf75a7"
-PKG_LICENSE="GPLv3"
-PKG_SITE="https://github.com/libretro/vemulator-libretro"
-PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
+PKG_NAME="libspeexdsp"
+PKG_VERSION="738e17905e1ca2a1fa932ddd9c2a85d089f4e845"
+PKG_SITE="https://github.com/xiph/speexdsp"
+PKG_URL="${PKG_SITE}.git"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_LONGDESC="A port of the SEGA Visual Memory Unit emulator VeMUlator for libretro"
-PKG_TOOLCHAIN="make"
-
-makeinstall_target() {
-  ${STRIP} "${PKG_BUILD}"/vemulator_libretro.so
-}
+PKG_LONGDESC="Speex audio processing library"
+GET_HANDLER_SUPPORT="git"
+PKG_TOOLCHAIN="autotools"

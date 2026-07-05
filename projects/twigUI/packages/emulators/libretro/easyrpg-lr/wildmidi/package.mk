@@ -1,7 +1,6 @@
 ################################################################################
 #      This file is part of OpenELEC - http://www.openelec.tv
 #      Copyright (C) 2009-2012 Stephan Raue (stephan@openelec.tv)
-#      Copyright (C) 2020      351ELEC team (https://github.com/fewtarius/351ELEC)
 #
 #  This Program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -19,16 +18,13 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
-PKG_NAME="crocods-lr"
-PKG_VERSION="a320f6e38af49af84a63f81329a1bdb9322022b4"
-PKG_LICENSE="MIT"
-PKG_SITE="https://github.com/libretro/libretro-crocods"
+PKG_NAME="wildmidi"
+PKG_VERSION="405ca73"
+PKG_SITE="https://github.com/Mindwerks/wildmidi"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain core-info"
-PKG_LONGDESC="Amstrad CPC emulator"
-PKG_TOOLCHAIN="make"
+PKG_DEPENDS_TARGET="toolchain"
+PKG_LONGDESC="WildMIDI is a simple software midi player which has a core softsynth library that can be used with other applications."
 
-makeinstall_target() {
-  cp "$(get_build_dir core-info)"/crocods_libretro.info "${PKG_BUILD}"/
-  ${STRIP} "${PKG_BUILD}"/crocods_libretro.so
-}
+PKG_TOOLCHAIN="cmake"
+
+PKG_CMAKE_OPTS_TARGET="WANT_PLAYER=OFF -DWANT_ALSA=ON"
