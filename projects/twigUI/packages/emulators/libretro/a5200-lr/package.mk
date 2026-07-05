@@ -24,11 +24,12 @@ PKG_VERSION="23c1ea482afb08656ec507e9ce98ed242a20bdfa"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/libretro/a5200"
 PKG_URL="${PKG_SITE}.git"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="Atari 5200 libretro core"
 PKG_TOOLCHAIN="auto"
 GET_HANDLER_SUPPORT="git"
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/a5200_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/a5200_libretro.so
 }

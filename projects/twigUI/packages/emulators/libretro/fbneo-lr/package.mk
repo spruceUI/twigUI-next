@@ -8,7 +8,7 @@ PKG_VERSION="09e45081253540b11199d44aa1f9b419e621c13c"
 PKG_LICENSE="Non-commercial"
 PKG_SITE="https://github.com/libretro/FBNeo"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="Port of Final Burn Neo to Libretro (v0.2.97.38)."
 PKG_TOOLCHAIN="make"
 
@@ -25,6 +25,7 @@ fi
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/fbneo_libretro.info "${PKG_BUILD}"/
   LR_SO="${PKG_BUILD}"/src/burner/libretro/fbneo_libretro.so
 
   ${STRIP} "${LR_SO}"

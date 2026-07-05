@@ -25,7 +25,7 @@ PKG_LICENSE="MIT"
 PKG_SITE="https://github.com/LIJI32/SameBoy"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
 PKG_GIT_CLONE_BRANCH="SameDuck"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="Mega Duck/Cougar Boy emulator written in C"
 
 PKG_TOOLCHAIN="make"
@@ -35,6 +35,7 @@ make_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/sameduck_libretro.info "${PKG_BUILD}"/
   LR_SO="${PKG_BUILD}"/build/bin/sameduck_libretro.so
 
   ${STRIP} "${LR_SO}"

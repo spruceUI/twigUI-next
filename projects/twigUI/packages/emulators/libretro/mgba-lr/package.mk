@@ -23,7 +23,7 @@ PKG_VERSION="6dce57eef127dc4cc292644f38196e0e7c58590c"
 PKG_LICENSE="MPLv2.0"
 PKG_SITE="https://github.com/libretro/mgba"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="mGBA Game Boy Advance Emulator"
 PKG_PATCH_DIRS+="${DEVICE}"
 
@@ -46,5 +46,6 @@ make_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/mgba_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/mgba_libretro.so
 }

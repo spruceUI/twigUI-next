@@ -23,7 +23,7 @@ PKG_VERSION="b0fd87dd07e3c52903435d302b04e5e97796f127"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/nestopia"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="Libretro implementation of NEStopia. (Nintendo Entertainment System)"
 
 PKG_TOOLCHAIN="make"
@@ -35,6 +35,7 @@ make_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/nestopia_libretro.info "${PKG_BUILD}"/
   LR_SO="${PKG_BUILD}"/libretro/nestopia_libretro.so
 
   ${STRIP} "${LR_SO}"

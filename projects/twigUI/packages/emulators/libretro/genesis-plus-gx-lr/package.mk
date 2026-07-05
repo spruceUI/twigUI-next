@@ -25,7 +25,7 @@ PKG_VERSION="c7ecd07f0a08db1cdd6871d788476bfac55be638"
 PKG_LICENSE="Non-commercial"
 PKG_SITE="https://github.com/libretro/Genesis-Plus-GX"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="An enhanced port of Genesis Plus for Gamecube/Wii"
 
 PKG_TOOLCHAIN="make"
@@ -38,5 +38,6 @@ make_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/genesis_plus_gx_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/genesis_plus_gx_libretro.so
 }

@@ -24,7 +24,7 @@ PKG_VERSION="bce196fb774835fe65b3e5b821887a4ccf657167"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/fuse-libretro"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="A port of the Fuse Unix Spectrum Emulator to libretro "
 
 PKG_TOOLCHAIN="make"
@@ -34,5 +34,6 @@ make_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/fuse_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/fuse_libretro.so
 }

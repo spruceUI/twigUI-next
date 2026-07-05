@@ -24,11 +24,12 @@ PKG_VERSION="38e7a0ec9ac7079ca1c1e3dd9aaf5b56f527efca"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/beetle-vb-libretro"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="libretro implementation of Mednafen VB. (VirtualBoy)"
 
 PKG_TOOLCHAIN="make"
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/mednafen_vb_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/mednafen_vb_libretro.so
 }

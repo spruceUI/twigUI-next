@@ -25,7 +25,7 @@ PKG_VERSION="7946cfa0d3775e958616d4d107de867a4616ae6c"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/vice-libretro"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="Versatile Commodore 8-bit Emulator version 3.0"
 PKG_TOOLCHAIN="make"
 
@@ -43,9 +43,13 @@ make_target() {
 }
 
 makeinstall_target() {
+  CORE_INFO_PATH="$(get_build_dir core-info)"
+  cp "${CORE_INFO_PATH}"/vice_x64_libretro.info "${PKG_BUILD}"/
+  cp "${CORE_INFO_PATH}"/vice_xvic_libretro.info "${PKG_BUILD}"/
+
   ${STRIP} "${PKG_BUILD}"/built/vice_x64_libretro.so
   ${STRIP} "${PKG_BUILD}"/built/vice_xvic_libretro.so
-  
+
   cp "${PKG_BUILD}"/built/vice_x64_libretro.so "${PKG_BUILD}"/
   cp "${PKG_BUILD}"/built/vice_xvic_libretro.so "${PKG_BUILD}"/
 }

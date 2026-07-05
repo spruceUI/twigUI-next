@@ -7,7 +7,7 @@ PKG_VERSION="f901022198dacf125d43331c6540492441ab415b"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/swanstation"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain nasm:host"
+PKG_DEPENDS_TARGET="toolchain nasm:host core-info"
 PKG_LONGDESC="SwanStation - PlayStation 1, aka. PSX Emulator"
 PKG_TOOLCHAIN="cmake"
 PKG_BUILD_FLAGS="-lto"
@@ -25,6 +25,7 @@ pre_configure_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/swanstation_libretro.info "${PKG_BUILD}"/
   LR_SO="${PKG_BUILD}"/.${TARGET_NAME}/swanstation_libretro.so
 
   ${STRIP} "${LR_SO}"

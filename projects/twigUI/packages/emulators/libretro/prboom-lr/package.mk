@@ -23,9 +23,10 @@ PKG_VERSION="141978db577b52cb943641629401776e49ccbbe6"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/libretro-prboom"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="libretro implementation of Doom"
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/prboom_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/prboom_libretro.so
 }

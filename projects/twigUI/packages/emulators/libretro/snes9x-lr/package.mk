@@ -24,7 +24,7 @@ PKG_VERSION="185488cd83aaf274752a742c94d45561cbecb7af"
 PKG_LICENSE="Non-commercial"
 PKG_SITE="https://github.com/libretro/snes9x"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="Snes9x - Portable Super Nintendo Entertainment System (TM) emulator"
 
 PKG_TOOLCHAIN="make"
@@ -38,6 +38,7 @@ make_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/snes9x_libretro.info "${PKG_BUILD}"/
   LR_SO="${PKG_BUILD}"/libretro/snes9x_libretro.so
 
   ${STRIP} "${LR_SO}"

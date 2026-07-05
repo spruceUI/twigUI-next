@@ -3,7 +3,8 @@
         {
             "package": "a5200-lr",
             "files": [
-                {"src": "a5200_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "a5200_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "a5200_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
@@ -23,25 +24,29 @@
         {
             "package": "bluemsx-lr",
             "files": [
-                {"src": "bluemsx_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "bluemsx_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "bluemsx_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "cap32-lr",
             "files": [
-                {"src": "cap32_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "cap32_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "cap32_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "chailove-lr",
             "files": [
-                {"src": "chailove_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "chailove_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "chailove_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "chimerasnes-lr",
             "files": [
-                {"src": "chimerasnes_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "chimerasnes_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "chimerasnes_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
@@ -61,31 +66,36 @@
         {
             "package": "fbalpha2012-lr",
             "files": [
-                {"src": "fbalpha2012_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "fbalpha2012_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "fbalpha2012_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "fbneo-lr",
             "files": [
-                {"src": "fbneo_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "fbneo_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "fbneo_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "fceumm-lr",
             "files": [
-                {"src": "fceumm_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "fceumm_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "fceumm_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "flycast2021-lr",
             "files": [
-                {"src": "flycast2021_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "flycast2021_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "flycast2021_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "fmsx-lr",
             "files": [
-                {"src": "fmsx_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "fmsx_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "fmsx_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
@@ -105,13 +115,15 @@
         {
             "package": "fuse-lr",
             "files": [
-                {"src": "fuse_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "fuse_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "fuse_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "gambatte-lr",
             "files": [
-                {"src": "gambatte_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "gambatte_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "gambatte_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
@@ -131,7 +143,8 @@
         {
             "package": "genesis-plus-gx-lr",
             "files": [
-                {"src": "genesis_plus_gx_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "genesis_plus_gx_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "genesis_plus_gx_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
@@ -144,25 +157,29 @@
         {
             "package": "gpsp-lr",
             "files": [
-                {"src": "gpsp_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "gpsp_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "gpsp_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "gw-lr",
             "files": [
-                {"src": "gw_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "gw_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "gw_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "handy-lr",
             "files": [
-                {"src": "handy_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "handy_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "handy_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "hatari-lr",
             "files": [
-                {"src": "hatari_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "hatari_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "hatari_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
@@ -182,61 +199,71 @@
         {
             "package": "mame2003-plus-lr",
             "files": [
-                {"src": "mame2003_plus_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "mame2003_plus_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "mame2003_plus_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "beetle-lynx-lr",
             "files": [
-                {"src": "mednafen_lynx_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "mednafen_lynx_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "mednafen_lynx_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "beetle-ngp-lr",
             "files": [
-                {"src": "mednafen_ngp_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "mednafen_ngp_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "mednafen_ngp_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "beetle-pce-fast-lr",
             "files": [
-                {"src": "mednafen_pce_fast_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "mednafen_pce_fast_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "mednafen_pce_fast_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "beetle-supafaust-lr",
             "files": [
-                {"src": "mednafen_supafaust_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "mednafen_supafaust_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "mednafen_supafaust_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "beetle-supergrafx-lr",
             "files": [
-                {"src": "mednafen_supergrafx_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "mednafen_supergrafx_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "mednafen_supergrafx_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "beetle-vb-lr",
             "files": [
-                {"src": "mednafen_vb_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "mednafen_vb_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "mednafen_vb_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "beetle-wswan-lr",
             "files": [
-                {"src": "mednafen_wswan_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "mednafen_wswan_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "mednafen_wswan_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "mgba-lr",
             "files": [
-                {"src": "mgba_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "mgba_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "mgba_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "mupen64plus-nx-lr",
             "files": [
-                {"src": "mupen64plus_next_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "mupen64plus_next_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "mupen64plus_next_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
@@ -249,145 +276,162 @@
         {
             "package": "nestopia-lr",
             "files": [
-                {"src": "nestopia_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "nestopia_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "nestopia_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "np2kai-lr",
             "files": [
-                {"src": "np2kai_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "np2kai_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "np2kai_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "o2em-lr",
             "files": [
-                {"src": "o2em_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "o2em_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "o2em_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "parallel-n64-lr",
             "files": [
-                {"src": "parallel_n64_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "parallel_n64_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "parallel_n64_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "pcsx_rearmed-lr",
             "files": [
-                {"src": "pcsx_rearmed_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "pcsx_rearmed_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "pcsx_rearmed_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "picodrive-lr",
             "files": [
-                {"src": "picodrive_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "picodrive_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "picodrive_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "pokemini-lr",
             "files": [
-                {"src": "pokemini_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
-            ]
-        },
-        {
-            "package": "pokemini-lr",
-            "files": [
-                {"src": "pokemini_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "pokemini_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "pokemini_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "potator-lr",
             "files": [
-                {"src": "potator_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "potator_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "potator_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "prboom-lr",
             "files": [
-                {"src": "prboom_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "prboom_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "prboom_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "prosystem-lr",
             "files": [
-                {"src": "prosystem_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "prosystem_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "prosystem_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "puae2021-lr",
             "files": [
-                {"src": "puae2021_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "puae2021_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "puae2021_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "px68k-lr",
             "files": [
-                {"src": "px68k_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "px68k_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "px68k_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "quicknes-lr",
             "files": [
-                {"src": "quicknes_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "quicknes_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "quicknes_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "race-lr",
             "files": [
-                {"src": "race_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "race_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "race_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "sameduck-lr",
             "files": [
-                {"src": "sameduck_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "sameduck_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "sameduck_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "snes9x-lr",
             "files": [
-                {"src": "snes9x_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "snes9x_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "snes9x_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "stella2014-lr",
             "files": [
-                {"src": "stella2014_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "stella2014_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "stella2014_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "swanstation-lr",
             "files": [
-                {"src": "swanstation_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "swanstation_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "swanstation_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "tgbdual-lr",
             "files": [
-                {"src": "tgbdual_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "tgbdual_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "tgbdual_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "tic80-lr",
             "files": [
-                {"src": "tic80_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "tic80_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "tic80_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "tyrquake-lr",
             "files": [
-                {"src": "tyrquake_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "tyrquake_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "tyrquake_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "uae4arm-lr",
             "files": [
-                {"src": "uae4arm_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "uae4arm_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "uae4arm_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "vecx-lr",
             "files": [
-                {"src": "vecx_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "vecx_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "vecx_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
@@ -401,13 +445,16 @@
             "package": "vice-lr",
             "files": [
                 {"src": "vice_x64_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
-                {"src": "vice_xvic_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "vice_xvic_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "vice_x64_libretro.info", "dest": "/RetroArch/.retroarch/info/"},
+                {"src": "vice_xvic_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         },
         {
             "package": "yabasanshiro-lr",
             "files": [
-                {"src": "yabasanshiro_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+                {"src": "yabasanshiro_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "yabasanshiro_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
             ]
         }
     ]

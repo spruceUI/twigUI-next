@@ -23,12 +23,13 @@ PKG_VERSION="bb009b1379ad15f1514f20ca7cbf710b4af42b3e"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/pokemini"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="Obscure nintendo AMD64 emulator (functional,no color files or savestates currently)"
 
 PKG_TOOLCHAIN="make"
 PKG_PATCH_DIRS+="${DEVICE}"
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/pokemini_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/pokemini_libretro.so
 }

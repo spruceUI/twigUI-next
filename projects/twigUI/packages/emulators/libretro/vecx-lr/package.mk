@@ -23,7 +23,7 @@ PKG_VERSION="8f671cc9d737f2890c3ce19e177e2984dcae121f"
 PKG_LICENSE="GPLv2|LGPLv2.1"
 PKG_SITE="https://github.com/libretro/libretro-vecx"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="libretro adaptation of vecx"
 
 PKG_TOOLCHAIN="make"
@@ -33,5 +33,6 @@ make_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/vecx_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/vecx_libretro.so
 }

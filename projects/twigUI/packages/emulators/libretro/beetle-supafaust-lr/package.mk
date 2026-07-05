@@ -24,12 +24,13 @@ PKG_VERSION="2b93c0d7dff5b8f6c4e60e049d66849923fa8bba"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/supafaust"
 PKG_URL="${PKG_SITE}.git"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="Super Nintendo (Super Famicom) emulator"
 GET_HANDLER_SUPPORT="git"
 PKG_TOOLCHAIN="make"
 
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/mednafen_supafaust_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/mednafen_supafaust_libretro.so
 }

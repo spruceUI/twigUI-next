@@ -24,7 +24,7 @@ PKG_VERSION="4f74bf22d2730d989502943784f217aed8cea5c1"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/blueMSX-libretro"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="Port of blueMSX to the libretro API."
 
 PKG_TOOLCHAIN="make"
@@ -34,5 +34,6 @@ make_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/bluemsx_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/bluemsx_libretro.so
 }

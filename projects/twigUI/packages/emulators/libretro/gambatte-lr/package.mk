@@ -24,7 +24,7 @@ PKG_VERSION="897bc1386cff38860b149049f515f1fcd1e85621"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/gambatte-libretro"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="libretro implementation of libgambatte"
 
 PKG_TOOLCHAIN="make"
@@ -35,5 +35,6 @@ make_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/gambatte_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/gambatte_libretro.so
 }

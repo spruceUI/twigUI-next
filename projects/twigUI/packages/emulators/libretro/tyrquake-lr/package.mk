@@ -23,7 +23,7 @@ PKG_VERSION="8f1e7dcdcdd10f840b7020ac6701ae62b07c41a4"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/tyrquake"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="Libretro port of Tyrquake (Quake 1 engine)"
 PKG_PATCH_DIRS+="${DEVICE}"
 
@@ -37,5 +37,6 @@ pre_configure_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/tyrquake_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/tyrquake_libretro.so
 }

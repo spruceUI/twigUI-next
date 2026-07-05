@@ -24,7 +24,7 @@ PKG_VERSION="c605d3aa342f2ad8f915f94bf03bae018e1be7b7"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/hatari"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain capsimg"
+PKG_DEPENDS_TARGET="toolchain capsimg core-info"
 PKG_LONGDESC="New rebasing of Hatari based on Mercurial upstream. Tries to be a shallow fork for easy upstreaming later on."
 
 PKG_TOOLCHAIN="make"
@@ -39,5 +39,6 @@ make_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/hatari_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/hatari_libretro.so
 }

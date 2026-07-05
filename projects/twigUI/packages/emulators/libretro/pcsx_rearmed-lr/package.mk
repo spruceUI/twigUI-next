@@ -7,7 +7,7 @@ PKG_VERSION="050981b6eeb715f142854f57c68086f62921f027"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/pcsx_rearmed"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="ARM optimized PCSX fork"
 PKG_TOOLCHAIN="manual"
 
@@ -24,5 +24,6 @@ make_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/pcsx_rearmed_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/pcsx_rearmed_libretro.so
 }

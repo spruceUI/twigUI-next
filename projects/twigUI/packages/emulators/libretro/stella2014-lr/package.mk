@@ -24,7 +24,7 @@ PKG_VERSION="eed47e154d1bbda3305e9ef2d486b6710c8973f4"
 PKG_LICENSE="GPL2"
 PKG_SITE="https://github.com/libretro/stella2014-libretro"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="Port of Stella to libretro."
 PKG_TOOLCHAIN="make"
 
@@ -33,6 +33,7 @@ make_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/stella2014_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/stella2014_libretro.so
 }
 

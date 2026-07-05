@@ -24,7 +24,7 @@ PKG_VERSION="f013e213458e06d9df718e4bc4b09d46f88aa899"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/fmsx-libretro"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="Port of fMSX 6.0 to the libretro API."
 
 PKG_TOOLCHAIN="make"
@@ -34,5 +34,6 @@ make_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/fmsx_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/fmsx_libretro.so
 }

@@ -24,11 +24,12 @@ PKG_VERSION="bf816b096f1dca55ea805337d7c9e78d6b98d839"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/tgbdual-libretro"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="libretro port of TGB Dual"
 
 PKG_TOOLCHAIN="make"
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/tgbdual_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/tgbdual_libretro.so
 }

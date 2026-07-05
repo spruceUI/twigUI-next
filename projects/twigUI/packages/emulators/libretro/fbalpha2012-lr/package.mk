@@ -24,7 +24,7 @@ PKG_VERSION="95fa35582b1ca7ce68de3313615794c8c9d8d7c0"
 PKG_LICENSE="Non-commercial"
 PKG_SITE="https://github.com/libretro/fbalpha2012"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="Port of Final Burn Alpha 2012 to Libretro"
 PKG_TOOLCHAIN="make"
 
@@ -38,6 +38,7 @@ make_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/fbalpha2012_libretro.info "${PKG_BUILD}"/
   LR_SO="${PKG_BUILD}"/svn-current/trunk/fbalpha2012_libretro.so
 
   ${STRIP} "${LR_SO}"

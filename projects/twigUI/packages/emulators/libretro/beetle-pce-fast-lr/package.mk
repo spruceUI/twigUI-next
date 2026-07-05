@@ -24,11 +24,12 @@ PKG_VERSION="7e9b257b8a591cb7e00f9e55371edba19db9799c"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/beetle-pce-fast-libretro"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="Standalone port of Mednafen PCE Fast to libretro."
 
 PKG_TOOLCHAIN="make"
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/mednafen_pce_fast_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/mednafen_pce_fast_libretro.so
 }

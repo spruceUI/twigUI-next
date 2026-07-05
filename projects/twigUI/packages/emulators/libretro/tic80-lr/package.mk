@@ -6,7 +6,7 @@ PKG_VERSION="7020500a6e88f6ee91301933bb77f082a10e10f5"
 PKG_LICENSE="MIT"
 PKG_SITE="https://github.com/nesbox/TIC-80"
 PKG_URL="${PKG_SITE}.git"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="TIC-80 is a fantasy computer for making, playing and sharing tiny games."
 GET_HANDLER_SUPPORT="git"
 
@@ -37,6 +37,7 @@ PKG_CMAKE_OPTS_TARGET="-DBUILD_DEMO_CARTS=OFF \
                        -DCMAKE_POLICY_VERSION_MINIMUM=3.5"
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/tic80_libretro.info "${PKG_BUILD}"/
   LR_SO="${PKG_BUILD}"/.${TARGET_NAME}/bin/tic80_libretro.so
 
   ${STRIP} "${LR_SO}"

@@ -24,7 +24,7 @@ PKG_GIT_CLONE_BRANCH="yabasanshiro"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/yabause"
 PKG_URL="${PKG_SITE}.git"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="Port of YabaSanshiro to libretro."
 PKG_TOOLCHAIN="make"
 GET_HANDLER_SUPPORT="git"
@@ -58,6 +58,7 @@ pre_configure_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/yabasanshiro_libretro.info "${PKG_BUILD}"/
   LR_SO="${PKG_BUILD}"/yabause/src/libretro/yabasanshiro_libretro.so
 
   ${STRIP} "${LR_SO}"

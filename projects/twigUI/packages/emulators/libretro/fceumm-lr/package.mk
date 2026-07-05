@@ -24,7 +24,7 @@ PKG_VERSION="6e00afac498903586330492cdd81354a6c4c0d4c"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/libretro-fceumm"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="Port of FCEUmm / FCEUX to Libretro."
 
 PKG_TOOLCHAIN="make"
@@ -34,5 +34,6 @@ make_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/fceumm_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/fceumm_libretro.so
 }

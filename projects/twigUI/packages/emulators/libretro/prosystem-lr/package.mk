@@ -23,11 +23,12 @@ PKG_VERSION="363b6dfbd3e240762e022c2b4897b4fe55722be3"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/prosystem-libretro"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="Port of ProSystem to libretro."
 
 PKG_TOOLCHAIN="make"
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/prosystem_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/prosystem_libretro.so
 }

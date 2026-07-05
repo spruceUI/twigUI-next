@@ -6,7 +6,7 @@ PKG_VERSION="98c1b0d877542b01314b3b04272282ba223b65b3"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/mupen64plus-libretro-nx"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain nasm:host"
+PKG_DEPENDS_TARGET="toolchain nasm:host core-info"
 PKG_LONGDESC="mupen64plus NX"
 PKG_TOOLCHAIN="make"
 PKG_BUILD_FLAGS="-lto"
@@ -48,5 +48,6 @@ pre_configure_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/mupen64plus_next_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/mupen64plus_next_libretro.so
 }

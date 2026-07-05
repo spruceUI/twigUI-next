@@ -24,11 +24,12 @@ PKG_VERSION="4abfb8be233bec630f369379fb6c1d92d31f1c7d"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/libretro-cap32"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="caprice32 4.2.0 libretro"
 
 PKG_TOOLCHAIN="make"
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/cap32_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/cap32_libretro.so
 }

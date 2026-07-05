@@ -30,5 +30,6 @@ pre_configure_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/parallel_n64_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/parallel_n64_libretro.so
 }

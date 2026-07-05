@@ -25,7 +25,7 @@ PKG_VERSION="69e86ebe89f14c3f5f75b809c12c0a953b3d6ce4"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/gpsp"
 PKG_URL="${PKG_SITE}.git"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="gameplaySP is a Gameboy Advance emulator for Playstation Portable"
 PKG_PATCH_DIRS+="${DEVICE}"
 PKG_TOOLCHAIN="make"
@@ -35,5 +35,6 @@ make_target() {
 }
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/gpsp_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/gpsp_libretro.so
 }

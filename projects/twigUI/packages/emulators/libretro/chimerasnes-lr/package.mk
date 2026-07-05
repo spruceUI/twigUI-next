@@ -24,11 +24,12 @@ PKG_VERSION="04c57c2902c25f36ae5a5d9c57aff851a772c868"
 PKG_LICENSE="GPLv2+"
 PKG_SITE="https://github.com/jamsilva/chimerasnes"
 PKG_URL="${PKG_SITE}.git"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain core-info"
 PKG_LONGDESC="A Super Nintendo emulator core using the libretro API"
 PKG_TOOLCHAIN="make"
 GET_HANDLER_SUPPORT="git"
 
 makeinstall_target() {
+  cp "$(get_build_dir core-info)"/chimerasnes_libretro.info "${PKG_BUILD}"/
   ${STRIP} "${PKG_BUILD}"/chimerasnes_libretro.so
 }
