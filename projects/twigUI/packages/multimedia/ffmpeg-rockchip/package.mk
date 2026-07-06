@@ -127,12 +127,6 @@ pre_configure_target() {
   rm -rf .${TARGET_NAME}
 }
 
-if [ "${FFMPEG_TESTING}" = "yes" ]; then
-  PKG_FFMPEG_TESTING="--enable-encoder=wrapped_avframe --enable-muxer=null"
-else
-  PKG_FFMPEG_TESTING="--disable-programs"
-fi
-
 configure_target() {
   ./configure --prefix="/usr" \
               --cpu="${TARGET_CPU}" \
@@ -155,6 +149,7 @@ configure_target() {
               --extra-libs="${PKG_FFMPEG_LIBS}" \
               --disable-static \
               --enable-shared \
+              --disable-ffplay \
               --enable-version3 \
               --enable-logging \
               --disable-doc \
@@ -243,4 +238,5 @@ configure_target() {
 
 post_makeinstall_target() {
   rm -rf ${INSTALL}/usr/share/ffmpeg/examples
+  rm -f ${INSTALL}/usr/share/ffmpeg/*.ffpreset
 }
