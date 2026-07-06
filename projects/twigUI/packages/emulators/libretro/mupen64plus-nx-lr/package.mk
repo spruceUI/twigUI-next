@@ -24,8 +24,6 @@ if [ "${VULKAN_SUPPORT}" = "yes" ]; then
   PKG_MAKE_OPTS_TARGET+=" HAVE_PARALLEL_RSP=1 HAVE_PARALLEL_RDP=1"
 fi
 
-echo PKG_DEPENDS_TARGET ${PKG_DEPENDS_TARGET}
-
 pre_configure_target() {
   export CFLAGS="${CFLAGS} -DHAVE_UNISTD_H -Wno-error=incompatible-pointer-types"
   if [ "${ARCH}" = "aarch64" ]; then

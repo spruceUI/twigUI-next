@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (C) 2024-present ROCKNIX (https://github.com/ROCKNIX)
 
-PKG_NAME="retroarch"
+PKG_NAME="retroarch-spruce"
 PKG_VERSION="1.22.2"
 PKG_LICENSE="GPLv3"
 PKG_LONGDESC="a pipedream"

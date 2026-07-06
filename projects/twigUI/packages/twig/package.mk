@@ -2,7 +2,7 @@
 # Copyright (C) 2023 JELOS (https://github.com/JustEnoughLinuxOS)
 
 PKG_NAME="twig"
-PKG_VERSION="686832224e51a3c57eb39e9bb393c3a603dc4550"
+PKG_VERSION="95c9b802cf9c6580f224847ce8b8c4a7f65244f2"
 PKG_LICENSE="Public Domain"
 PKG_SITE="https://github.com/Hairo/spruceOS/"
 PKG_URL="https://github.com/Hairo/spruceOS/archive/${PKG_VERSION}.tar.gz"
@@ -28,15 +28,6 @@ copy_ra_cores() {
       dest=$(echo "$file" | jq -r '.dest')
       build_dir="$(get_build_dir $package)"
 
-      # ???????????????????
-      if [[ "$build_dir" == *"PKG_DEPENDS_TARGET"* ]]; then
-        clean=$(echo $build_dir | sed 's/PKG_DEPENDS_TARGET//')
-        first=$(echo $clean | cut -d' ' -f1)
-        last=$(echo ${build_dir##* })
-
-        build_dir="${first}""${last}"
-      fi
-
       cp "$build_dir"/"$src" "${SPRUCE_DIR}"/"$dest"
     done
 
@@ -57,7 +48,6 @@ make_target() {
 
   # TODO: developer_mode flag
   # TODO: Download themes
-  cp "$(get_build_dir retroarch)"/ra64.pixel2 "${SPRUCE_DIR}"/RetroArch/ra64.pixel2
   copy_ra_cores
 
   # Adjust default configs

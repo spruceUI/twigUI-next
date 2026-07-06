@@ -1,6 +1,12 @@
 {
     "emulators": [
         {
+            "package": "retroarch-spruce",
+            "files": [
+                {"src": "ra64.pixel2", "dest": "/RetroArch/"}
+            ]
+        },
+        {
             "package": "a5200-lr",
             "files": [
                 {"src": "a5200_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
@@ -469,6 +475,32 @@
             "files": [
                 {"src": "yabasanshiro_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
                 {"src": "yabasanshiro_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
+            ]
+        },
+        {
+            "package": "drastic-trngaje-sa",
+            "files": [
+                {"src": "drastic64", "dest": "/Emu/NDS/"},
+                {"src": "libSDL2-2.0.so.0", "dest": "/Emu/NDS/lib64_Pixel2_trngaje/"},
+                {"src": "libadvdrastic.so", "dest": "/Emu/NDS/lib64_Pixel2_trngaje/"}
+            ]
+        },
+        {
+            "package": "flycast-sa",
+            "files": [
+                {"src": "flycast", "dest": "/Emu/DC/"}
+            ]
+        },
+        {
+            "package": "flycast2024-sa",
+            "files": [
+                {"src": "flycast2024", "dest": "/Emu/DC/"}
+            ]
+        },
+        {
+            "package": "ppsspp-spruce-sa",
+            "files": [
+                {"src": "PPSSPPSDL_Pixel2", "dest": "/Emu/PSP/"}
             ]
         }
     ]

@@ -1,0 +1,23 @@
+diff -rupN flycast2024-sa.orig/core/deps/glm/CMakeLists.txt flycast2024-sa/core/deps/glm/CMakeLists.txt
+--- flycast2024-sa.orig/core/deps/glm/CMakeLists.txt	2026-07-05 13:05:00.014896305 -0400
++++ flycast2024-sa/core/deps/glm/CMakeLists.txt	2026-07-05 13:16:46.715202195 -0400
+@@ -1,5 +1,5 @@
+-cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
+-cmake_policy(VERSION 3.2)
++cmake_minimum_required(VERSION 3.6 FATAL_ERROR)
++cmake_policy(VERSION 3.6)
+ 
+ set(GLM_VERSION "0.9.9")
+ project(glm VERSION ${GLM_VERSION} LANGUAGES CXX)
+diff -rupN flycast2024-sa.orig/core/deps/xxHash/cmake_unofficial/CMakeLists.txt flycast2024-sa/core/deps/xxHash/cmake_unofficial/CMakeLists.txt
+--- flycast2024-sa.orig/core/deps/xxHash/cmake_unofficial/CMakeLists.txt	2026-07-05 13:05:00.033897844 -0400
++++ flycast2024-sa/core/deps/xxHash/cmake_unofficial/CMakeLists.txt	2026-07-05 13:13:57.409189576 -0400
+@@ -5,7 +5,7 @@
+ #
+ # For details, see <https://creativecommons.org/publicdomain/zero/1.0/>.
+ 
+-cmake_minimum_required (VERSION 2.8.12 FATAL_ERROR)
++cmake_minimum_required (VERSION 3.6 FATAL_ERROR)
+ 
+ set(XXHASH_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
+ 
