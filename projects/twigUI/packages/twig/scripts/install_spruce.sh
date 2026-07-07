@@ -33,8 +33,8 @@ e2fsck -f -p $PART >> $LOG 2>&1
 echo "Running resize2fs..." >> $LOG 2>&1
 resize2fs $PART >> $LOG 2>&1
 
-echo "Running mkfs.exfat..." >> $LOG 2>&1
-mkfs.exfat -n TWIGUI $PART >> $LOG 2>&1
+echo "Running mkfs.fat..." >> $LOG 2>&1
+mkfs.fat -F32 -n TWIGUI $PART >> $LOG 2>&1
 
 echo "Syncing..." >> $LOG 2>&1
 
