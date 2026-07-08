@@ -480,7 +480,7 @@
         {
             "package": "drastic-trngaje-sa",
             "files": [
-                {"src": "drastic64", "dest": "/Emu/NDS/"},
+                {"src": "drastic", "dest": "/Emu/NDS/"},
                 {"src": "libSDL2-2.0.so.0", "dest": "/Emu/NDS/lib64_Pixel2_trngaje/"},
                 {"src": "libadvdrastic.so", "dest": "/Emu/NDS/lib64_Pixel2_trngaje/"}
             ]

@@ -14,7 +14,7 @@ make_target() {
 }
 
 makeinstall_target() {
-  cp "${PKG_BUILD}"/advanced_drastic/drastic "${PKG_BUILD}"/drastic64
+  cp "${PKG_BUILD}"/advanced_drastic/drastic "${PKG_BUILD}"/
 
   cp "${PKG_BUILD}"/advanced_drastic/libs/rk3326/libSDL2-2.0.so.0 "${PKG_BUILD}"/
   cp "${PKG_BUILD}"/advanced_drastic/libs/libadvdrastic.so "${PKG_BUILD}"/

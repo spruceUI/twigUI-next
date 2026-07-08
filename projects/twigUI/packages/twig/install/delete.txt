@@ -72,7 +72,7 @@ Emu/SATURN/input.cfg
 Emu/SCUMMVM/fixjoy
 Emu/SCUMMVM/liba30/
 Emu/SCUMMVM/libmini/
-Emu/SCUMMVM/lib/!(liba52*|libbsd*|libfaad*|libgif*|libmad*|libmikmod*|libsndio*|libspeechd*)
+Emu/SCUMMVM/lib/!(liba52*|libbsd*|libfaad*|libgif*|libmad*|libmikmod*|libsndio*|libspeechd*|libmpeg2*|libfribidi*)
 Emu/SCUMMVM/scummvm_a30.7z
 Emu/SCUMMVM/scummvm_mini.7z
 Emu/SCUMMVM/scummvm_mini_plugins.7z
