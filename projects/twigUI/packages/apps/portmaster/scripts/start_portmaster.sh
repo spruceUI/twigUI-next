@@ -13,6 +13,12 @@ if [ ! -d "/storage/.config/PortMaster" ]; then
       cp -r "/usr/config/PortMaster" "/storage/.config/"
 fi
 
+# Make sure the symlink exists
+if [ ! -L "/storage/roms/ports" ]; then
+    mkdir -p /storage/roms
+    ln -s /mnt/SDCARD/Roms/PORTS /storage/roms/ports
+fi
+
 cd /storage/.config/PortMaster
 
 #Grab the latest control.txt & mapper.txt, then set correct permissions
@@ -27,49 +33,31 @@ rm -r gamecontrollerdb.txt
 ln -sf /usr/config/SDL-GameControllerDB/gamecontrollerdb.txt gamecontrollerdb.txt
 
 #Delete old PortMaster fold first (we can probably remove this later)
-if [ ! -f "/storage/roms/ports/PortMaster/pugwash" ]; then
-    rm -r /storage/roms/ports/PortMaster
+if [ ! -f "/mnt/SDCARD/Roms/PORTS/PortMaster/pugwash" ]; then
+    rm -r /mnt/SDCARD/Roms/PORTS/PortMaster
 fi
 
 #Make sure roms/ports/PortMaster folder exists
-if [ ! -d "/storage/roms/ports/PortMaster" ]; then
-    unzip /usr/config/PortMaster/release/PortMaster.zip -d /storage/roms/ports/
-    chmod +x /storage/roms/ports/PortMaster/PortMaster.sh
+if [ ! -d "/mnt/SDCARD/Roms/PORTS/PortMaster" ]; then
+    unzip /usr/config/PortMaster/release/PortMaster.zip -d /mnt/SDCARD/Roms/PORTS/
+    chmod +x /mnt/SDCARD/Roms/PORTS/PortMaster/PortMaster.sh
 fi
 
 #We dont use tasksetter, delete it
-if [ -f /storage/roms/ports/PortMaster/tasksetter ]; then
-  rm -r /storage/roms/ports/PortMaster/tasksetter
+if [ -f /mnt/SDCARD/Roms/PORTS/PortMaster/tasksetter ]; then
+  rm -r /mnt/SDCARD/Roms/PORTS/PortMaster/tasksetter
 fi
 
 #Use PortMasters gptokeyb
 rm gptokeyb
-cp /storage/roms/ports/PortMaster/gptokeyb gptokeyb
+cp /mnt/SDCARD/Roms/PORTS/PortMaster/gptokeyb gptokeyb
 
 #Copy over required files for ports
-cp /storage/.config/PortMaster/control.txt /storage/roms/ports/PortMaster/control.txt
-cp /storage/.config/PortMaster/mapper.txt /storage/roms/ports/PortMaster/mapper.txt
-cp /storage/.config/PortMaster/gamecontrollerdb.txt /storage/roms/ports/PortMaster/gamecontrollerdb.txt
-cp /usr/bin/oga_controls* /storage/roms/ports/PortMaster/
-
-#Hide PortMaster folder in ports
-if [ ! -f /storage/roms/ports/gamelist.xml ]; then
-echo "<gameList>
-	<folder>
-		<path>./PortMaster</path>
-		<name>PortMaster</name>
-		<hidden>true</hidden>
-	</folder>
-</gameList>" > /storage/roms/ports/gamelist.xml
-else
-  xmlstarlet ed --inplace -d  "/gameList/folder[name='PortMaster']" /storage/roms/ports/gamelist.xml
-  xmlstarlet ed --inplace -d  "/gameList/game[name='PortMaster']" /storage/roms/ports/gamelist.xml
-  xmlstarlet ed --inplace --subnode "/gameList" --type elem -n folder -v "" /storage/roms/ports/gamelist.xml
-  xmlstarlet ed --inplace --subnode "/gameList/folder[last()]" --type elem -n path -v "./PortMaster" /storage/roms/ports/gamelist.xml
-  xmlstarlet ed --inplace --subnode "/gameList/folder[last()]" --type elem -n name -v "PortMaster" /storage/roms/ports/gamelist.xml
-  xmlstarlet ed --inplace --subnode "/gameList/folder[last()]" --type elem -n hidden -v "true" /storage/roms/ports/gamelist.xml
-fi
+cp /storage/.config/PortMaster/control.txt /mnt/SDCARD/Roms/PORTS/PortMaster/control.txt
+cp /storage/.config/PortMaster/mapper.txt /mnt/SDCARD/Roms/PORTS/PortMaster/mapper.txt
+cp /storage/.config/PortMaster/gamecontrollerdb.txt /mnt/SDCARD/Roms/PORTS/PortMaster/gamecontrollerdb.txt
+cp /usr/bin/oga_controls* /mnt/SDCARD/Roms/PORTS/PortMaster/
 
 #Start PortMaster
-cd /storage/roms/ports/PortMaster
+cd /mnt/SDCARD/Roms/PORTS/PortMaster
 ./PortMaster.sh 2>/dev/null

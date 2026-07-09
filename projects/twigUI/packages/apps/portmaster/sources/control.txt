@@ -30,57 +30,14 @@ raconf="--config /storage/.config/retroarch/retroarch.cfg"
 
 # $param_device / $LOWRES / $ANALOG_STICKS (also set by device_info.txt) are used in port launch scripts
 case "${QUIRK_DEVICE}" in
-  "Anbernic RG552")
-    param_device="rg552"
-    LOWRES="N"
-    ANALOG_STICKS="2"
-  ;;
-  "Hardkernel ODROID-GO-Ultra"|"Powkiddy RGB10 MAX 3 Pro")
-    param_device="s922x"
-    LOWRES="N"
-    ANALOG_STICKS="2"
-  ;;
-  "Powkiddy x55")
-    param_device="x55"
-    LOWRES="N"
-    ANALOG_STICKS="2"
-  ;;
-  "Anbernic RG351M")
-    param_device="anbernic"
-    LOWRES="Y"
-    ANALOG_STICKS="2"
-  ;;
-  "Anbernic RG351V")
-    param_device="anbernic"
-    LOWRES="N"
-    ANALOG_STICKS="1"
-  ;;
-  "ODROID-GO Advance*"|"Powkiddy RGB10")
-    param_device="oga"
-    LOWRES="Y"
-    ANALOG_STICKS="1"
-  ;;
-  "ODROID-GO Super")
-    param_device="ogs"
-    LOWRES="N"
-    ANALOG_STICKS="2"
-  ;;
-  "Anbernic RG35XX H"|"Anbernic RG40XX H"|"Anbernic RG CubeXX")
-    param_device="anbernic"
-    LOWRES="N"
-    ANALOG_STICKS="2"
-  ;;
-  "Anbernic RG40XX V")
-    param_device="anbernic"
-    LOWRES="N"
-    ANALOG_STICKS="1"
-  ;;
-  "Anbernic RG35XX Plus"|"Anbernic RG35XX 2024"|"Anbernic RG28XX")
-    param_device="anbernic"
+  "GameKiddy GKD Pixel2")
+    DEVICE="03008d96010000000221000000010000"
+    param_device="gkd-pixel2"
     LOWRES="N"
     ANALOG_STICKS="0"
   ;;
   *)
+    DEVICE="00000000000000000000000000000000"
     param_device="rg552"
     LOWRES="N"
     ANALOG_STICKS="2"
@@ -89,16 +46,13 @@ esac
 
 get_controls() {
     # Set controller file to be generated
-    export SDL_GAMECONTROLLERCONFIG_FILE="/tmp/gamecontrollerdb.txt"
-
-    # Generate controller file for controllers mapped in emulationstation
-    /storage/.config/PortMaster/mapper.txt ${SDL_GAMECONTROLLERCONFIG_FILE} ${controlfolder}
+    export SDL_GAMECONTROLLERCONFIG_FILE="/mnt/SDCARD/Roms/PORTS/PortMaster/gamecontrollerdb.txt"
 
     # Set compatability libs
     export LD_LIBRARY_PATH=${clibs}
 
     # Some ports want sdl_controllerconfig (to set SDL_GAMECONTROLLERCONFIG), so let's fill it in
-    sdl_controllerconfig="$(< "${SDL_GAMECONTROLLERCONFIG_FILE}")"
+    sdl_controllerconfig="$(cat "${SDL_GAMECONTROLLERCONFIG_FILE}" | grep $DEVICE)"
 }
 
 GPTOKEYB2="$ESUDO env LD_PRELOAD=$controlfolder/libinterpose.${DEVICE_ARCH}.so $controlfolder/gptokeyb2 $ESUDOKILL"
