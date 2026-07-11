@@ -1,0 +1,14 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (C) 2024 ROCKNIX (https://github.com/ROCKNIX)
+
+# Bind-mount mali GLES libraries over mesa if not already done.
+# Use mount output (not /proc/mounts) to avoid squashfs false positives.
+mount | grep -q "on /usr/lib/libEGL.so" || find /usr/{lib,lib32}/mali -type f -exec bash -c 'lib={}; mount --bind $lib ${lib/\/mali\//\/}' ';'
+# Portmaster is not ready for SDL in glesonly subdir, so override libs the dirty way
+if [ -d /usr/lib/glesonly ]; then
+    mount | grep -q "on /usr/lib/libSDL2" || find /usr/{lib,lib32}/glesonly -type f -exec bash -c 'lib={}; mount --bind $lib ${lib/\/glesonly\//\/}' ';'
+fi
+
+mount --bind /dev/null /usr/lib/libGL.so
+mount --bind /dev/null /usr/lib32/libGL.so

@@ -19,11 +19,5 @@ makeinstall_target() {
     cp ${PKG_DIR}/sources/common/* ${INSTALL}/usr/lib/autostart/common
     chmod -R 0755 ${INSTALL}/usr/lib/autostart/common
   fi
-  if [ -d "${PKG_DIR}/sources/daemons" ]
-  then
-    mkdir -p ${INSTALL}/usr/lib/autostart/daemons
-    cp ${PKG_DIR}/sources/daemons/* ${INSTALL}/usr/lib/autostart/daemons
-    chmod -R 0755 ${INSTALL}/usr/lib/autostart/daemons
-  fi
   chmod -R 0755 ${INSTALL}/usr/bin/autostart
 }
