@@ -10,7 +10,7 @@ set_kill set "PortMaster"
 #Make sure PortMaster exists in .config/PortMaster
 if [ ! -d "/storage/.config/PortMaster" ]; then
     mkdir -p "/storage/.config/PortMaster"
-      cp -r "/usr/config/PortMaster" "/storage/.config/"
+    cp -r "/usr/config/PortMaster" "/storage/.config/"
 fi
 
 # Make sure the symlink exists
@@ -37,10 +37,16 @@ if [ ! -f "/mnt/SDCARD/Roms/PORTS/PortMaster/pugwash" ]; then
     rm -r /mnt/SDCARD/Roms/PORTS/PortMaster
 fi
 
-#Make sure roms/ports/PortMaster folder exists
+#Make sure /mnt/SDCARD/Roms/PORTS/PortMaster folder exists
 if [ ! -d "/mnt/SDCARD/Roms/PORTS/PortMaster" ]; then
     unzip /usr/config/PortMaster/release/PortMaster.zip -d /mnt/SDCARD/Roms/PORTS/
     chmod +x /mnt/SDCARD/Roms/PORTS/PortMaster/PortMaster.sh
+
+    # Install default theme
+    if [ -d "/mnt/SDCARD/App/PortMaster/tmp" ]; then
+        cp -rf /mnt/SDCARD/App/PortMaster/tmp/* /mnt/SDCARD/Roms/PORTS/PortMaster/
+        rm -r /mnt/SDCARD/App/PortMaster/tmp/
+    fi
 fi
 
 #We dont use tasksetter, delete it
