@@ -5,7 +5,21 @@
 # Minimal OS variable loading for performance
 . /etc/profile.d/001-functions
 
-tocon "Setting root password..."
+# Prepare authorized keys if they exist
+if [ ! -e "/storage/.ssh/authorized_keys" ] && \
+   [ -e "/usr/config/ssh/authorized_keys" ]
+then
+  mkdir -p /storage/.ssh/
+  cp /usr/config/ssh/authorized_keys /storage/.ssh/authorized_keys
+  chmod 0610 /storage/.ssh/authorized_keys
+fi
 
-ROOTPASS="happygaming"
-setrootpass "${ROOTPASS}"
+touch /storage/.cache/services/sshd.conf
+
+SHADOW_FILE=/storage/.cache/shadow
+touch $SHADOW_FILE
+chmod 777 $SHADOW_FILE
+echo "root:dummy:::::::" > $SHADOW_FILE
+
+setrootpass "happygaming"
+echo "spruce:\$6\$wc4.anMG2q6/Q/NY$/tOibsaiRFnZ9fOh0ZLaOiVtK.crs8Q7EbuMPQA2pCL2Kc6ajypvPJMpDhRsMI/3uM8LSdHZJzDtd/qR9K76D/:::::::" >> $SHADOW_FILE

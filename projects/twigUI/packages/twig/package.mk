@@ -15,7 +15,7 @@ unpack() {
   tar --strip-components=1 -xf ${SOURCES}/${PKG_NAME}/${PKG_NAME}-${PKG_VERSION}.tar.gz -C "${PKG_BUILD}/spruce"
 }
 
-copy_ra_cores() {
+copy_emulators() {
   jsonf=$(cat "${PKG_DIR}"/install/emulators.json)
 
   while read -r jvalue
@@ -48,7 +48,7 @@ make_target() {
 
   # TODO: developer_mode flag
   # TODO: Download themes
-  copy_ra_cores
+  copy_emulators
 
   # Adjust default configs
   CONF_FILE="${SPRUCE_DIR}/Saves/spruce/spruce-config.json"
@@ -80,4 +80,8 @@ makeinstall_target() {
   chmod 0755 ${INSTALL}/usr/bin/install_spruce.sh
 
   ln -sf ${PKG_PYTHON_VERSION} ${INSTALL}/usr/bin/MainUI
+}
+
+post_install() {
+  add_user spruce x 0 0 "Root User" "/mnt/SDCARD" "/bin/sh"
 }
