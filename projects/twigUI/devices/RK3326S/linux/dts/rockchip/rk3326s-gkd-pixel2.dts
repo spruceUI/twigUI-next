@@ -4289,23 +4289,18 @@
 	};
 
 	gamekiddy-joypad {
-		compatible = "rocknix-joypad";
+		compatible = "rocknix-singleadc-joypad";
 		joypad-name = "pixel2_joypad";
 		joypad-vendor = <0x01>;
 		joypad-product = <0x2102>;
 		joypad-revision = <0x100>;
+		status = "okay";
 		pinctrl-names = "default";
 		pinctrl-0 = <0xc5>;
-		io-channel-names = "joy_x", "joy_y";
-		io-channels = <0xc6 0x02 0xc6 0x02>;
-		button-adc-count = <0x04>;
-		button-adc-scale = <0x02>;
-		button-adc-deadzone = <0x14>;
-		button-adc-x-range = <0x708>;
-		button-adc-y-range = <0x708>;
-		button-adc-fuzz = <0x20>;
-		button-adc-flat = <0x20>;
+		amux-count = <0>;
 		poll-interval = <0x0a>;
+		pwms = <0xca 0 0x3B9ACA00 0>;
+		pwm-names = "enable";
 		phandle = <0x173>;
 
 		sw1 {
@@ -4452,13 +4447,6 @@
 		regulator-min-microvolt = <0x39fbc0>;
 		regulator-max-microvolt = <0x39fbc0>;
 		phandle = <0x68>;
-	};
-
-	vibrator {
-		compatible = "pwm-vibrator";
-		pwms = <0xca 0x00 0xbebc200 0x00>;
-		pwm-names = "enable";
-		direction-duty-cycle-ns = <0xbebc200>;
 	};
 
 	vcc-mipi-lcd0 {

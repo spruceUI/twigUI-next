@@ -37,11 +37,11 @@ class GKDPixel2(GKDDevice):
                 from controller.controller import Controller
                 #/dev/miyooio if we want to get rid of miyoo_inputd
                 # debug in terminal: hexdump  /dev/miyooio
-                self.volume_key_watcher = KeyWatcher("/dev/input/event2")
+                self.volume_key_watcher = KeyWatcher("/dev/input/event1")
                 Controller.add_button_watcher(self.volume_key_watcher.poll_keyboard)
                 volume_key_polling_thread = threading.Thread(target=self.volume_key_watcher.poll_keyboard, daemon=True)
                 volume_key_polling_thread.start()
-                self.power_key_watcher = KeyWatcher("/dev/input/event1")
+                self.power_key_watcher = KeyWatcher("/dev/input/event0")
                 power_key_polling_thread = threading.Thread(target=self.power_key_watcher.poll_keyboard, daemon=True)
                 power_key_polling_thread.start()
                 # Done to try to account for external systems editting the config file
@@ -135,7 +135,7 @@ class GKDPixel2(GKDDevice):
         key_mappings[KeyEvent(1, 704, 1)] = [InputResult(ControllerInput.MENU, KeyState.PRESS)]
         key_mappings[KeyEvent(1, 704, 0)] = [InputResult(ControllerInput.MENU, KeyState.RELEASE)]
 
-        return KeyWatcherController(event_path="/dev/input/event3", mapping_provider=DictKeyMappingProvider(key_mappings))
+        return KeyWatcherController(event_path="/dev/input/event2", mapping_provider=DictKeyMappingProvider(key_mappings))
 
     def get_device_name(self):
         return self.device_name
@@ -176,7 +176,7 @@ class GKDPixel2(GKDDevice):
         return NmWiFiScanner()
 
     def volume_up(self):
-        StdInBasedSendEventBinaryHelper.send_key_down_and_up("/dev/input/event2",115)
+        StdInBasedSendEventBinaryHelper.send_key_down_and_up("/dev/input/event1",115)
 
     def volume_down(self):
-        StdInBasedSendEventBinaryHelper.send_key_down_and_up("/dev/input/event2",114)
+        StdInBasedSendEventBinaryHelper.send_key_down_and_up("/dev/input/event1",114)
