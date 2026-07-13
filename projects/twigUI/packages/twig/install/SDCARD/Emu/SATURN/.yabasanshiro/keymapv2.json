@@ -1,5 +1,5 @@
 {
-  "0_pixel2_joypad_03008d96010000000221000000010000": {
+  "0_pixel2_joypad_19008d96010000000221000000010000": {
     "a": {
       "id": 1,
       "type": "button",
@@ -68,7 +68,7 @@
   },
   "player1": {
     "DeviceID": 0,
-    "deviceGUID": "03008d96010000000221000000010000",
+    "deviceGUID": "19008d96010000000221000000010000",
     "deviceName": "pixel2_joypad",
     "padmode": 0
   }

@@ -31,7 +31,7 @@ raconf="--config /storage/.config/retroarch/retroarch.cfg"
 # $param_device / $LOWRES / $ANALOG_STICKS (also set by device_info.txt) are used in port launch scripts
 case "${QUIRK_DEVICE}" in
   "GameKiddy GKD Pixel2")
-    DEVICE="03008d96010000000221000000010000"
+    DEVICE="19008d96010000000221000000010000"
     param_device="gkd-pixel2"
     LOWRES="N"
     ANALOG_STICKS="0"
