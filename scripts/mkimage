@@ -31,6 +31,8 @@ DISK="${DISK_BASENAME}.img"
 cleanup() {
   echo -e "image: cleanup...\n"
   rm -rf "${IMG_TMP}"
+
+  rm -f ${TARGET_IMG}/${IMAGE_NAME}.tar
 }
 
 show_error() {
@@ -279,8 +281,8 @@ elif [ "${BOOTLOADER}" = "u-boot" ]; then
   mcopy "${RELEASE_DIR}/target/KERNEL.md5" "::/${KERNEL_NAME}.md5" >"${SAVE_ERROR}" 2>&1 || show_error
   mcopy "${RELEASE_DIR}/target/SYSTEM.md5" ::/SYSTEM.md5 >"${SAVE_ERROR}" 2>&1 || show_error
 
-  mcopy "${RELEASE_DIR}"/target/twigUI_V*.7z ::/ >"${SAVE_ERROR}" 2>&1 || show_error
-  mcopy "${RELEASE_DIR}"/target/twig.md5 ::/twig.md5 >"${SAVE_ERROR}" 2>&1 || show_error
+  TWIG_DIR="$(get_build_dir twig)"
+  mcopy "${ROOT}/build.${DISTRO}-${DEVICE}.${ARCH}/${TWIG_DIR}"/twigUI_SDCARD.7z ::/ >"${SAVE_ERROR}" 2>&1 || show_error
 
   touch "${RELEASE_DIR}/target/first_run.txt"
   mcopy "${RELEASE_DIR}/target/first_run.txt" ::/first_run.txt >"${SAVE_ERROR}" 2>&1 || show_error
@@ -378,6 +380,12 @@ pigz --best --force "${DISK}"
   cd "${TARGET_IMG}"
   sha256sum "${DISK##*/}.gz" >"${DISK##*/}.gz.sha256"
 )
+
+echo "image: creating twigUI archives..."
+TWIG_VER=$(cat "${ROOT}/build.${DISTRO}-${DEVICE}.${ARCH}/${TWIG_DIR}"/version)
+
+tar -czf ${TARGET_IMG}/twigUI_V${TWIG_VER}_update.tar.gz "${ROOT}/build.${DISTRO}-${DEVICE}.${ARCH}/${TWIG_DIR}"/twigUI_SDCARD.7z ${TARGET_IMG}/${IMAGE_NAME}.tar --transform='s#.*/##'
+mv "${DISK}".gz ${TARGET_IMG}/twigUI_V${TWIG_VER}_install.img.gz
 
 # cleanup
 cleanup

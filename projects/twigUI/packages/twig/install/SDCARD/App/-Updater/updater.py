@@ -14,6 +14,7 @@ import socket
 import subprocess
 import sys
 import time
+import tarfile
 from pathlib import Path
 
 SD_ROOT = "/mnt/SDCARD"
@@ -127,7 +128,7 @@ def parse_version(v):
     except (ValueError, AttributeError): return (0,)
 
 def find_update_file():
-    matches = glob.glob(f"{SD_ROOT}/twigUI_V*.7z")
+    matches = glob.glob(f"{SD_ROOT}/twigUI_V*.tar.gz")
     if not matches:
         return None
     def key(p):
@@ -225,6 +226,36 @@ def verify_7z_content(archive):
     if missing:
         log.error(f"Missing directories in archive: {' '.join(missing)}")
         return False
+    return True
+
+def extract_tar(archive):
+    log.info(f"Extracting files from: {archive}")
+    tar = tarfile.open(archive)
+    members = tar.getmembers()
+
+    valid = []
+    for f in members:
+        if f.name.startswith("twigUI") and (f.name.endswith(".7z") or f.name.endswith(".tar")):
+            valid.append(True)
+        else:
+            valid.append(False)
+
+    all_valid = all(valid)
+    if not all_valid:
+        log.error(f"{archive} is not a valid update file.")
+        return False
+
+    try:
+        for m in members:
+            if m.name.endswith(".tar"):
+                tar.extract(m, path="/storage/.update/")
+
+            if m.name.endswith(".7z"):
+                tar.extract(m, path=SD_ROOT)
+    except OSError:
+        return False
+
+    log.info(f"Succesfully extracted {archive}.")
     return True
 
 def extract_with_progress(archive):
@@ -342,9 +373,16 @@ def main():
                 ui.image_and_text(LOGO, 35, 25, "Detected current installation is invalid. Allowing reinstall.")
                 time.sleep(5)
 
-    # Verify archive
-    if not os.path.isfile(update_file):
+    # Extract 7z from tar
+    if os.path.isfile(update_file):
+        if extract_tar(update_file):
+            update_file = f"{SD_ROOT}/twigUI_SDCARD.7z"
+        else:
+            fail("Invalid update file structure. Update file corrupt or not a spruce update.")
+    else:
         fail("Update file not found")
+
+    # Verify archive
     if not verify_7z_content(update_file):
         fail("Invalid update file structure. Update file corrupt or not a spruce update.")
 
@@ -411,7 +449,7 @@ def main():
     # Delete update files
     if DELETE_UPDATE:
         log.info("Deleting all update files")
-        for f in glob.glob(f"{SD_ROOT}/twigUI_V*.7z"):
+        for f in glob.glob(f"{SD_ROOT}/twigUI_*.*"):
             try: os.remove(f)
             except OSError: pass
         log.info("All update files deleted")

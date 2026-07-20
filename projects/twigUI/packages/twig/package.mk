@@ -62,9 +62,10 @@ make_target() {
   cat "${PS_CONF}" | jq '.menuOptions.Governor.selected = "Performance"' | tee "${PS_CONF}"
 
   # Create spruce 7z file
-  ARCHIVE_FILE=${PKG_BUILD}/twigUI_V"$(cat ${SPRUCE_DIR}/spruce/twig)".7z
+  ARCHIVE_FILE=${PKG_BUILD}/twigUI_SDCARD.7z
   7z a -t7z -mx=7 -mf- "${ARCHIVE_FILE}" "${SPRUCE_DIR}"/. > /dev/null
 
+  cp -f "${SPRUCE_DIR}"/spruce/twig ${PKG_BUILD}/version
   rm -rf "${SPRUCE_DIR}"
 }
 

@@ -265,6 +265,8 @@ if [ "${1}" = "release" -o "${1}" = "mkimage" -o "${1}" = "noobs" ]; then
 
   # Remove any previously created release images
   rm -rf ${TARGET_IMG}/${IMAGE_NAME}.img.gz
+  rm -rf ${TARGET_IMG}/*_install.img.gz
+  rm -rf ${TARGET_IMG}/*_update.tar.gz
 
   if [ -n "${BOOTLOADER}" ]; then
 
@@ -294,16 +296,11 @@ if [ "${1}" = "release" -o "${1}" = "mkimage" -o "${1}" = "noobs" ]; then
   cp ${TARGET_IMG}/${IMAGE_NAME}.system ${RELEASE_DIR}/target/SYSTEM
   cp ${TARGET_IMG}/${IMAGE_NAME}.kernel ${RELEASE_DIR}/target/KERNEL
 
-  # twigUI files
-  TWIG_DIR="$(get_build_dir twig)"
-  cp "${TWIG_DIR}"/twigUI_V*.7z ${RELEASE_DIR}/target/
-
   # Create md5sum's
   (
     cd ${RELEASE_DIR}
     md5sum -t target/SYSTEM >target/SYSTEM.md5
     md5sum -t target/KERNEL >target/KERNEL.md5
-    md5sum -t target/twigUI_V*.7z >target/twig.md5
   )
 
   # Create target directory

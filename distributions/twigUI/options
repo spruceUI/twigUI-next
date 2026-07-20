@@ -193,7 +193,7 @@
   SYSTEM_PART_START=32768
 
 # Size of storage partition, in MB. Must be >=32
-  STORAGE_SIZE=256
+  STORAGE_SIZE=1024
 
 # Default supported get handlers (archive, git, file etc.)
   GET_HANDLER_SUPPORT="archive git file"

@@ -3,6 +3,7 @@ To-Do.txt
 .git*/
 create_*
 App/-FirmwareUpdate-/
+App/-Updater/updater.sh
 App/adbd/
 App/BootLogo/
 App/FileManagement/lib-A30/

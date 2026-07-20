@@ -47,14 +47,11 @@ show_msg 640 480 "${MSG2}" &
 echo "Mounting filesystem..." >> $LOG 2>&1
 mount -o "rw,noatime" LABEL=TWIGUI /mnt/SDCARD
 
-# echo "Moving install file..." >> $LOG 2>&1
-# mv /flash/twigUI_V*.7z /mnt/SDCARD/
-
 echo "Extracting install file..." >> $LOG 2>&1
-7zr x -o/mnt/SDCARD/ /flash/twigUI_V*.7z >> $LOG 2>&1
+7zr x -o/mnt/SDCARD/ /flash/twigUI_SDCARD.7z >> $LOG 2>&1
 
 echo "Cleaning up install file..." >> $LOG 2>&1
-rm /flash/twigUI_V*.7z
+rm /flash/twigUI_SDCARD.7z
 
 # -------------------------------- Cleanup
 echo "Done." >> $LOG 2>&1
