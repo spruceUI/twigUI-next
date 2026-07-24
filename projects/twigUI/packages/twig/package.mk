@@ -47,8 +47,10 @@ make_target() {
   done
 
   # TODO: developer_mode flag
-  # TODO: Download themes
   copy_emulators
+
+  # Download themes
+  wget -nc -P ${SPRUCE_DIR}/Themes/ -i ${PKG_DIR}/install/themes.txt
 
   # Adjust default configs
   CONF_FILE="${SPRUCE_DIR}/Saves/spruce/spruce-config.json"
