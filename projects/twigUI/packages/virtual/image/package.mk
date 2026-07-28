@@ -24,7 +24,7 @@ PKG_MULTIMEDIA="ffmpeg-rockchip mpv"
 
 PKG_SOUND="libao alsa pulseaudio pipewire wireplumber SDL2_mixer cava"
 
-PKG_TOOLS="patchelf i2c-tools evtest rsync show_msg"
+PKG_TOOLS="patchelf i2c-tools evtest rsync show_msg libgpiod"
 
 PKG_DEBUG="debug"
 

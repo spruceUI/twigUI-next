@@ -406,9 +406,7 @@
                 clock-names = "mclk";
                 pinctrl-names = "default";
                 pinctrl-0 = <&i2s1_2ch_mclk>;
-                hp-volume = <20>;
                 spk-volume = <3>;
-                mic-in-differential;
                 status = "okay";
             };
         };
@@ -924,14 +922,11 @@
         status = "okay";
         compatible = "rockchip,multicodecs-card";
         rockchip,card-name = "rockchip-rk817";
-		hp-det-gpio = <&gpio2 RK_PC6 GPIO_ACTIVE_HIGH>;
         rockchip,format = "i2s";
         rockchip,mclk-fs = <256>;
         rockchip,cpu = <&i2s1_2ch>;
         rockchip,codec = <&rk817_codec>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&hp_det>;
-	};
+    };
 
     vccsys: vccsys {
         compatible = "regulator-fixed";
