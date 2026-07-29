@@ -23,7 +23,7 @@
 
     display_subsystem: display-subsystem {
         status = "okay";
-        logo-memory-region = <17>;
+        logo-memory-region = <&drm_logo>;
 
         route {
             route_lvds: route-lvds {
@@ -32,7 +32,7 @@
                 logo,kernel = "logo_kernel.bmp";
                 logo,mode = "center";
                 charge_logo,mode = "center";
-                connect = <18>;
+                connect = <&vopb_out_lvds>;
             };
 
             route_dsi: route-dsi {
@@ -41,7 +41,7 @@
                 logo,kernel = "logo_kernel.bmp";
                 logo,mode = "center";
                 charge_logo,mode = "center";
-                connect = <19>;
+                connect = <&vopb_out_dsi>;
             };
 
             route_rgb: route-rgb {
@@ -50,7 +50,7 @@
                 logo,kernel = "logo_kernel.bmp";
                 logo,mode = "center";
                 charge_logo,mode = "center";
-                connect = <20>;
+                connect = <&vopb_out_rgb>;
             };
         };
     };
@@ -898,27 +898,27 @@
         pinctrl-0 = <&led_pins>;
         pinctrl-names = "default";
 
-        led-0-red {
+        led-0 {
             default-state = "off";
             gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_LOW>;
         };
 
-        led-0-green {
+        led-1 {
             default-state = "off";
             gpios = <&gpio1 RK_PB4 GPIO_ACTIVE_LOW>;
         };
 
-        led-1-green {
+        led-2 {
             default-state = "off";
             gpios = <&gpio1 RK_PB5 GPIO_ACTIVE_LOW>;
         };
 
-        led-2-green {
+        led-3 {
             default-state = "off";
             gpios = <&gpio1 RK_PB6 GPIO_ACTIVE_LOW>;
         };
 
-        led-3-green {
+        led-4 {
             default-state = "off";
             gpios = <&gpio1 RK_PB7 GPIO_ACTIVE_LOW>;
         };
