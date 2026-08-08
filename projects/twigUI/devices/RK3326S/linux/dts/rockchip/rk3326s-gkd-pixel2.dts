@@ -1,5 +1,6 @@
 /dts-v1/;
 
+#include <dt-bindings/display/drm_mipi_dsi.h>
 #include "rk3326.dtsi"
 
 / {
@@ -144,7 +145,7 @@
             compatible = "rockchip,rk817";
             reg = <0x20>;
             interrupt-parent = <&gpio0>;
-            interrupts = <10 8>;
+            interrupts = <RK_PB2 IRQ_TYPE_LEVEL_LOW>;
             pinctrl-names = "default", "pmic-sleep", "pmic-power-off", "pmic-reset";
             pinctrl-0 = <&pmic_int>;
             pinctrl-1 = <&soc_slppin_slp &rk817_slppin_slp>;
@@ -155,6 +156,7 @@
             #clock-cells = <1>;
             clock-output-names = "rk808-clkout1", "rk808-clkout2";
             pmic-reset-func = <1>;
+
             vcc1-supply = <&vccsys>;
             vcc2-supply = <&vccsys>;
             vcc3-supply = <&vccsys>;
@@ -407,6 +409,7 @@
                 pinctrl-names = "default";
                 pinctrl-0 = <&i2s1_2ch_mclk>;
                 spk-volume = <3>;
+                mic-in-differential;
                 status = "okay";
             };
         };
@@ -520,14 +523,12 @@
         status = "okay";
 
         ports {
-            port@0 {
-                dsi_in_vopb: endpoint@0 {
-                    status = "okay";
-                };
-            };
+            #address-cells = <1>;
+            #size-cells = <0>;
 
             port@1 {
-                reg = <0x1>;
+                reg = <1>;
+
                 dsi_out_panel: endpoint {
                     remote-endpoint = <&panel_in_dsi>;
                 };
@@ -536,9 +537,9 @@
 
         panel@0 {
             compatible = "sitronix,st7703", "simple-panel-dsi";
-            reg = <0x0>;
-            backlight = <&backlight>;
+            reg = <0>;
             power-supply = <&vcc_mipi_lcd0>;
+            backlight = <&backlight>;
             enable-gpios = <&gpio0 RK_PC1 GPIO_ACTIVE_HIGH>;
             reset-gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_LOW>;
             pinctrl-names = "default";
@@ -555,12 +556,60 @@
             width-mm = <68>;
             height-mm = <121>;
 
-            dsi,flags = <2563>;
-            dsi,format = <0>;
+            dsi,flags = <(MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST | MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET)>;
+            dsi,format = <MIPI_DSI_FMT_RGB888>;
             dsi,lanes = <2>;
 
-            panel-init-sequence = [39 00 06 ff 77 01 00 00 13 15 00 02 ef 08 39 00 06 ff 77 01 00 00 10 39 00 03 c0 4f 00 39 00 03 c1 10 0c 39 00 03 c2 01 14 15 00 02 cc 10 39 00 11 b0 00 0b 13 0d 10 07 02 08 07 1f 04 11 0f 28 2f 1f 39 00 11 b1 00 0c 13 0c 10 05 02 08 08 1e 05 13 11 27 30 1f 39 00 06 ff 77 01 00 00 11 15 00 02 b0 4d 15 00 02 b1 4d 15 00 02 b2 87 15 00 02 b3 80 15 00 02 b5 45 15 00 02 b7 85 15 00 02 b8 20 15 00 02 c0 09 15 00 02 c1 78 15 00 02 c2 78 15 64 02 d0 88 39 00 04 e0 00 00 02 39 00 0c e1 04 b0 06 b0 05 b0 07 b0 00 44 44 39 00 0d e2 20 20 44 44 96 a0 00 00 96 a0 00 00 39 00 05 e3 00 00 22 22 39 00 03 e4 44 44 39 00 11 e5 0c 90 b0 a0 0e 92 b0 a0 08 8c b0 a0 0a 8e b0 a0 39 00 05 e6 00 00 22 22 39 00 03 e7 44 44 39 00 11 e8 0d 91 b0 a0 0f 93 b0 a0 09 8d b0 a0 0b 8f b0 a0 39 00 03 e9 36 00 39 00 08 eb 00 00 e4 e4 44 88 40 39 00 11 ed c1 a2 bf 0f 67 45 ff ff ff ff 54 76 f0 fb 2a 1c 39 00 07 ef 10 0d 04 08 3f 1f 39 00 06 ff 77 01 00 00 13 39 00 03 e8 00 0e 39 00 06 ff 77 01 00 00 00 05 78 01 11 39 00 06 ff 77 01 00 00 13 39 0a 03 e8 00 0c 39 00 03 e8 00 00 39 00 06 ff 77 01 00 00 00 05 32 01 29];
-            panel-exit-sequence = <84934952 91750672>;
+            panel-init-sequence = [
+                39 00 06 ff 77 01 00 00 13
+                15 00 02 ef 08
+                39 00 06 ff 77 01 00 00 10
+                39 00 03 c0 4f 00
+                39 00 03 c1 10 0c
+                39 00 03 c2 01 14
+                15 00 02 cc 10
+                39 00 11 b0 00 0b 13 0d 10 07 02 08 07 1f 04 11 0f 28 2f 1f
+                39 00 11 b1 00 0c 13 0c 10 05 02 08 08 1e 05 13 11 27 30 1f
+                39 00 06 ff 77 01 00 00 11
+                15 00 02 b0 4d
+                15 00 02 b1 4d
+                15 00 02 b2 87
+                15 00 02 b3 80
+                15 00 02 b5 45
+                15 00 02 b7 85
+                15 00 02 b8 20
+                15 00 02 c0 09
+                15 00 02 c1 78
+                15 00 02 c2 78
+                15 64 02 d0 88
+                39 00 04 e0 00 00 02
+                39 00 0c e1 04 b0 06 b0 05 b0 07 b0 00 44 44
+                39 00 0d e2 20 20 44 44 96 a0 00 00 96 a0 00 00
+                39 00 05 e3 00 00 22 22
+                39 00 03 e4 44 44
+                39 00 11 e5 0c 90 b0 a0 0e 92 b0 a0 08 8c b0 a0 0a 8e b0 a0
+                39 00 05 e6 00 00 22 22
+                39 00 03 e7 44 44
+                39 00 11 e8 0d 91 b0 a0 0f 93 b0 a0 09 8d b0 a0 0b 8f b0 a0
+                39 00 03 e9 36 00
+                39 00 08 eb 00 00 e4 e4 44 88 40
+                39 00 11 ed c1 a2 bf 0f 67 45 ff ff ff ff 54 76 f0 fb 2a 1c
+                39 00 07 ef 10 0d 04 08 3f 1f
+                39 00 06 ff 77 01 00 00 13
+                39 00 03 e8 00 0e
+                39 00 06 ff 77 01 00 00 00
+                05 78 01 11
+                39 00 06 ff 77 01 00 00 13
+                39 0a 03 e8 00 0c
+                39 00 03 e8 00 00
+                39 00 06 ff 77 01 00 00 00
+                05 32 01 29
+            ];
+
+            panel-exit-sequence = [
+                05 10 01 28
+                05 78 01 10
+            ];
 
             display-timings {
                 native-mode = <&timing0>;
@@ -587,7 +636,7 @@
                 #size-cells = <0>;
 
                 port@0 {
-                    reg = <0x0>;
+                    reg = <0>;
 
                     panel_in_dsi: endpoint {
                         remote-endpoint = <&dsi_out_panel>;
