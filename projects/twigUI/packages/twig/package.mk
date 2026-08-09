@@ -2,7 +2,7 @@
 # Copyright (C) 2023 JELOS (https://github.com/JustEnoughLinuxOS)
 
 PKG_NAME="twig"
-PKG_VERSION="6e8074872d1033353884c77d4bdc501f08ba831e"
+PKG_VERSION="91eb57698763d88dfa02bf2994a6f242f365a0d9"
 PKG_LICENSE="Public Domain"
 PKG_SITE="https://github.com/Hairo/spruceOS/"
 PKG_URL="https://github.com/Hairo/spruceOS/archive/${PKG_VERSION}.tar.gz"
@@ -46,7 +46,6 @@ make_target() {
     rm -rf "${SPRUCE_DIR}"/$f
   done
 
-  # TODO: developer_mode flag
   copy_emulators
 
   # Download themes
@@ -62,6 +61,11 @@ make_target() {
   # TODO: Check if this is needed
   PS_CONF="${SPRUCE_DIR}/Emu/PS/config.json"
   cat "${PS_CONF}" | jq '.menuOptions.Governor.selected = "Performance"' | tee "${PS_CONF}"
+
+  # Remove developer_mode flag if needed
+  if [ "$RELEASE" = "true" ]; then
+    rm "${SPRUCE_DIR}"/spruce/flags/developer_mode
+  fi
 
   # Create spruce 7z file
   ARCHIVE_FILE=${PKG_BUILD}/twigUI_SDCARD.7z

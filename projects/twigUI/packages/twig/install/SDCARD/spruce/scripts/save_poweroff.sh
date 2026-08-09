@@ -11,7 +11,7 @@ SAVE_IMG="/mnt/SDCARD/spruce/imgs/save.png"
 
 EMU_PROCESSES="ra32.a30 ra32.mini ra32.universal ra64.universal ra64.pixel2 \
 retroarch drastic drastic32 drastic64 pico8_dyn pico8_64 \
-flycast flycast-stock yabasanshiro yabasanshiro.trimui \
+flycast flycast2024 yabasanshiro yabasanshiro.trimui \
 mupen64plus PPSSPPSDL PPSSPPSDL_TrimUI PPSSPPSDL_$PLATFORM"
 
 STAGE_2_SD_PATH=/mnt/SDCARD/spruce/scripts/save_poweroff_stage2.sh
@@ -155,7 +155,7 @@ close_non_emu_cmd_to_run() {
     if cat /tmp/cmd_to_run.sh | grep -q -v -e '/mnt/SDCARD/Emu' -e '/media/sdcard0/Emu' -e '/mnt/SDCARD/Emus'; then
         kill_current_process
         # remove lastgame flag to prevent loading any App after next boot
-        rm "${FLAGS_DIR}/lastgame.lock"
+        rm -f -- "${FLAGS_DIR}/lastgame.lock"
     fi
 }
 
