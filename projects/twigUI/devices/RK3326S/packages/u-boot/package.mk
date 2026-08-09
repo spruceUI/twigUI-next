@@ -49,8 +49,4 @@ make_target() {
 makeinstall_target() {
   mkdir -p $INSTALL/usr/share/bootloader
   cp -av uboot.bin "${INSTALL}/usr/share/bootloader/uboot.bin"
-
-  # Copy u-boot dtb for late initialization
-  mkdir -p $INSTALL/usr/share/bootloader/device_trees
-  cp -v ${PKG_DIR}/dtb/*.dtb ${INSTALL}/usr/share/bootloader/device_trees/
 }

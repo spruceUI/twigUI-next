@@ -1,6 +1,5 @@
 /dts-v1/;
 
-#include <dt-bindings/display/drm_mipi_dsi.h>
 #include "rk3326.dtsi"
 
 / {
@@ -438,7 +437,6 @@
         status = "okay";
     };
 
-
     tsadc: tsadc@ff280000 {
         status = "okay";
 	};
@@ -624,15 +622,15 @@
         center-supply = <&vdd_logic>;
 	};
 
-	 px30s_dmc_opp_table: px30s-dmc-opp-table {
-		opp-666000000 {
-			status = "disabled";
-		};
+    px30s_dmc_opp_table: px30s-dmc-opp-table {
+        opp-666000000 {
+            status = "disabled";
+        };
 
         opp-1056000000 {
             status = "okay";
         };
-	};
+    };
 
 	pinctrl {
 		headphone {
