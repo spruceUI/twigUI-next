@@ -5,18 +5,6 @@
 # Minimal OS variable loading for performance
 . /etc/profile.d/001-functions
 
-if [ -d "/storage/cache/.cores" ]
-then
-  rm -rf /storage/cache/.cores
-fi
-
-if [ ! -d "/tmp/cache" ]
-then
-  mkdir -p /tmp/cache
-fi
-
-ln -sf /tmp/cache /storage/cache/.cores
-
 if [ ! -d "/storage/.config/profile.d" ]
 then
   mkdir -p /storage/.config/profile.d
