@@ -22,7 +22,7 @@ if [ -n "${UBOOT_FIRMWARE}" ]; then
 fi
 
 pre_make_target() {
-  PKG_UBOOT_CONFIG="evb-rk3326s_defconfig"
+  PKG_UBOOT_CONFIG="rk3326s_defconfig"
   PKG_RKBIN="$(get_build_dir rkbin)"
   PKG_MINILOADER="${PKG_RKBIN}/bin/rk33/rk3326_miniloader_v1.40.bin"
   PKG_BL31="${PKG_RKBIN}/bin/rk33/rk3326_bl31_v1.34.elf"
@@ -47,6 +47,7 @@ make_target() {
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL/usr/share/bootloader
+  mkdir -p $INSTALL/usr/share/bootloader/device_trees
   cp -av uboot.bin "${INSTALL}/usr/share/bootloader/uboot.bin"
+  cp -av arch/arm/dts/rk3326s-gkd-pixel2-uboot.dtb "${INSTALL}/usr/share/bootloader/device_trees/rk3326s-gkd-pixel2-uboot.dtb"
 }
