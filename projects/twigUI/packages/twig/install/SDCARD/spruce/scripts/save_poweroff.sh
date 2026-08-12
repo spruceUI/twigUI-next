@@ -161,8 +161,8 @@ close_non_emu_cmd_to_run() {
 
 stop_problematic_scripts() {
     # kill principal and runtime first so no new app / MainUI will be loaded anymore
-    killall -q -15 runtime.sh
-    killall -q -15 principal.sh
+    # killall -q -15 runtime.sh
+    # killall -q -15 principal.sh
 
     # Ensure legacy display can run
     killall -q -9 MainUI

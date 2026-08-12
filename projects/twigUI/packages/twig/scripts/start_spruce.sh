@@ -18,3 +18,5 @@ else
         poweroff
     fi
 fi
+
+exit 0
