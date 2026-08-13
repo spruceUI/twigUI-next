@@ -32,7 +32,9 @@ cleanup() {
   echo -e "image: cleanup...\n"
   rm -rf "${IMG_TMP}"
 
-  rm -f ${TARGET_IMG}/${IMAGE_NAME}.tar
+  if [ "$RELEASE" = "true" ]; then
+    rm -f ${TARGET_IMG}/${IMAGE_NAME}.tar
+  fi
 }
 
 show_error() {

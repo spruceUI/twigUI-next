@@ -48,8 +48,13 @@ make_target() {
 
   copy_emulators
 
-  # Download themes
-  wget -nc -P ${SPRUCE_DIR}/Themes/ -i ${PKG_DIR}/install/themes.txt
+  if [ "$RELEASE" = "true" ]; then
+    # Remove developer_mode flag if needed
+    rm "${SPRUCE_DIR}"/spruce/flags/developer_mode
+
+    # Download themes
+    wget -nc -P ${SPRUCE_DIR}/Themes/ -i ${PKG_DIR}/install/themes.txt
+  fi
 
   # Adjust default configs
   CONF_FILE="${SPRUCE_DIR}/Saves/spruce/spruce-config.json"
@@ -61,11 +66,6 @@ make_target() {
   # TODO: Check if this is needed
   PS_CONF="${SPRUCE_DIR}/Emu/PS/config.json"
   cat "${PS_CONF}" | jq '.menuOptions.Governor.selected = "Performance"' | tee "${PS_CONF}"
-
-  # Remove developer_mode flag if needed
-  if [ "$RELEASE" = "true" ]; then
-    rm "${SPRUCE_DIR}"/spruce/flags/developer_mode
-  fi
 
   # Create spruce 7z file
   ARCHIVE_FILE=${PKG_BUILD}/twigUI_SDCARD.7z
