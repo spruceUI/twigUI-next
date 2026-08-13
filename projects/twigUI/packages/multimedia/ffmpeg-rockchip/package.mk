@@ -12,15 +12,6 @@ PKG_VERSION="23ae84d74a4f1ac0cf744acb2e4f13f27946eb32"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
 PKG_PATCH_DIRS="rocknix"
 
-post_unpack() {
-  # Fix FFmpeg version
-  if [ "${DEVICE}" = "S922X" ]; then
-    echo "${PKG_FFMPEG_BRANCH}-${PKG_VERSION:0:7}" > ${PKG_BUILD}/VERSION
-  else
-    echo "${PKG_VERSION}" > ${PKG_BUILD}/RELEASE
-  fi
-}
-
 # Dependencies
 get_graphicdrivers
 
@@ -187,6 +178,8 @@ configure_target() {
               --enable-encoder=wmav2 \
               --enable-encoder=mjpeg \
               --enable-encoder=png \
+              --enable-encoder=image2 \
+              --enable-encoder=qoi \
               ${PKG_FFMPEG_HWACCEL} \
               --disable-muxers \
               --enable-muxer=spdif \
@@ -194,7 +187,9 @@ configure_target() {
               --enable-muxer=asf \
               --enable-muxer=ipod \
               --enable-muxer=mpegts \
+              --enable-muxer=image2 \
               --enable-demuxers \
+              --enable-demuxer=image2 \
               --enable-parsers \
               --enable-bsfs \
               --enable-gpl \
@@ -202,6 +197,7 @@ configure_target() {
               --enable-rkrga \
               --enable-rkmpp \
               --enable-protocol=http \
+              --enable-protocol=file \
               --disable-indevs \
               --disable-outdevs \
               --enable-filters \
