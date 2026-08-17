@@ -1,0 +1,94 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (C) 2024 ROCKNIX (https://github.com/ROCKNIX)
+
+. /etc/profile.d/001-functions
+
+GPU_DRIVER_FILE="/storage/.config/gpu_driver"
+
+get_current_driver() {
+  if [ -f ${GPU_DRIVER_FILE} ]; then
+    CONFDRIVER=$(cat "${GPU_DRIVER_FILE}")
+  else
+    CONFDRIVER="libmali"              # DEFAULT
+    echo ${CONFDRIVER} > "${GPU_DRIVER_FILE}"
+  fi
+}
+
+
+# When loading a driver, do two things:
+#   * ensure needed driver is loaded and other is not
+#   * ensure graphics related libs are overridden (or not)
+load_driver() {
+  DRIVER_TO_LOAD=$1
+
+  case ${DRIVER_TO_LOAD} in
+    "libmali")
+      modprobe -r @PAN@
+      modprobe mali_kbase
+
+      # Bind-mount mali GLES libraries over mesa if not already done.
+      # Use mount output (not /proc/mounts) to avoid squashfs false positives.
+      mount | grep -q "on /usr/lib/libEGL.so" || find /usr/{lib,lib32}/mali -type f -exec bash -c 'lib={}; mount --bind $lib ${lib/\/mali\//\/}' ';'
+      # Portmaster is not ready for SDL in glesonly subdir, so override libs the dirty way
+      if [ -d /usr/lib/glesonly ]; then
+        mount | grep -q "on /usr/lib/libSDL2" || find /usr/{lib,lib32}/glesonly -type f -exec bash -c 'lib={}; mount --bind $lib ${lib/\/glesonly\//\/}' ';'
+      fi
+      mount --bind /dev/null /usr/lib/libGL.so
+      mount --bind /dev/null /usr/lib32/libGL.so
+
+      # Mask panfrost Vulkan ICD so the loader only finds mali
+      for icd in /usr/share/vulkan/icd.d/panfrost_icd.*.json; do
+        [ -f "${icd}" ] && mount --bind /dev/null "${icd}"
+      done
+      ;;
+    "panfrost")
+      modprobe -r mali_kbase
+      modprobe @PAN@
+
+      mount | grep -q "on /usr/lib/libEGL.so" && find /usr/lib/mali -type f -exec bash -c 'lib={}; umount ${lib/\/mali\//\/}' ';'
+      if [ -d /usr/lib/glesonly ]; then
+        mount | grep -q "on /usr/lib/libSDL2" && find /usr/lib/glesonly -type f -exec bash -c 'lib={}; umount ${lib/\/glesonly\//\/}' ';'
+      fi
+
+      # Mask mali Vulkan ICD so the loader only finds panfrost
+      [ -f /usr/share/vulkan/icd.d/mali.json ] && \
+        mount --bind /dev/null /usr/share/vulkan/icd.d/mali.json
+      ;;
+    *)
+      exit 3
+      ;;
+  esac
+}
+
+
+case "$1" in
+  "--options")
+    echo "panfrost libmali"
+    ;;
+  "--start")
+    get_current_driver
+    load_driver ${CONFDRIVER}
+    ;;
+  "libmali")
+    echo $1 > "${GPU_DRIVER_FILE}"
+    @DTB_OVERLAY_UNLOAD@
+    ;;
+  "panfrost")
+    echo $1 > "${GPU_DRIVER_FILE}"
+    @DTB_OVERLAY_LOAD@
+    ;;
+  "")
+    get_current_driver
+    echo ${CONFDRIVER}
+    ;;
+  *)
+    echo "Unexpected parameter $1" >&2
+    echo "Usage:" >&2
+    echo "  List available drivers:                $0 --options" >&2
+    echo "  Load configured driver and set libs:   $0 --start" >&2
+    echo "  Get current driver:                    $0" >&2
+    echo "  Configure driver to load on next boot: $0 <panfrost|libmali>" >&2
+    exit 1
+    ;;
+esac
