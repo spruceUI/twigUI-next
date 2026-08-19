@@ -1,6 +1,7 @@
 To-Do.txt
 .git*
 .git*/
+.system/
 create_*
 App/-FirmwareUpdate-/
 App/-Updater/updater.sh
@@ -13,13 +14,13 @@ App/fn_editor/
 App/Gallery/gallery32
 App/Gallery/lib*
 App/Moonlight/
-App/PixelReader/libs32/
+App/PixelReader/libs*/
 App/PixelReader/reader32
 App/PortMaster/*.txt
 App/PortMaster/*.7z
 App/PortMaster/config.py
 App/PortMaster/pillow_offline
-App/PyUI/dll/
+App/PyUI/dll*/
 App/RetroArch32/
 App/Songo#5/
 Emu/A30PORTS/
@@ -84,6 +85,7 @@ RetroArch/.retroarch/info/*
 RetroArch/joypad
 RetroArch/ra32.*
 RetroArch/ra64.universal
+RetroArch/ra64.h700
 Roms/A30PORTS/
 Saves/flip/home/.[!.]*
 spruce/archives/staging/overlays_1024x768.7z
@@ -97,7 +99,9 @@ spruce/FIRMWARE_UPDATE/
 spruce/flip/
 spruce/rg3*/
 spruce/rg2*/
+spruce/h700/
 spruce/miyoomini/
 spruce/smartpro/
 spruce/smartpros/
+spruce/zoneinfo/
 trimui/
