@@ -49,5 +49,5 @@ make_target() {
 makeinstall_target() {
   mkdir -p $INSTALL/usr/share/bootloader/device_trees
   cp -av uboot.bin "${INSTALL}/usr/share/bootloader/uboot.bin"
-  cp -av arch/arm/dts/rk3326s-gkd-pixel2-uboot.dtb "${INSTALL}/usr/share/bootloader/device_trees/rk3326s-gkd-pixel2-uboot.dtb"
+  cp -v ${PKG_DIR}/dtb/*.dtb ${INSTALL}/usr/share/bootloader/device_trees/
 }
