@@ -37,6 +37,9 @@ PKG_EXTRA="psutil pyserial Pillow py-sdl2 rumble sdl12-compat"
 PKG_DEPENDS_TARGET+=" ${PKG_TOOLS} ${PKG_FONTS} ${PKG_SOUND} ${PKG_GRAPHICS} ${PKG_MULTIMEDIA} misc-packages"
 PKG_DEPENDS_TARGET+=" ${PKG_UI_TOOLS} ${PKG_DEBUG} ${PKG_GAMESUPPORT} ${PKG_NETWORK} ${PKG_EXTRA}"
 
+# GL demos and tools
+[[ ! -z "${OPENGL_SUPPORT}" ]] && PKG_DEPENDS_TARGET+=" mesa-demos"
+
 # 32Bit package support
 [ "${ENABLE_32BIT}" == true ] && PKG_DEPENDS_TARGET+=" lib32"
 
