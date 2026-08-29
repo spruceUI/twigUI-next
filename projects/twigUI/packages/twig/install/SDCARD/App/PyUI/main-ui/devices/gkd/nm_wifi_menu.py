@@ -132,6 +132,15 @@ class NmWifiMenu:
         return False
 
     def show_wifi_menu(self):
+        if self.adapter_is_connected():
+            self._show_menu()
+        else:
+            message = "USB adapter not connected.\n" \
+                    "Connect a compatible adapter to use WiFi.\n" \
+                    "The device must be restarted to use WiFi after using sleep."
+            Display.display_message(message, 5000)
+
+    def _show_menu(self):
         selected = Selection(None, None, 0)
         self.wifi_scanner = Device.get_device().get_new_wifi_scanner()
 

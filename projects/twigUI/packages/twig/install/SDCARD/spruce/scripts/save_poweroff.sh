@@ -286,6 +286,14 @@ exec_shutdown_stage_2() {
         # doesn't load shared libraries from the SD card
         export PATH=/usr/bin:/usr/sbin:/bin:/sbin
         unset LD_LIBRARY_PATH
+        # Stage 2 runs from /tmp with the card gone, so it cannot source the
+        # device layer to ask this itself. Answer it here, while we still can,
+        # and hand the answer over in the environment.
+        if device_needs_strict_unmount; then
+            export SPRUCE_STRICT_UNMOUNT=1
+        else
+            export SPRUCE_STRICT_UNMOUNT=0
+        fi
         exec "$STAGE_2_TMP_PATH" "$s2_arg"
     else
         log_message "ERROR: Stage 2 script missing! Executing run_poweroff_cmd() instead."
@@ -314,8 +322,34 @@ trap 'rm -f "$PIDFILE"' EXIT INT TERM
 ################### MAIN ######################
                   ########
 
+# BaseOS runs the frontend session from an inittab respawn entry, so killing
+# runtime.sh below only makes init start another one - and that fresh session
+# races this shutdown. It is not merely noise: its read_only_check sees the card
+# we just remounted read-only and runs `mount -o remount,rw` to "repair" it,
+# undoing the clean unmount seconds before the power command. Observed exactly
+# that - the respawned session logged two lines, went silent as the card went
+# read-only, and the next boot still reported a dirty filesystem.
+#
+# Raise a flag runtime.sh checks on startup so the respawned session exits at
+# once. It lives in /tmp, so a real boot never sees it.
+#
+# Only where the strict path applies. Nothing else in the fleet respawns its
+# frontend from init, so the flag would never be read there - and a flag that is
+# never read is still a flag that can be left behind by an aborted shutdown and
+# make the next runtime.sh exit for no reason.
+if device_needs_strict_unmount; then
+    flag_add "shutting_down" --tmp
+fi
+
+# Breadcrumbs. Without them a hang anywhere in the shutdown path is
+# indistinguishable from the script never having run at all - the log simply
+# stops, which is exactly how the RGB30 lockup first presented. These are three
+# writes on a path that ends in a poweroff; they cost nothing.
+log_message "save_poweroff.sh: starting (arg=${1:-none}, platform=$PLATFORM)"
+
 blink_led_if_applicable
 device_prepare_for_poweroff
+log_message "save_poweroff.sh: device prepared, closing apps"
 log_activity_event "$(get_current_app)" "STOP"
 stop_problematic_scripts
 

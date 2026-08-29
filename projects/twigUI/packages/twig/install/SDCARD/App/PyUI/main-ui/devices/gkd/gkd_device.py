@@ -162,15 +162,15 @@ class GKDDevice(DeviceCommon):
                 return "No USB adapter"
 
             try:
+                wlan_addrs = []
                 all_addrs = psutil.net_if_addrs()
+
                 for k in all_addrs.keys():
                     if k.startswith("wlan"):
                         wlan_addrs = all_addrs.get(k)
                         break
 
                 eth_addrs = all_addrs.get("eth0")
-
-                wlan_addrs = wlan_addrs if wlan_addrs else []
                 eth_addrs = eth_addrs if eth_addrs else []
 
                 addrs = wlan_addrs + eth_addrs

@@ -100,6 +100,7 @@ spruce/flip/
 spruce/rg3*/
 spruce/rg2*/
 spruce/h700/
+spruce/miniloong/
 spruce/miyoomini/
 spruce/smartpro/
 spruce/smartpros/
