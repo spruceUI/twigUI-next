@@ -513,6 +513,7 @@
 };
 
 &gpu {
+	interrupt-names = "gpu", "mmu", "job";
 	mali-supply = <&vdd_logic>;
 	status = "okay";
 };

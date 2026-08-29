@@ -3,70 +3,55 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="mesa"
-PKG_LICENSE="OSS"
+PKG_VERSION="26.2.0"
+PKG_SHA256="efd4bb08cdb7c365a812cd4e6c9202ab55b2f22cdcd13c7d6c4f9647b799a4ef"
+PKG_LICENSE="MIT"
 PKG_SITE="http://www.mesa3d.org/"
-PKG_DEPENDS_HOST="toolchain:host llvm:host libclc:host spirv-tools:host libdrm:host \
-                  spirv-llvm-translator:host wayland-protocols:host libX11:host libXext:host \
-                  libXfixes:host libxshmfence:host libXxf86vm:host xrandr:host glslang:host"
+PKG_URL="https://mesa.freedesktop.org/archive/mesa-${PKG_VERSION}.tar.xz"
+PKG_DEPENDS_HOST="toolchain:host expat:host libclc:host libdrm:host llvm:host Mako:host pyyaml:host spirv-tools:host"
 PKG_DEPENDS_TARGET="toolchain expat libdrm Mako:host pyyaml:host"
 PKG_LONGDESC="Mesa is a 3-D graphics library with an API."
-PKG_TOOLCHAIN="meson"
-PKG_PATCH_DIRS+=" ${DEVICE}"
-PKG_VERSION="26.1.0"
-PKG_URL="https://gitlab.freedesktop.org/mesa/mesa/-/archive/mesa-${PKG_VERSION}/mesa-mesa-${PKG_VERSION}.tar.gz"
-
-if listcontains "${GRAPHIC_DRIVERS}" "panfrost" || \
-   listcontains "${GRAPHIC_DRIVERS}" "freedreno"; then
-  PKG_DEPENDS_TARGET+=" mesa:host"
-fi
 
 get_graphicdrivers
 
-pre_configure_host() {
-  PKG_MESON_OPTS_HOST+=" ${MESA_LIBS_PATH_OPTS} \
-                         -Dgallium-drivers=${GALLIUM_DRIVERS// /,} \
-                         -Dvulkan-drivers=${VULKAN_DRIVERS_MESA// /,}"
+if [ "${DEVICE}" = "Dragonboard" ]; then
+  PKG_DEPENDS_TARGET+=" libarchive libxml2 lua54"
+fi
 
-  if listcontains "${GRAPHIC_DRIVERS}" "panfrost"; then
-    PKG_MESON_OPTS_HOST+=" -Dmesa-clc=enabled \
-                           -Dinstall-mesa-clc=true \
-                           -Dprecomp-compiler=enabled \
-                           -Dinstall-precomp-compiler=true"
-  fi
+PKG_MESON_OPTS_HOST="-Dglvnd=disabled \
+                     -Dgallium-drivers= \
+                     -Dplatforms= \
+                     -Dglx=disabled \
+                     -Dvulkan-drivers=imagination \
+                     -Dshared-llvm=disabled \
+                     -Dtools=panfrost \
+                     -Dvideo-codecs= \
+                     -Dbuild-tests=false \
+                     -Denable-glcpp-tests=false \
+                     -Dmesa-clc=enabled \
+                     -Dinstall-mesa-clc=true \
+                     -Dprecomp-compiler=enabled \
+                     -Dinstall-precomp-compiler=true \
+                     -Dimagination-srv=false"
 
-  if listcontains "${GRAPHIC_DRIVERS}" "freedreno"; then
-    export HOST_CFLAGS="${HOST_CFLAGS} -fno-strict-aliasing"
-    export HOST_CXXFLAGS="${HOST_CXXFLAGS} -fno-strict-aliasing"
-    export CFLAGS="${HOST_CFLAGS}"
-    export CXXFLAGS="${HOST_CXXFLAGS}"
-
-  fi
-}
-
-PKG_MESON_OPTS_TARGET=" ${MESA_LIBS_PATH_OPTS} \
-                       -Dgallium-drivers=${GALLIUM_DRIVERS// /,} \
+PKG_MESON_OPTS_TARGET="-Dgallium-drivers=${GALLIUM_DRIVERS// /,} \
                        -Dgallium-extra-hud=false \
+                       -Dgallium-rusticl=false \
                        -Dshader-cache=enabled \
-                       -Dshared-glapi=enabled \
                        -Dopengl=true \
                        -Dgbm=enabled \
                        -Degl=enabled \
+                       -Dvalgrind=disabled \
                        -Dlibunwind=disabled \
                        -Dlmsensors=disabled \
-                       -Dbuild-tests=false"
-
-if listcontains "${GRAPHIC_DRIVERS}" "panfrost"; then
-  # These options require that we have built mesa host as specified above
-  PKG_MESON_OPTS_TARGET+=" -Dmesa-clc=system \
-                           -Dprecomp-compiler=system"
-fi
+                       -Dbuild-tests=false \
+                       -Dmicrosoft-clc=disabled"
 
 if [ "${DISPLAYSERVER}" = "x11" ]; then
-  PKG_DEPENDS_TARGET+=" xorgproto libXext libXdamage libXfixes libXxf86vm libxcb libX11 libxshmfence libXrandr libglvnd glfw"
+  PKG_DEPENDS_TARGET+=" xorgproto libXext libXdamage libXfixes libXxf86vm libxcb libX11 libxshmfence libXrandr"
   export X11_INCLUDES=
-  PKG_MESON_OPTS_TARGET+="	-Dplatforms=x11 \
-				-Dglx=dri \
-				-Dglvnd=enabled"
+  PKG_MESON_OPTS_TARGET+=" -Dplatforms=x11 \
+                           -Dglx=dri"
 elif [ "${DISPLAYSERVER}" = "wl" ]; then
   PKG_DEPENDS_TARGET+=" wayland wayland-protocols libglvnd glfw"
   PKG_MESON_OPTS_TARGET+=" 	-Dplatforms=wayland,x11 \
@@ -75,10 +60,40 @@ elif [ "${DISPLAYSERVER}" = "wl" ]; then
   PKG_DEPENDS_TARGET+=" xorgproto libXext libXdamage libXfixes libXxf86vm libxcb libX11 libxshmfence libXrandr libglvnd"
   export X11_INCLUDES=
 else
-  PKG_MESON_OPTS_TARGET+="	-Dplatforms="" \
-				-Dgallium-nine=false \
-				-Dglx=disabled \
-				-Dglvnd=disabled"
+  PKG_MESON_OPTS_TARGET+=" -Dplatforms="" \
+                           -Dglx=disabled"
+fi
+
+if listcontains "${GRAPHIC_DRIVERS}" "etnaviv"; then
+  PKG_DEPENDS_TARGET+=" pycparser:host"
+fi
+
+if listcontains "${GRAPHIC_DRIVERS}" "(i915|r300)"; then
+  PKG_MESON_OPTS_TARGET+=" -Ddraw-use-llvm=true"
+else
+  PKG_MESON_OPTS_TARGET+=" -Ddraw-use-llvm=false"
+fi
+
+if listcontains "${GRAPHIC_DRIVERS}" "imagination"; then
+  PKG_DEPENDS_TARGET+=" spirv-tools"
+  PKG_MESON_OPTS_TARGET+=" -Dimagination-srv=true"
+fi
+
+if listcontains "${GRAPHIC_DRIVERS}" "(imagination|iris|panfrost)"; then
+  if [ "${USE_REUSABLE}" = "yes" ]; then
+    PKG_DEPENDS_TARGET+=" mesa-reusable"
+  else
+    PKG_DEPENDS_TARGET+=" mesa:host"
+  fi
+  PKG_MESON_OPTS_TARGET+=" -Dmesa-clc=system -Dprecomp-compiler=system"
+fi
+
+if listcontains "${GRAPHIC_DRIVERS}" "(nvidia|nvidia-ng)" ||
+              [ "${OPENGL_SUPPORT}" = "yes" -a "${DISPLAYSERVER}" != "x11" ]; then
+  PKG_DEPENDS_TARGET+=" libglvnd"
+  PKG_MESON_OPTS_TARGET+=" -Dglvnd=enabled"
+else
+  PKG_MESON_OPTS_TARGET+=" -Dglvnd=disabled"
 fi
 
 if [ "${LLVM_SUPPORT}" = "yes" ]; then
@@ -91,27 +106,53 @@ fi
 if [ "${VAAPI_SUPPORT}" = "yes" ] && listcontains "${GRAPHIC_DRIVERS}" "(r600|radeonsi)"; then
   PKG_DEPENDS_TARGET+=" libva"
   PKG_MESON_OPTS_TARGET+=" -Dgallium-va=enabled \
-                           -Dvideo-codecs=vc1dec,h264dec,h264enc,h265dec,h265enc"
+                           -Dvideo-codecs=mpeg12dec,vc1dec,h264dec,h264enc,h265dec,h265enc,av1dec,av1enc,vp9dec"
 else
   PKG_MESON_OPTS_TARGET+=" -Dgallium-va=disabled"
 fi
 
 if [ "${OPENGLES_SUPPORT}" = "yes" ]; then
-  PKG_MESON_OPTS_TARGET+=" -Dgles1=enabled -Dgles2=enabled"
+  PKG_MESON_OPTS_TARGET+=" -Dgles1=disabled -Dgles2=enabled"
 else
   PKG_MESON_OPTS_TARGET+=" -Dgles1=disabled -Dgles2=disabled"
 fi
 
 if [ "${VULKAN_SUPPORT}" = "yes" ]; then
-  PKG_DEPENDS_TARGET+=" ${VULKAN} vulkan-tools"
+  PKG_DEPENDS_TARGET+=" ${VULKAN} vulkan-tools ply:host"
   PKG_MESON_OPTS_TARGET+=" -Dvulkan-drivers=${VULKAN_DRIVERS_MESA// /,}"
 else
   PKG_MESON_OPTS_TARGET+=" -Dvulkan-drivers="
 fi
 
-post_makeinstall_target() {
-  # While this likely breaks panfrost vulkan, it does fix vulkaninfo on libmali-vulkan
-  if [ "${DEVICE}" = "S922X" ]; then
-    rm -f ${INSTALL}/usr/lib/libvulkan_panfrost.so ${INSTALL}/usr/share/vulkan/icd.d/panfrost_icd.*.json
+makeinstall_host() {
+  host_files="src/compiler/clc/mesa_clc \
+              src/compiler/spirv/vtn_bindgen2 \
+              src/imagination/pco/uscgen/pco_clc \
+              src/panfrost/clc/panfrost_compile"
+
+  if listcontains "${BUILD_REUSABLE}" "(all|mesa:host)"; then
+    # Build the reusable mesa:host for both local and to be added to a GitHub release
+    strip ${host_files}
+    upx --lzma ${host_files}
+
+    REUSABLE_SOURCES="${SOURCES}/mesa-reusable"
+    MESA_HOST="mesa-reusable-${OS_VERSION}-${PKG_VERSION}"
+    REUSABLE_SOURCE_NAME=${MESA_HOST}-${MACHINE_HARDWARE_NAME}.tar
+
+    mkdir -p "${TARGET_IMG}"
+
+    tar cf ${TARGET_IMG}/${REUSABLE_SOURCE_NAME} --transform='s|.*/||' ${host_files}
+    sha256sum ${TARGET_IMG}/${REUSABLE_SOURCE_NAME} | \
+      cut -d" " -f1 >${TARGET_IMG}/${REUSABLE_SOURCE_NAME}.sha256
+
+    if listcontains "${BUILD_REUSABLE}" "save-local"; then
+      mkdir -p "${REUSABLE_SOURCES}"
+      cp -p ${TARGET_IMG}/${REUSABLE_SOURCE_NAME} ${REUSABLE_SOURCES}
+      cp -p ${TARGET_IMG}/${REUSABLE_SOURCE_NAME}.sha256 ${REUSABLE_SOURCES}
+      echo "save-local" >${REUSABLE_SOURCES}/${REUSABLE_SOURCE_NAME}.url
+    fi
   fi
+
+  mkdir -p "${TOOLCHAIN}/bin"
+    cp -a ${host_files} "${TOOLCHAIN}/bin"
 }
