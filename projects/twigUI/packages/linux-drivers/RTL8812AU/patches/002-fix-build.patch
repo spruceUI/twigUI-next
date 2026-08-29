@@ -1,0 +1,11 @@
+diff -rupN RTL8188EU.orig/Makefile RTL8188EU/Makefile
+--- RTL8188EU.orig/Makefile	2024-02-06 13:52:54.000000000 -0400
++++ RTL8188EU/Makefile	2026-08-27 20:57:48.413171273 -0400
+@@ -9,6 +9,7 @@ EXTRA_CFLAGS += -Wno-unused
+ EXTRA_CFLAGS += -Wno-uninitialized
+ EXTRA_CFLAGS += -Wno-missing-prototypes
+ EXTRA_CFLAGS += -Wno-missing-declarations
++EXTRA_CFLAGS += -Wno-header-guard
+ 
+ GCC_VER_49 := $(shell echo `$(CC) -dumpversion | cut -f1-2 -d.` \>= 4.9 | bc )
+ ifeq ($(GCC_VER_49),1)

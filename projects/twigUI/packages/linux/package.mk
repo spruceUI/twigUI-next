@@ -20,10 +20,10 @@ PKG_PATCH_DIRS="${LINUX} mainline ${DEVICE} default"
 
 case ${DEVICE} in
   RK3326S)
-    PKG_VERSION="d2b4477a1df699e6639e83837c7dc45ea1d1d73f"
-    PKG_URL="https://github.com/rockchip-linux/kernel/archive/${PKG_VERSION}.tar.gz"
-    PKG_GIT_CLONE_BRANCH="develop-6.1"
-    PKG_PATCH_DIRS="${LINUX} ${DEVICE} default"
+    PKG_VERSION="0c1ad27d20bb8d84a41cd8ac913829a7bd934329"
+    PKG_URL="https://github.com/bmdhacks/kernel_rk3562/archive/${PKG_VERSION}.tar.gz"
+    PKG_GIT_CLONE_BRANCH="master"
+    PKG_PATCH_DIRS="${DEVICE} default"
     ;;
   RK3588)
     PKG_VERSION="b8e62bed74766b6c8c423a767b35495e78b64caf"
@@ -73,7 +73,7 @@ for pkg in $(get_pkg_variable initramfs PKG_DEPENDS_TARGET); do
   ! listcontains "${PKG_DEPENDS_TARGET}" "${pkg}" && PKG_DEPENDS_TARGET+=" ${pkg}" || true
 done
 
-if [[ "${DEVICE}" == RK3326* ]] || [ "${DEVICE}" = "RK3566" ]; then
+if [[ "${DEVICE}" == RK3326 ]] || [ "${DEVICE}" = "RK3566" ]; then
   PKG_DEPENDS_UNPACK+=" generic-dsi"
 elif [ "${DEVICE}" = "SM8250" -o "${DEVICE}" = "H700" ]; then
   PKG_DEPENDS_UNPACK+=" kernel-firmware"
@@ -89,7 +89,7 @@ post_patch() {
     cp -p ${PKG_INSTALL}/.image/Module.symvers ${PKG_BUILD}
   fi
 
-  if [[ "${DEVICE}" == RK3326* ]] || [ "${DEVICE}" = "RK3566" ] || [ "${DEVICE}" = "RK3576" ]; then
+  if [[ "${DEVICE}" == RK3326 ]] || [ "${DEVICE}" = "RK3566" ] || [ "${DEVICE}" = "RK3576" ]; then
     cp -v $(get_pkg_directory generic-dsi)/sources/panel-generic-dsi.c ${PKG_BUILD}/drivers/gpu/drm/panel/
     echo "obj-y" += panel-generic-dsi.o >> ${PKG_BUILD}/drivers/gpu/drm/panel/Makefile
   fi

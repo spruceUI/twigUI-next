@@ -204,11 +204,10 @@ class GKDDevice(DeviceCommon):
 
     @throttle.limit_refresh(5)
     def get_charge_status(self):
-        #Probably need to find the power and not just usb
-        with open("/sys/class/power_supply/usb/online", "r") as f:
-            ac_online = int(f.read().strip())
+        with open("/sys/class/power_supply/battery/status", "r") as f:
+            status = f.read().strip()
 
-        if(ac_online):
+        if(status == "Charging"):
            return ChargeStatus.CHARGING
         else:
             return ChargeStatus.DISCONNECTED
