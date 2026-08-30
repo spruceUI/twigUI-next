@@ -471,6 +471,13 @@
             ]
         },
         {
+            "package": "virtualjaguar-lr",
+            "files": [
+                {"src": "virtualjaguar_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
+                {"src": "virtualjaguar_libretro.info", "dest": "/RetroArch/.retroarch/info/"}
+            ]
+        },
+        {
             "package": "yabasanshiro-lr",
             "files": [
                 {"src": "yabasanshiro_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},
