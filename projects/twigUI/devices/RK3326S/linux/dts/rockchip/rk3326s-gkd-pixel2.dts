@@ -25,8 +25,18 @@
 		mmc2 = &sdio;
 	};
 
-	chosen {
-		stdout-path = "serial2:1500000n8";
+	chosen { };
+
+	fiq_debugger: fiq-debugger {
+        compatible = "rockchip,fiq-debugger";
+        rockchip,serial-id = <2>;
+        rockchip,wake-irq = <0>;
+        rockchip,irq-mode-enable = <0>;
+        rockchip,baudrate = <1500000>;
+        interrupts = <GIC_SPI 127 IRQ_TYPE_LEVEL_LOW>;
+        pinctrl-names = "default";
+        pinctrl-0 = <&uart2m1_xfer>;
+        status = "okay";
 	};
 
 	reserved-memory {
