@@ -5,7 +5,7 @@
 # Minimal OS variable loading for performance
 . /etc/profile.d/001-functions
 
-tocon "Configuring Audio..."
+log "Configuring Audio..."
 
 STATE=$(systemctl is-active pipewire-pulse)
 if [ "${STATE}" = "inactive" ]

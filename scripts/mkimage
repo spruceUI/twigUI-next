@@ -285,6 +285,7 @@ elif [ "${BOOTLOADER}" = "u-boot" ]; then
 
   TWIG_DIR="$(get_build_dir twig)"
   mcopy "${ROOT}/build.${DISTRO}-${DEVICE}.${ARCH}/${TWIG_DIR}"/twigUI_SDCARD.7z ::/ >"${SAVE_ERROR}" 2>&1 || show_error
+  mcopy "${ROOT}/build.${DISTRO}-${DEVICE}.${ARCH}/${TWIG_DIR}"/logo.bmp ::/ >"${SAVE_ERROR}" 2>&1 || show_error
 
   touch "${RELEASE_DIR}/target/first_run.txt"
   mcopy "${RELEASE_DIR}/target/first_run.txt" ::/first_run.txt >"${SAVE_ERROR}" 2>&1 || show_error

@@ -5,7 +5,7 @@
 # Minimal OS variable loading for performance
 . /etc/profile.d/001-functions
 
-tocon "Configure suspend mode..."
+log "Configure suspend mode..."
 
 cat <<EOF >>/storage/.config/sleep.conf.d/sleep.conf
 [Sleep]

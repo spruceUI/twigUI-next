@@ -6,7 +6,7 @@ PKG_VERSION="1cbc00f1d966c132ac27b203402ce0fe2e8b5670"
 PKG_LICENSE="Public Domain"
 PKG_SITE="https://github.com/Hairo/spruceOS/"
 PKG_URL="https://github.com/Hairo/spruceOS/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain Python3 emulators"
+PKG_DEPENDS_TARGET="toolchain Python3 emulators systemd"
 PKG_LONGDESC="twigUI SD card package"
 PKG_TOOLCHAIN="manual"
 
@@ -71,6 +71,8 @@ make_target() {
   ARCHIVE_FILE=${PKG_BUILD}/twigUI_SDCARD.7z
   7z a -t7z -mx=7 -mf- "${ARCHIVE_FILE}" "${SPRUCE_DIR}"/. > /dev/null
 
+  # Copy version file and boot logo
+  cp -f "${PKG_DIR}"/install/logo.bmp ${PKG_BUILD}/
   cp -f "${SPRUCE_DIR}"/spruce/twig ${PKG_BUILD}/version
   rm -rf "${SPRUCE_DIR}"
 }
@@ -91,4 +93,5 @@ makeinstall_target() {
 
 post_install() {
   add_user spruce x 0 0 "Root User" "/mnt/SDCARD" "/bin/sh"
+  ln -sf ../twig-splash.target ${INSTALL}/usr/lib/systemd/system/sysinit.target.wants/twig-splash.service
 }

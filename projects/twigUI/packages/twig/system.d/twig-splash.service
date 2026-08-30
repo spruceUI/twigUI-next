@@ -1,0 +1,10 @@
+[Unit]
+Description=twigUI splash screen
+DefaultDependencies=false
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/fbv /flash/logo.bmp
+
+[Install]
+WantedBy=sysinit.target
