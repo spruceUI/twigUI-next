@@ -4,7 +4,7 @@ DefaultDependencies=false
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/fbv /flash/logo.bmp
+ExecStart=/usr/bin/fbv -i -y /flash/logo.bmp
 
 [Install]
 WantedBy=sysinit.target
