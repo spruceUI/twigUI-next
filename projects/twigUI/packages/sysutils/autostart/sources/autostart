@@ -10,8 +10,6 @@ log() {
   echo "$(date): Autostart: $*" >>${BOOTLOG} 2>&1
 }
 
-echo "performance" > /sys/devices/system/cpu/cpufreq/*/scaling_governor
-
 ### Load platform specific quirks
 if [ -d "/usr/lib/autostart/quirks/platforms/${HW_DEVICE}" ]
 then
