@@ -71,7 +71,7 @@
   # Additional packages to install
     EMULATION_DEVICE="no"
     BLUETOOTH_SUPPORT="no"
-    ADDITIONAL_PACKAGES="libmali generic-dsi"
+    ADDITIONAL_PACKAGES="libmali"
     ADDITIONAL_PACKAGES_32BIT="libmali"
 
   # Debug tty path

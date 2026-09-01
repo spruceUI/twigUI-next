@@ -2,9 +2,9 @@
 # Copyright (C) 2024 ROCKNIX (https://github.com/ROCKNIX)
 
 PKG_NAME="rocknix-joypad"
-PKG_VERSION="7f3272ff6bd002c718291465ae5e5d752ccb24b8"
+PKG_VERSION="7647fdb0fc89cd69b284903bf7707e861df5dc7e"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/AveyondFly/rocknix-joypad"
+PKG_SITE="https://github.com/ROCKNIX/rocknix-joypad"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
 PKG_LONGDESC="rocknix-joypad: ROCKNIX joypad driver"
 PKG_TOOLCHAIN="manual"
@@ -12,7 +12,6 @@ PKG_IS_KERNEL_PKG="yes"
 
 pre_make_target() {
   unset LDFLAGS
-  export DEVICE
 }
 
 make_target() {

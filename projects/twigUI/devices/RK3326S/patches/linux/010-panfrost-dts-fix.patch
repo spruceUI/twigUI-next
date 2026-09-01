@@ -1,0 +1,34 @@
+diff -rupN linux.orig/arch/arm64/boot/dts/rockchip/px30.dtsi linux/arch/arm64/boot/dts/rockchip/px30.dtsi
+--- linux.orig/arch/arm64/boot/dts/rockchip/px30.dtsi	2025-06-20 05:04:50.000000000 -0400
++++ linux/arch/arm64/boot/dts/rockchip/px30.dtsi	2026-08-31 22:59:48.480367684 -0400
+@@ -1498,21 +1498,28 @@
+ 		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
+-		interrupt-names = "GPU", "MMU", "JOB";
++		interrupt-names = "gpu", "mmu", "job";
+ 		clocks = <&cru SCLK_GPU>;
++		clock-names = "bus";
++		resets = <&cru SRST_GPU>;
+ 		#cooling-cells = <2>;
+ 		power-domains = <&power PX30_PD_GPU>;
++		power_policy = "coarse_demand";
+ 		operating-points-v2 = <&gpu_opp_table>;
+ 		upthreshold = <40>;
+ 		downdifferential = <10>;
+ 		status = "disabled";
+-		power_model {
++		power_model@0 {
+ 			compatible = "arm,mali-simple-power-model";
+ 			static-coefficient = <411000>;
+ 			dynamic-coefficient = <733>;
+ 			ts = <32000 4700 (-80) 2>;
+ 			thermal-zone = "gpu-thermal";
+ 		};
++		power_model@1 {
++			compatible = "arm,mali-g31-power-model";
++			scale = <5>;
++		};
+ 	};
+ 
+ 	gpu_opp_table: gpu-opp-table {
