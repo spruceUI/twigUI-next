@@ -662,15 +662,6 @@
 		status = "okay";
 	};
 
-	rkisp1: rkisp1@ff4a0000 {
-		status = "okay";
-	};
-
-    isp_mmu: iommu@ff4a8000 {
-        rk_iommu,disable_reset_quirk;
-		status = "okay";
-	};
-
 	dfi: dfi@ff610000 {
 		status = "okay";
 	};
