@@ -20,10 +20,10 @@ PKG_PATCH_DIRS="${LINUX} mainline ${DEVICE} default"
 
 case ${DEVICE} in
   RK3326S)
-    PKG_VERSION="d2b4477a1df699e6639e83837c7dc45ea1d1d73f"
-    PKG_URL="https://github.com/rockchip-linux/kernel/archive/${PKG_VERSION}.tar.gz"
-    PKG_GIT_CLONE_BRANCH="develop-6.1"
-    PKG_PATCH_DIRS="${LINUX} ${DEVICE} default"
+    PKG_VERSION="0c1ad27d20bb8d84a41cd8ac913829a7bd934329"
+    PKG_URL="https://github.com/bmdhacks/kernel_rk3562/archive/${PKG_VERSION}.tar.gz"
+    PKG_GIT_CLONE_BRANCH="master"
+    PKG_PATCH_DIRS="${DEVICE} default"
     ;;
   RK3588)
     PKG_VERSION="b8e62bed74766b6c8c423a767b35495e78b64caf"
