@@ -25,7 +25,7 @@ load_driver() {
   case ${DRIVER_TO_LOAD} in
     "libmali")
       modprobe -r @PAN@
-      modprobe mali_kbase
+      modprobe bifrost_kbase
 
       # Bind-mount mali GLES libraries over mesa if not already done.
       # Use mount output (not /proc/mounts) to avoid squashfs false positives.
@@ -43,7 +43,7 @@ load_driver() {
       done
       ;;
     "panfrost")
-      modprobe -r mali_kbase
+      modprobe -r bifrost_kbase
       modprobe @PAN@
 
       mount | grep -q "on /usr/lib/libEGL.so" && find /usr/lib/mali -type f -exec bash -c 'lib={}; umount ${lib/\/mali\//\/}' ';'
