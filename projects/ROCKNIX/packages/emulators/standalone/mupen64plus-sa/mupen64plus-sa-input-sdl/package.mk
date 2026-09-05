@@ -5,17 +5,20 @@
 
 PKG_NAME="mupen64plus-sa-input-sdl"
 PKG_VERSION="3698a2b12b1dc536801649de2705b4a79ffb8a08"
+PKG_SHA256="9a2f2b2a0dbb7bdd32f26495d9614d19a0fc215ffaefeb11bef167d7e7b006c9"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/mupen64plus/mupen64plus-input-sdl"
 PKG_URL="https://github.com/mupen64plus/mupen64plus-input-sdl/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain libpng SDL2 SDL2_net zlib freetype nasm:host mupen64plus-sa-core"
+PKG_DEPENDS_UNPACK="mupen64plus-sa-core"
 PKG_LONGDESC="mupen64plus-input-sdl"
 PKG_LONGDESC="Mupen64Plus Standalone Input SDL"
 PKG_TOOLCHAIN="manual"
 
 case ${DEVICE} in
-  RK3588|S922X|RK3399|RK3566*|SM8250|SM8550|SM8650|SM8750)
+  RK3588|S922X|RK3399|RK3566*|SM8250|SM8550|SM8650|SM8750|AMD64)
     PKG_DEPENDS_TARGET+=" mupen64plus-sa-simplecore"
+    PKG_DEPENDS_UNPACK+=" mupen64plus-sa-simplecore"
   ;;
 esac
 

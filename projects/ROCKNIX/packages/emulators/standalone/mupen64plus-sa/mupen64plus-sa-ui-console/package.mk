@@ -5,22 +5,25 @@
 
 PKG_NAME="mupen64plus-sa-ui-console"
 PKG_VERSION="1340c4bdfc9ec53d3fccda5e085930dd79eb08b3"
+PKG_SHA256="8ea9c5d7234d19080ba1f2792cbe61181270a530ce1f12bf146468f00cb7dbe4"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/mupen64plus/mupen64plus-ui-console"
 PKG_URL="https://github.com/mupen64plus/mupen64plus-ui-console/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain libpng SDL2 SDL2_net zlib freetype nasm:host mupen64plus-sa-core"
+PKG_DEPENDS_UNPACK="mupen64plus-sa-core"
 PKG_LONGDESC="mupen64plus-ui-console"
 PKG_LONGDESC="Mupen64Plus Standalone Console"
 PKG_TOOLCHAIN="manual"
 
 case ${DEVICE} in
-  RK3588|S922X|RK3399|RK3566*|SM8250|SM8550|SM8650|SM8750)
+  RK3588|S922X|RK3399|RK3566*|SM8250|SM8550|SM8650|SM8750|AMD64)
     PKG_DEPENDS_TARGET+=" mupen64plus-sa-simplecore"
+    PKG_DEPENDS_UNPACK+=" mupen64plus-sa-simplecore"
   ;;
 esac
 
 case ${DEVICE} in
-  SM8250|SM8550|SM8650|SM8750)
+  SM8250|SM8550|SM8650|SM8750|AMD64)
     PKG_DEPENDS_TARGET+=" ${OPENGL} glu libglvnd"
     export USE_GLES=0
   ;;
@@ -49,7 +52,7 @@ make_target() {
   cp ${PKG_BUILD}/projects/unix/mupen64plus ${PKG_BUILD}/projects/unix/mupen64plus-base
 
   case ${DEVICE} in
-    RK3588|S922X|RK3399|RK3566*|SM8250|SM8550|SM8650|SM8750)
+    RK3588|S922X|RK3399|RK3566*|SM8250|SM8550|SM8650|SM8750|AMD64)
       export APIDIR=$(get_build_dir mupen64plus-sa-simplecore)/src/api
       export CFLAGS="${CFLAGS} -DSIMPLECORE"
       make -C projects/unix all ${PKG_MAKE_OPTS_TARGET}

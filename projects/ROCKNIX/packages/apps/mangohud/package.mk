@@ -2,7 +2,8 @@
 # Copyright (C) 2025-present ROCKNIX (https://github.com/ROCKNIX)
 
 PKG_NAME="mangohud"
-PKG_VERSION="330c42a5956e005a4d102473f5782bb0e3d94b6f" # v0.8.3
+PKG_VERSION="992103e4fb744897826de04ea00a2f71e7018214" # v0.8.4
+PKG_SHA256="edd61f4716710681a9e3b535556831ee0c6187b7b6f90d29f8d8ac234448f4a5"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/flightlessmango/MangoHud"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
@@ -10,7 +11,16 @@ PKG_DEPENDS_TARGET="toolchain glslang mesa Python3 wayland libxcb dbus"
 PKG_LONGDESC="A Vulkan and OpenGL overlay for monitoring FPS, temperatures, CPU/GPU load and more."
 
 PKG_PATCH_DIRS+=" common"
-[[ "${DEVICE}" =~ SM6115||SM8250|SM8550|SM8650|SM8750 ]] && PKG_PATCH_DIRS+=" qualcomm"
+
+case ${DEVICE} in
+  SM6115|SM8250|SM8550|SM8650|SM8750)
+    PKG_PATCH_DIRS+=" qualcomm"
+  ;;
+  S922X)
+    PKG_PATCH_DIRS+=" batteryplus"
+  ;;
+esac
+
 PKG_PATCH_DIRS+=" ${DEVICE}"
 
 if [ "${OPENGL_SUPPORT}" = "yes" ]; then
@@ -27,7 +37,8 @@ pre_configure_target() {
                            -Dwith_x11=enabled \
                            -Dmangoplot=disabled \
                            -Dwith_wayland=enabled \
-                           -Dmangoapp=true"
+                           -Dmangoapp=true \
+                           -Dwith_fex=true"
 
   # Download Sub Modules
   mkdir -p ${PKG_BUILD}/subprojects/
@@ -91,6 +102,12 @@ post_makeinstall_target() {
 
       # No GPU temperature sensor or battery life estimate available
       sed -i 's/^gpu_temp/\# gpu_temp/g' ${INSTALL}/usr/config/MangoHud/MangoHud.conf
+      sed -i 's/^battery_time/\# battery_time/g' ${INSTALL}/usr/config/MangoHud/MangoHud.conf
+    ;;
+    SM8250)
+      sed -e "s/@FONT_SIZE@/40/g" -i ${INSTALL}/usr/config/MangoHud/MangoHud.conf
+      
+      # No battery life estimate available
       sed -i 's/^battery_time/\# battery_time/g' ${INSTALL}/usr/config/MangoHud/MangoHud.conf
     ;;
     *)

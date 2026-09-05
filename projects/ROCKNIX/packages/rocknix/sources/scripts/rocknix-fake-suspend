@@ -48,11 +48,37 @@ check_charging() {
 }
 
 check_es_running_game() {
-  local HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:1234/runningGame")
-  ${DEBUG} && log $0 "ES runningGame HTTP_STATUS - ${HTTP_STATUS}"
-  test $? != 0 && return 1 # call failed, assume no game running
-  test "${HTTP_STATUS}" = 201 && return 1 # 201 when no game running
-  test "${HTTP_STATUS}" = 200 && return 0 # 200 when game running
+  # Check whether ES API endpoint is up
+  local endpoint_up=1 # default to endpoint down
+  test "$(nc -vz -w5 localhost 1234 2>&1 | grep 'open')" && endpoint_up=0
+
+  if [[ $endpoint_up -eq 0 ]]; then
+    ${DEBUG} && log $0 "ES API endpoint up - querying"
+    local HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:1234/runningGame")
+    ${DEBUG} && log $0 "ES runningGame HTTP_STATUS - ${HTTP_STATUS}"
+    test $? != 0 && return 1 # call failed, assume no game running
+    test "${HTTP_STATUS}" = 201 && return 1 # 201 when no game running
+    test "${HTTP_STATUS}" = 200 && return 0 # 200 when game running
+  else
+    ${DEBUG} && log $0 "ES API endpoint down"
+    return 0 # assume a game is running
+  fi
+}
+
+backlight_off() {
+  ${DEBUG} && log $0 "Backlight off"
+
+  for BL_POWER_DEVICE in "${BL_POWER_DEVICES[@]}"; do
+    echo 4 > "${BL_POWER_DEVICE}"
+  done
+}
+
+backlight_on() {
+  ${DEBUG} && log $0 "Backlight on"
+
+  for BL_POWER_DEVICE in "${BL_POWER_DEVICES[@]}"; do
+    echo 0 > "${BL_POWER_DEVICE}"
+  done
 }
 
 display_off() {
@@ -60,19 +86,18 @@ display_off() {
     # DPMS enabled, use it to turn off the display
     ${DEBUG} && log $0 "DPMS - display off"
 
-    if echo "${UI_SERVICE}" | grep "sway"; then
+    if [[ -n $(echo "${UI_SERVICE}" | grep "sway") && -n $(pgrep "sway") ]]; then
       ${DEBUG} && log $0 "Display power off"
       swaymsg "output * power off"
-    elif echo "${UI_SERVICE}" | grep "weston"; then
+    elif [[ -n $(echo "${UI_SERVICE}" | grep "weston") && -n $(pgrep "weston") ]]; then
       weston-dpms -m off
+    else
+      # Fallback - just turn off the backlight
+      backlight_off
     fi
   else
     # DPMS disabled, just turn off the backlight
-    ${DEBUG} && log $0 "Backlight off"
-
-    for BL_POWER_DEVICE in "${BL_POWER_DEVICES[@]}"; do
-      echo 4 > "${BL_POWER_DEVICE}"
-    done
+    backlight_off
   fi
 }
 
@@ -81,19 +106,17 @@ display_on() {
     # DPMS enabled, use it to turn on the display
     ${DEBUG} && log $0 "DPMS - display on"
 
-    if echo "${UI_SERVICE}" | grep "sway"; then
+    if [[  -n $(echo "${UI_SERVICE}" | grep "sway") && -n $(pgrep "sway") ]]; then
       ${DEBUG} && log $0 "Display power on"
       swaymsg "output * power on"
-    elif echo "${UI_SERVICE}" | grep "weston"; then
+    elif [[ -n $(echo "${UI_SERVICE}" | grep "weston") && -n $(pgrep "weston") ]]; then
       weston-dpms -m on
+    else
+      backlight_on
     fi
   else
-    # DPMS disabled, just turn on the backlight
-    ${DEBUG} && log $0 "Backlight on"
-
-    for BL_POWER_DEVICE in "${BL_POWER_DEVICES[@]}"; do
-      echo 0 > "${BL_POWER_DEVICE}"
-    done
+    # Fallback - just turn on the backlight
+    backlight_on
   fi
 }
 
@@ -196,43 +219,47 @@ unblock_input() {
   done
 }
 
+freeze_processes() {
+  ${DEBUG} && log $0 "Freezing processes"
+
+  # Grab the process to freeze from the set_kill call
+  process_kill_data=$(</tmp/.process-kill-data)
+  process_kill_data=$(echo "${process_kill_data}" | sed 's/-9//' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+
+  if [[ -n "${process_kill_data}" ]]; then
+    ${DEBUG} && log $0 "Freezing '${process_kill_data}' processes"
+
+    for process_cmd in ${process_kill_data}; do
+      for pid in $(pgrep -f "${process_cmd}"); do
+        ${DEBUG} && log $0 "Freezing ${process_cmd} process ${pid}"
+        kill -STOP ${pid}
+      done
+    done
+  fi
+}
+
+unfreeze_processes() {
+  ${DEBUG} && log $0 "Unfreezing processes"
+  kill -CONT -1
+}
+
 do_suspend_actions() {
-  # Disable LEDs
   disable_leds
-
-  # Mute audio
   mute_audio
-
-  # Block input
   block_input
-  
-  # Turn off display
   display_off
-
-  # Set CPU / GPU governors
+  freeze_processes
   powersave_governors
-
-  # CPU core parking (if enabled)
   [[ "${ENABLE_CORE_PARKING}" == "1" ]] && park_cores
 }
 
 do_resume_actions() {
-  # Undo CPU core parking (if enabled)
   [[ "${ENABLE_CORE_PARKING}" == "1" ]] && unpark_cores
-
-  # Restore CPU / GPU governors
   restore_governors
-
-  # Turn on display
+  unfreeze_processes
   display_on
-
-  # Unblock input
   unblock_input
-
-  # Unmute audio
   unmute_audio
-
-  # Restore LEDs
   enable_leds
 }
 
@@ -257,6 +284,9 @@ do_shutdown() {
 
   # Unmute audio - otherwise wireplumber will keep it muted on next boot
   unmute_audio
+
+  # Unfreeze prococesses - otherwise ES will be unable to respond to API calls
+  unfreeze_processes
 
   # Check whether a game is running
   check_es_running_game
@@ -284,26 +314,33 @@ suspend() {
   check_charging
   local CHARGING=$?
 
+  [[ ${TIMED_SHUTDOWN_ENABLED} == "1" ]] && ${DEBUG} && log $0 "Timed shutdown enabled ..."
+  [[ ${TIMED_SHUTDOWN_ENABLED} != "1" ]] && ${DEBUG} && log $0 "Timed shutdown disabled ..."
+
   # Determine shutdown delay
   local DELAY=${SHUTDOWN_DELAY}
   [[ $RUNNING_GAME -eq 0 ]] && DELAY=${SHUTDOWN_DELAY_RUNNING_GAME}
   ${DEBUG} && log $0 "Shutdown delay - ${DELAY} seconds"
   [[ ${CHARGING} -eq 0 ]] && ${DEBUG} && log $0 "Charging ..."
 
-  if [[ "${DELAY}" -gt 0 || ${CHARGING} -eq 0 ]]; then
+
+  if [[ "${DELAY}" -gt 0 || ${CHARGING} -eq 0 || ${TIMED_SHUTDOWN_ENABLED} != "1" ]]; then
     do_suspend_actions
   fi
 
-  # Delay shutdown
-  sleep ${DELAY}
+  if [[ ${TIMED_SHUTDOWN_ENABLED} == "1" ]]; then
+    # Delay shutdown
+    ${DEBUG} && log $0 "Timed shutdown (${DELAY} seconds) ..."
+    sleep ${DELAY}
 
-  # Delay has completed - check whether the flag file is still present
-  if [[ -f "${DELAY_FLAG_FILE}" ]]; then
-    ${DEBUG} && log $0 "Delay expired, flag file found"
-    # Flag present - shutdown
-    do_shutdown
-  else
-    ${DEBUG} && log $0 "Delay expired, flag file not found"
+    # Delay has completed - check whether the flag file is still present
+    if [[ -f "${DELAY_FLAG_FILE}" ]]; then
+      ${DEBUG} && log $0 "Delay expired, flag file found"
+      # Flag present - shutdown
+      do_shutdown
+    else
+      ${DEBUG} && log $0 "Delay expired, flag file not found"
+    fi
   fi
 }
 
@@ -331,6 +368,19 @@ if [[ $HW_SUSPEND_ENABLED -eq 0 ]]; then
   exit 0
 fi
 
+# Only do something when fake suspend is enabled
+FAKE_SUSPEND_ENABLED="$(get_setting system.suspend.enable)"
+[[ "${FAKE_SUSPEND_ENABLED}" = "" ]] && FAKE_SUSPEND_ENABLED="1"
+
+if [[ $FAKE_SUSPEND_ENABLED != "1" ]]; then
+  ${DEBUG} && log $0 "Fake suspend disabled, exiting"
+  exit 0
+fi
+
+# Timed shutdown after suspend
+TIMED_SHUTDOWN_ENABLED="$(get_setting system.suspend.enable_timed_shutdown)"
+[[ "${TIMED_SHUTDOWN_ENABLED}" = "" ]] && TIMED_SHUTDOWN_ENABLED="1"
+
 # If a game is not running, by default delay the shutdown for 15 minutes
 SHUTDOWN_DELAY="$(get_setting system.shutdown_delay)"
 [[ "${SHUTDOWN_DELAY}" = "" ]] && SHUTDOWN_DELAY=900
@@ -343,9 +393,9 @@ SHUTDOWN_DELAY_RUNNING_GAME="$(get_setting system.shutdown_delay_running_game)"
 ENABLE_CORE_PARKING="$(get_setting system.suspend.park_cores)"
 [[ "${ENABLE_CORE_PARKING}" = "" ]] && ENABLE_CORE_PARKING="1"
 
-# On suspend, should DPMS be used
+# On suspend, should DPMS be used, disabled by default
 ENABLE_DPMS="$(get_setting system.suspend.dpms)"
-[[ "${ENABLE_DPMS}" = "" ]] && ENABLE_DPMS="1"
+[[ "${ENABLE_DPMS}" = "" ]] && ENABLE_DPMS="0"
 
 # flag files
 PID=$$

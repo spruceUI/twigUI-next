@@ -5,22 +5,25 @@
 
 PKG_NAME="mupen64plus-sa-video-glide64mk2"
 PKG_VERSION="992b5942078fe77987e8c40bcd396f44be19be2b"
+PKG_SHA256="192ae40ac12c1dc38c336748e68679c4393ebc02caa1f0530ba21f1a7024ccdf"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/mupen64plus/mupen64plus-video-glide64mk2"
 PKG_URL="https://github.com/mupen64plus/mupen64plus-video-glide64mk2/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain boost libpng SDL2 SDL2_net zlib freetype nasm:host mupen64plus-sa-core"
+PKG_DEPENDS_UNPACK="mupen64plus-sa-core"
 PKG_LONGDESC="mupen64plus-video-glide64mk2"
 PKG_LONGDESC="Mupen64Plus Standalone Glide64 Video Driver"
 PKG_TOOLCHAIN="manual"
 
 case ${DEVICE} in
-  RK3588|S922X|RK3399|RK3566*|SM8250|SM8550|SM8650|SM8750)
+  RK3588|S922X|RK3399|RK3566*|SM8250|SM8550|SM8650|SM8750|AMD64)
     PKG_DEPENDS_TARGET+=" mupen64plus-sa-simplecore"
+    PKG_DEPENDS_UNPACK+=" mupen64plus-sa-simplecore"
   ;;
 esac
 
 case ${DEVICE} in
-  SM8250|SM8550|SM8650|SM8750)
+  SM8250|SM8550|SM8650|SM8750|AMD64)
     PKG_DEPENDS_TARGET+=" ${OPENGL} glu libglvnd"
     export USE_GLES=0
   ;;

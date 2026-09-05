@@ -312,7 +312,7 @@ set +e
   done
 
   wait  # Wait for all background loops (they never end unless forcibly stopped)
-) | while read line; do
+) | grep --line-buffered "EV_KEY\|EV_SW\|error reading" | while read line; do
 
     # Parse lines from any evtest instance:
     case ${line} in
@@ -484,12 +484,6 @@ set +e
           /usr/bin/mangohud_set toggle
         fi
       ;;
-     (${FUNCTION_HOTKEY_BTN_BACK_EVENT}|${FUNCTION_HOTKEY_KEY_F1_EVENT})
-       if [ "${HOTKEY_A_PRESSED}" = true ]; then
-         ${DEBUG} && log $0 "${FUNCTION_HOTKEY_BTN_BACK_EVENT}: Switch Screen Output"
-         /usr/bin/screen_switch
-       fi
-     ;;
      (${FUNCTION_HOTKEY_BTN_NORTH_EVENT})
        if [ "${HOTKEY_A_PRESSED}" = true ]; then
          ${DEBUG} && log $0 "${FUNCTION_HOTKEY_BTN_NORTH_EVENT}: Opening Game Guide"

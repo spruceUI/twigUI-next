@@ -2,7 +2,7 @@
 # Copyright (C) 2026 ROCKNIX (https://github.com/ROCKNIX)
 
 PKG_NAME="fex-emu"
-PKG_VERSION="a04b0241c2fe3911729842205cd8643981108aad"
+PKG_VERSION="e869aa644a16e4332cdc15c1ea0b4d13d482385d"
 PKG_LICENSE="MIT"
 PKG_SITE="https://github.com/FEX-Emu/FEX"
 PKG_URL="https://github.com/FEX-Emu/FEX.git"
@@ -23,6 +23,10 @@ FEX_CMAKE_BASE=(
   -DCMAKE_MAKE_PROGRAM=ninja
   -DCMAKE_C_COMPILER="${FEX_CLANG}"
   -DCMAKE_CXX_COMPILER="${FEX_CLANGXX}"
+  
+  # Make sure we pick up teh right llvm-ar and llvm-ranlib
+  -DCMAKE_AR="${FEX_LLVM_BIN}/llvm-ar"
+  -DCMAKE_RANLIB="${FEX_LLVM_BIN}/llvm-ranlib"
   -DCMAKE_C_COMPILER_AR="${FEX_LLVM_BIN}/llvm-ar"
   -DCMAKE_CXX_COMPILER_AR="${FEX_LLVM_BIN}/llvm-ar"
   -DCMAKE_ASM_COMPILER_AR="${FEX_LLVM_BIN}/llvm-ar"
@@ -115,7 +119,7 @@ makeinstall_target() {
   cp -rf "${PKG_DIR}/config/gptk" "${INSTALL}/usr/config/fex-emu"
   mkdir -p "${INSTALL}/usr/config/modules"
   cp -rf "${PKG_DIR}/scripts/"* "${INSTALL}/usr/config/modules"
-  cp "${TOOLCHAIN}/lib/libvulkan_freedreno.so" "${INSTALL}/usr/share/fex-emu/"
+
 }
 
 makeinstall_host() {

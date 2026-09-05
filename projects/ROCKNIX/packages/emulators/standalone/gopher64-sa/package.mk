@@ -6,9 +6,13 @@ PKG_LICENSE="GPLv3"
 PKG_VERSION="ca4a20f52403bb14f819db53f1cb161d41894666"
 PKG_SITE="https://github.com/gopher64/gopher64"
 PKG_URL="${PKG_SITE}.git"
-PKG_DEPENDS_TARGET="toolchain SDL3 SDL3_ttf cargo:host cargo rust mesa libXss ${VULKAN}"
+PKG_DEPENDS_TARGET="toolchain SDL3 SDL3_ttf cargo:host cargo rust mesa libxss ${VULKAN}"
 PKG_LONGDESC="Gopher64 - Highly compatible N64 emulator"
 PKG_TOOLCHAIN="manual"
+
+pre_make_target() {
+  sed -i 's/"build-from-source-static"/"use-pkg-config"/g' ${PKG_BUILD}/Cargo.toml
+}
 
 make_target() {
   unset CMAKE
@@ -17,6 +21,9 @@ make_target() {
 
   export CC=${TARGET_NAME}-gcc
   export CXX=${TARGET_NAME}-g++
+
+  export DEP_SDL3_OUT_DIR="${SYSROOT_PREFIX}/usr"
+  export DEP_SDL3_TTF_OUT_DIR="${SYSROOT_PREFIX}/usr"
 
   export FREETYPE2_INCLUDE_PATH="${SYSROOT_PREFIX}/usr/include/freetype2"
 

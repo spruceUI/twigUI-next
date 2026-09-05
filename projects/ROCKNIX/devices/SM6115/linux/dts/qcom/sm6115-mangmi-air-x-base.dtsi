@@ -5,7 +5,6 @@
 
 /dts-v1/;
 
-#include <dt-bindings/clock/qcom,sm6115-lpasscc.h>
 #include <dt-bindings/leds/common.h>
 #include <dt-bindings/sound/qcom,q6afe.h>
 #include <dt-bindings/sound/qcom,q6asm.h>
@@ -32,10 +31,10 @@
 		charge-full-design-microamp-hours = <5000000>;
 		voltage-min-design-microvolt = <3400000>;
 		voltage-max-design-microvolt = <4350000>;
-		constant-charge-current-max-microamp = <2040000>;
+		constant-charge-current-max-microamp = <3000000>;
 		constant-charge-voltage-max-microvolt = <4350000>;
-		precharge-current-microamp = <180000>;
-		charge-term-current-microamp = <180000>;
+		precharge-current-microamp = <200000>;
+		charge-term-current-microamp = <200000>;
 	};
 
 	fan: gpio-fan {
@@ -45,13 +44,20 @@
 		#cooling-cells = <2>;
 	};
 
-	vibrator {
-		compatible = "clk-vibrator";
+	clk_pwm: pwm {
+		compatible = "clk-pwm";
+		#pwm-cells = <2>;
 		clocks = <&gcc GCC_GP1_CLK>;
-		vcc-supply = <&vibra_vcc>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&gpio_clk_pins>;
-		vibration-frequency-hz = <10000>;
+	};
+
+	vibrator {
+		compatible = "pwm-vibrator";
+		pwms = <&clk_pwm 0 25000>;
+		pwm-names = "enable";
+		min-duty-cycle-ns = <10000>;
+		vcc-supply = <&vibra_vcc>;
 	};
 
 	led_vdd: regulator-led-vdd {
@@ -74,6 +80,19 @@
 		enable-active-high;
 		pinctrl-names = "default";
 		pinctrl-0 = <&vibra_vcc_default>;
+	};
+
+	es8326_vdd_3v3: regulator-es8326-vdd {
+		compatible = "regulator-fixed";
+		regulator-name = "es8326-vdd-3v3";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&tlmm 66 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		regulator-always-on;
+		regulator-boot-on;
+		pinctrl-names = "default";
+		pinctrl-0 = <&es8326_vdd_default>;
 	};
 
 	gpio-keys {
@@ -174,10 +193,13 @@
 		pin-switches = "SPK_L Speaker", "SPK_R Speaker";
 
 		audio-routing = "SPK_L Speaker", "SPK_L DAC Output",
-				"SPK_R Speaker", "SPK_R DAC Output";
+				"SPK_R Speaker", "SPK_R DAC Output",
+				"Headphone Jack", "HPOL",
+				"Headphone Jack", "HPOR";
 
 		pinctrl-names = "default";
-		pinctrl-0 = <&lpi_i2s2_active>;
+		pinctrl-0 = <&lpi_qua_mi2s_active>, <&lpi_i2s2_active>,
+			    <&lpi_dmic23_active>;
 
 		mm1-dai-link {
 			link-name = "MultiMedia1";
@@ -212,6 +234,133 @@
 				sound-dai = <&aw88261_l>, <&aw88261_r>;
 			};
 		};
+
+		quat-mi2s-playback-dai-link {
+			link-name = "Quaternary MI2S Playback";
+			cpu {
+				sound-dai = <&q6afedai QUATERNARY_MI2S_RX>;
+			};
+			platform {
+				sound-dai = <&q6routing>;
+			};
+			codec {
+				sound-dai = <&es8326>;
+			};
+		};
+
+		quat-mi2s-capture-dai-link {
+			link-name = "Quaternary MI2S Capture";
+			cpu {
+				sound-dai = <&q6afedai QUATERNARY_MI2S_TX>;
+			};
+			platform {
+				sound-dai = <&q6routing>;
+			};
+			codec {
+				sound-dai = <&es8326>;
+			};
+		};
+
+		mm4-capture-dai-link {
+			link-name = "MultiMedia4 Capture";
+			cpu {
+				sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA4>;
+			};
+		};
+
+		mm5-capture-dai-link {
+			link-name = "MultiMedia5 Capture";
+			cpu {
+				sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA5>;
+			};
+		};
+
+		va-codec-dma-dai-link {
+			link-name = "VA_CODEC_DMA_TX_0";
+			cpu {
+				sound-dai = <&q6afedai VA_CODEC_DMA_TX_0>;
+			};
+			platform {
+				sound-dai = <&q6routing>;
+			};
+			codec {
+				sound-dai = <&vamacro 0>;
+			};
+		};
+	};
+};
+
+&soc {
+	rxmacro: codec@a600000 {
+		compatible = "qcom,sm6115-lpass-rx-macro";
+		reg = <0x0 0x0a600000 0x0 0x1000>;
+
+		clocks = <&q6afecc LPASS_CLK_ID_RX_CORE_MCLK     LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+			 <&q6afecc LPASS_CLK_ID_RX_CORE_NPL_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+			 <&q6afecc LPASS_HW_DCODEC_VOTE          LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+			 <&vamacro>;
+		clock-names = "mclk", "npl", "dcodec", "fsgen";
+
+		assigned-clocks = <&q6afecc LPASS_CLK_ID_RX_CORE_MCLK     LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+				  <&q6afecc LPASS_CLK_ID_RX_CORE_NPL_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
+		assigned-clock-rates = <22579200>, <22579200>;
+
+		#clock-cells = <0>;
+		clock-output-names = "mclk";
+		#sound-dai-cells = <1>;
+	};
+
+	txmacro: codec@a620000 {
+		compatible = "qcom,sm6115-lpass-tx-macro";
+		reg = <0x0 0x0a620000 0x0 0x1000>;
+
+		clocks = <&q6afecc LPASS_CLK_ID_TX_CORE_MCLK     LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+			 <&q6afecc LPASS_CLK_ID_TX_CORE_NPL_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+			 <&q6afecc LPASS_HW_DCODEC_VOTE          LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+			 <&vamacro>;
+		clock-names = "mclk", "npl", "dcodec", "fsgen";
+
+		assigned-clocks = <&q6afecc LPASS_CLK_ID_TX_CORE_MCLK     LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+				  <&q6afecc LPASS_CLK_ID_TX_CORE_NPL_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
+		assigned-clock-rates = <19200000>, <19200000>;
+
+		qcom,dmic-sample-rate = <2400000>;
+
+		#clock-cells = <0>;
+		clock-output-names = "mclk";
+		#sound-dai-cells = <1>;
+	};
+
+	lpass_audiocc: clock-controller@a6a9000 {
+		compatible = "qcom,sm6115-lpassaudiocc";
+		reg = <0x0 0x0a6a9000 0x0 0x1000>;
+		#reset-cells = <1>;
+	};
+
+	vamacro: codec@a730000 {
+		compatible = "qcom,sm6115-lpass-va-macro";
+		reg = <0x0 0x0a730000 0x0 0x1000>;
+
+		clocks = <&q6afecc LPASS_CLK_ID_TX_CORE_MCLK     LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+			 <&q6afecc LPASS_HW_DCODEC_VOTE          LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+			 <&q6afecc LPASS_CLK_ID_TX_CORE_NPL_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
+		clock-names = "mclk", "dcodec", "npl";
+
+		assigned-clocks = <&q6afecc LPASS_CLK_ID_TX_CORE_MCLK     LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+				  <&q6afecc LPASS_CLK_ID_TX_CORE_NPL_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
+		assigned-clock-rates = <19200000>, <19200000>;
+
+		qcom,dmic-sample-rate = <2400000>;
+
+		#clock-cells = <0>;
+		clock-output-names = "fsgen";
+		#sound-dai-cells = <1>;
+	};
+
+	lpasscc: clock-controller@a7e0000 {
+		compatible = "qcom,sm6115-lpasscc";
+		reg = <0x0 0x0a7e0000 0x0 0x12000>;
+		#reset-cells = <1>;
 	};
 };
 
@@ -224,6 +373,30 @@
 	dai@19 {
 		reg = <SECONDARY_MI2S_TX>;
 		qcom,sd-lines = <1>;
+	};
+
+	dai@22 {
+		reg = <QUATERNARY_MI2S_RX>;
+		qcom,sd-lines = <0>;
+	};
+
+	dai@23 {
+		reg = <QUATERNARY_MI2S_TX>;
+		qcom,sd-lines = <1>;
+	};
+
+	dai@110 {
+		reg = <VA_CODEC_DMA_TX_0>;
+	};
+};
+
+&q6asmdai {
+	dai@3 {
+		reg = <MSM_FRONTEND_DAI_MULTIMEDIA4>;
+	};
+
+	dai@4 {
+		reg = <MSM_FRONTEND_DAI_MULTIMEDIA5>;
 	};
 };
 
@@ -242,7 +415,7 @@
 			regulator-max-microvolt = <5500000>;
 			regulator-active-discharge = <1>;
 			enable-gpios = <&tlmm 44 GPIO_ACTIVE_HIGH>;
-			vin-supply = <&vreg_l22a_2p96>;
+			vin-supply = <&vph_pwr>;
 		};
 
 		panel_avdd_outn: outn {
@@ -251,7 +424,7 @@
 			regulator-max-microvolt = <5500000>;
 			regulator-active-discharge = <1>;
 			enable-gpios = <&tlmm 45 GPIO_ACTIVE_HIGH>;
-			vin-supply = <&vreg_l22a_2p96>;
+			vin-supply = <&vph_pwr>;
 		};
 	};
 
@@ -263,12 +436,13 @@
 		assigned-clocks = <&q6afecc LPASS_CLK_ID_MCLK_1 LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
 		assigned-clock-rates = <12288000>;
 		interrupts-extended = <&tlmm 65 IRQ_TYPE_EDGE_FALLING>;
-		reset-gpios = <&tlmm 66 GPIO_ACTIVE_LOW>;
+		vdd-supply = <&es8326_vdd_3v3>;
 		everest,jack-detect-inverted;
+
 		pinctrl-names = "default";
-		pinctrl-0 = <&es8326_irq_default &es8326_pwr_default>;
+		pinctrl-0 = <&es8326_irq_default &lpi_ext_mclk0_b_active>;
 		#sound-dai-cells = <0>;
-		status = "disabled";
+		status = "okay";
 	};
 
 	aw88261_l: audio-codec@34 {
@@ -311,10 +485,11 @@
 		#sound-dai-cells = <0>;
 	};
 
-	fuel-gauge@64 {
+	fuel_gauge: fuel-gauge@64 {
 		compatible = "cellwise,cw221x";
 		reg = <0x64>;
 		monitored-battery = <&battery>;
+		#thermal-sensor-cells = <0>;
 		cellwise,sense-resistor-micro-ohms = <10000>;
 		cellwise,monitor-interval-ms = <5000>;
 		cellwise,battery-profile = /bits/ 8 <
@@ -348,13 +523,24 @@
 		connector {
 			compatible = "usb-c-connector";
 			label = "USB-C";
-			pd-revision = /bits/ 8 <0x2 0x0 0x1 0x20>;
+			pd-revision = /bits/ 8 <0x3 0x0 0x1 0x20>;
+			self-powered;
 			power-role = "dual";
 			data-role = "dual";
 			try-power-role = "sink";
 			op-sink-microwatt = <10000000>;
-			sink-pdos = <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>;
-			source-pdos = <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>;
+			sink-pdos = <PDO_FIXED(5000, 3000, PDO_FIXED_DUAL_ROLE |
+						      PDO_FIXED_USB_COMM |
+						      PDO_FIXED_DATA_SWAP)
+				PDO_PPS_APDO(4000, 11000, 3000)>;
+
+			source-pdos = <PDO_FIXED(5000, 1200,
+						 PDO_FIXED_DUAL_ROLE |
+						 PDO_FIXED_DATA_SWAP |
+						 PDO_FIXED_USB_COMM)>;
+
+			pd-source-inputs = <0x04>;
+			pd-battery-info = <0x01>;
 
 			ports {
 				#address-cells = <1>;
@@ -383,10 +569,9 @@
 		monitored-battery = <&battery>;
 		interrupts-extended = <&tlmm 70 IRQ_TYPE_EDGE_FALLING>;
 		pinctrl-names = "default";
-		pinctrl-0 = <&chg_int_default>;
+		pinctrl-0 = <&chg_int_default>, <&chg_en_default>;
 
 		input-voltage-limit-microvolt = <4500000>;
-		input-current-limit-microamp = <2400000>;
 
 		status = "okay";
 
@@ -548,6 +733,10 @@
 
 &mdss {
 	status = "okay";
+	interconnects = <&mmrt_virt MASTER_MDP_PORT0 RPM_ACTIVE_TAG
+			 &bimc SLAVE_EBI_CH0 RPM_ACTIVE_TAG>,
+			<&bimc MASTER_AMPSS_M0 RPM_ACTIVE_TAG
+			 &config_noc SLAVE_DISPLAY_CFG RPM_ACTIVE_TAG>;
 };
 
 &venus {
@@ -610,6 +799,7 @@
 
 &pon_pwrkey {
 	status = "okay";
+	wakeup-source;
 };
 
 &pon_resin {
@@ -628,10 +818,10 @@
 		clock-names = "se";
 		power-domains = <&rpmpd SM6115_VDDCX>;
 		operating-points-v2 = <&qup_opp_table>;
-		interconnects = <&clk_virt MASTER_QUP_CORE_0 RPM_ALWAYS_TAG
-				 &clk_virt SLAVE_QUP_CORE_0 RPM_ALWAYS_TAG>,
-				<&bimc MASTER_AMPSS_M0 RPM_ALWAYS_TAG
-				 &config_noc SLAVE_QUP_0 RPM_ALWAYS_TAG>;
+		interconnects = <&clk_virt MASTER_QUP_CORE_0 RPM_ACTIVE_TAG
+				 &clk_virt SLAVE_QUP_CORE_0 RPM_ACTIVE_TAG>,
+				<&bimc MASTER_AMPSS_M0 RPM_ACTIVE_TAG
+				 &config_noc SLAVE_QUP_0 RPM_ACTIVE_TAG>;
 		interconnect-names = "qup-core", "qup-config";
 		pinctrl-0 = <&qup_uart0_active>;
 		pinctrl-1 = <&qup_uart0_sleep>;
@@ -642,11 +832,29 @@
 &remoteproc_adsp {
 	firmware-name = "qcom/qrb4210/adsp.mbn";
 	status = "okay";
+
+	interrupts-extended = <&intc GIC_SPI 282 IRQ_TYPE_EDGE_RISING>,
+			      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+			      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+			      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+			      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
+			      <&adsp_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
+	interrupt-names = "wdog", "fatal", "ready",
+			  "handover", "stop-ack", "shutdown-ack";
 };
 
 &remoteproc_cdsp {
 	firmware-name = "qcom/qrb4210/cdsp.mbn";
 	status = "okay";
+
+	interrupts-extended = <&intc GIC_SPI 265 IRQ_TYPE_EDGE_RISING>,
+			      <&cdsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+			      <&cdsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+			      <&cdsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+			      <&cdsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
+			      <&cdsp_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
+	interrupt-names = "wdog", "fatal", "ready",
+			  "handover", "stop-ack", "shutdown-ack";
 };
 
 &remoteproc_mpss {
@@ -658,16 +866,43 @@
 	regulators-0 {
 		compatible = "qcom,rpm-pm6125-regulators";
 
-		vdd-s1-supply = <&vph_pwr>;
-		vdd-s2-supply = <&vph_pwr>;
-		vdd-s3-supply = <&vph_pwr>;
-		vdd-s4-supply = <&vph_pwr>;
-		vdd-s5-supply = <&vph_pwr>;
-		vdd-s6-supply = <&vph_pwr>;
-		vdd-s7-supply = <&vph_pwr>;
-		vdd-s8-supply = <&vph_pwr>;
-		vdd-s9-supply = <&vph_pwr>;
-		vdd-s10-supply = <&vph_pwr>;
+		vdd_s1-supply = <&vph_pwr>;
+		vdd_s2-supply = <&vph_pwr>;
+		vdd_s3-supply = <&vph_pwr>;
+		vdd_s4-supply = <&vph_pwr>;
+		vdd_s5-supply = <&vph_pwr>;
+		vdd_s6-supply = <&vph_pwr>;
+		vdd_s7-supply = <&vph_pwr>;
+		vdd_s8-supply = <&vph_pwr>;
+
+		vdd_l1_l7_l17_l18-supply = <&vreg_s6a_1p352>;
+		vdd_l2_l3_l4-supply = <&vreg_s6a_1p352>;
+		vdd_l5_l15_l19_l20_l21_l22-supply = <&vph_pwr>;
+		vdd_l6_l8-supply = <&vreg_s5a_0p848>;
+		vdd_l9_l11-supply = <&vreg_s7a_2p04>;
+		vdd_l10_l13_l14-supply = <&vreg_s7a_2p04>;
+		vdd_l12_l16-supply = <&vreg_s7a_2p04>;
+		vdd_l23_l24-supply = <&vph_pwr>;
+
+		vreg_s5a_0p848: s5 {
+			regulator-min-microvolt = <920000>;
+			regulator-max-microvolt = <1128000>;
+		};
+
+		vreg_s6a_1p352: s6 {
+			regulator-min-microvolt = <304000>;
+			regulator-max-microvolt = <1456000>;
+		};
+
+		vreg_s7a_2p04: s7 {
+			regulator-min-microvolt = <1280000>;
+			regulator-max-microvolt = <2040000>;
+		};
+
+		vreg_s8a_1p064: s8 {
+			regulator-min-microvolt = <1064000>;
+			regulator-max-microvolt = <1304000>;
+		};
 
 		vreg_l1a_1p0: l1 {
 			regulator-min-microvolt = <952000>;
@@ -680,7 +915,7 @@
 		};
 
 		vreg_l5a_2p96: l5 {
-			regulator-min-microvolt = <1800000>;
+			regulator-min-microvolt = <1648000>;
 			regulator-max-microvolt = <2960000>;
 			regulator-allow-set-load;
 		};
@@ -691,13 +926,12 @@
 		};
 
 		vreg_l7a_1p256: l7 {
-			regulator-min-microvolt = <1256000>;
-			regulator-max-microvolt = <1256000>;
-			regulator-always-on;
+			regulator-min-microvolt = <1200000>;
+			regulator-max-microvolt = <1200000>;
 		};
 
 		vreg_l8a_0p664: l8 {
-			regulator-min-microvolt = <640000>;
+			regulator-min-microvolt = <400000>;
 			regulator-max-microvolt = <640000>;
 		};
 
@@ -773,14 +1007,14 @@
 		};
 
 		vreg_l22a_2p96: l22 {
-			regulator-min-microvolt = <2960000>;
+			regulator-min-microvolt = <2952000>;
 			regulator-max-microvolt = <2960000>;
 			regulator-system-load = <100000>;
 			regulator-allow-set-load;
 		};
 
 		vreg_l23a_3p3: l23 {
-			regulator-min-microvolt = <3312000>;
+			regulator-min-microvolt = <3200000>;
 			regulator-max-microvolt = <3312000>;
 			regulator-allow-set-load;
 		};
@@ -816,7 +1050,59 @@
         vmmc-supply = <&vreg_l24a_2p96>;
         vqmmc-supply = <&vreg_l11a_1p8>;
 
+        non-removable;
+        supports-cqe;
+        cap-mmc-hw-reset;
+        mmc-ddr-1_8v;
+        mmc-hs200-1_8v;
+        mmc-hs400-1_8v;
+        mmc-hs400-enhanced-strobe;
+
+        interconnects = <&system_noc MASTER_SDCC_1 RPM_ALWAYS_TAG
+                         &bimc SLAVE_EBI_CH0 RPM_ALWAYS_TAG>,
+                        <&bimc MASTER_AMPSS_M0 RPM_ALWAYS_TAG
+                         &config_noc SLAVE_SDCC_1 RPM_ALWAYS_TAG>;
+
         status = "okay";
+};
+
+&scm {
+	qcom,dload-mode = <&tcsr_regs 0x13000>;
+
+	interconnects = <&system_noc MASTER_CRYPTO_CORE0 RPM_ACTIVE_TAG
+			 &bimc SLAVE_EBI_CH0 RPM_ACTIVE_TAG>;
+};
+
+&{/smp2p-mpss} {
+	wlan_smp2p_in: wlan-wpss-to-ap {
+		qcom,entry-name = "wlan";
+		interrupt-controller;
+		#interrupt-cells = <2>;
+	};
+
+	ipa_smp2p_out: ipa-1-out {
+		qcom,entry-name = "ipa";
+		#qcom,smem-state-cells = <1>;
+	};
+
+	ipa_smp2p_in: ipa-1-in {
+		qcom,entry-name = "ipa";
+		interrupt-controller;
+		#interrupt-cells = <2>;
+	};
+};
+
+&{/smp2p-cdsp} {
+	cdsp_rdbg_smp2p_out: rdbg5-out {
+		qcom,entry-name = "rdbg";
+		#qcom,smem-state-cells = <1>;
+	};
+
+	cdsp_rdbg_smp2p_in: rdbg5-in {
+		qcom,entry-name = "rdbg";
+		interrupt-controller;
+		#interrupt-cells = <2>;
+	};
 };
 
 &sdhc_2 {
@@ -828,6 +1114,18 @@
 	vqmmc-supply = <&vreg_l5a_2p96>;
 	no-sdio;
 	no-mmc;
+
+	sd-uhs-sdr12;
+	sd-uhs-sdr25;
+	sd-uhs-sdr50;
+	sd-uhs-sdr104;
+	sd-uhs-ddr50;
+
+	interconnects = <&system_noc MASTER_SDCC_2 RPM_ALWAYS_TAG
+			 &bimc SLAVE_EBI_CH0 RPM_ALWAYS_TAG>,
+			<&bimc MASTER_AMPSS_M0 RPM_ALWAYS_TAG
+			 &config_noc SLAVE_SDCC_2 RPM_ALWAYS_TAG>;
+
 	status = "okay";
 };
 
@@ -836,6 +1134,7 @@
 };
 
 &lpass_tlmm {
+
 	lpi_i2s2_active: lpi-i2s2-active-state {
 		sck-pins {
 			pins = "gpio10";
@@ -868,13 +1167,67 @@
 			drive-strength = <8>;
 			output-high;
 		};
+	};
 
-		ext-mclk1-pins {
-			pins = "gpio18";
-			function = "wsa_mclk";
+	lpi_qua_mi2s_active: lpi-qua-mi2s-active-state {
+		sck-pins {
+			pins = "gpio0";
+			function = "qua_mi2s_sclk";
 			bias-disable;
-			drive-strength = <16>;
+			drive-strength = <8>;
 			output-high;
+		};
+
+		ws-pins {
+			pins = "gpio1";
+			function = "qua_mi2s_ws";
+			bias-disable;
+			drive-strength = <8>;
+			output-high;
+		};
+
+		data0-pins {
+			pins = "gpio2";
+			function = "qua_mi2s_data";
+			bias-disable;
+			drive-strength = <8>;
+			output-high;
+		};
+
+		data1-pins {
+			pins = "gpio3";
+			function = "qua_mi2s_data";
+			bias-pull-down;
+			drive-strength = <2>;
+			input-enable;
+		};
+	};
+
+	lpi_ext_mclk0_b_active: lpi-ext_mclk0_b-active-state {
+		mclk-pins {
+			pins = "gpio5";
+			function = "ext_mclk0_b";
+			bias-disable;
+			drive-strength = <4>;
+			output-high;
+		};
+	};
+
+	lpi_dmic23_active: lpi-dmic23-active-state {
+		clk-pins {
+			pins = "gpio8";
+			function = "dmic23_clk";
+			bias-disable;
+			drive-strength = <8>;
+			output-high;
+		};
+
+		data-pins {
+			pins = "gpio9";
+			function = "dmic23_data";
+			bias-pull-down;
+			drive-strength = <8>;
+			input-enable;
 		};
 	};
 };
@@ -931,7 +1284,7 @@
 			pins = "gpio22", "gpio25", "gpio26", "gpio27", "gpio28";
 			function = "gpio";
 			drive-strength = <2>;
-			bias-disable;
+			bias-pull-up;
 		};
 
 		btn_pins {
@@ -1067,12 +1420,11 @@
 		input-enable;
 	};
 
-	es8326_pwr_default: es8326-pwr-default-state {
+	es8326_vdd_default: es8326-vdd-default-state {
 		pins = "gpio66";
 		function = "gpio";
 		drive-strength = <2>;
 		bias-disable;
-		output-high;
 	};
 
 	aw88261_left_irq_default: aw88261-left-irq-default-state {
@@ -1095,15 +1447,8 @@
 		pins = "gpio69";
 		function = "gpio";
 		drive-strength = <2>;
-		bias-disable;
-	};
-
-	ts_reset_default: ts-reset-default-state {
-		pins = "gpio68";
-		function = "gpio";
-		drive-strength = <2>;
-		bias-disable;
-		output-low;
+		bias-pull-up;
+		input-enable;
 	};
 
 	tcpc_irq_default: tcpc-irq-default-state {
@@ -1121,15 +1466,26 @@
 		bias-pull-up;
 		input-enable;
 	};
+
+	chg_en_default: chg-en-default-state {
+		pins = "gpio85";
+		function = "gpio";
+		drive-strength = <2>;
+		bias-pull-down;
+		output-low;
+	};
 };
 
 &usb {
 	status = "okay";
+	assigned-clock-rates = <19200000>, <133333333>;
 };
 
 &usb_dwc3 {
 	dr_mode = "otg";
 	maximum-speed = "super-speed";
+	/delete-property/ snps,dis_u2_susphy_quirk;
+    /delete-property/ snps,dis_enblslpm_quirk;
 
 	ports {
 		port@0 {
@@ -1325,6 +1681,30 @@
 		opp-2016000000 { opp-hz = /bits/ 64 <2016000000>; opp-peak-kBps = < 7216000>; };
 		opp-2112000000 { opp-hz = /bits/ 64 <2112000000>; opp-peak-kBps = < 8368000>; };
 	};
+
+	thermal-zones {
+		battery-thermal {
+			polling-delay-passive = <5000>;
+			polling-delay = <10000>;
+			thermal-sensors = <&fuel_gauge>;
+			linux,governor = "bang_bang";
+
+			trips {
+				battery_fan_on: battery-fan-on {
+					temperature = <40000>;
+					hysteresis = <5000>;
+					type = "active";
+				};
+			};
+
+			cooling-maps {
+				map0 {
+					trip = <&battery_fan_on>;
+					cooling-device = <&fan THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+				};
+			};
+		};
+	};
 };
 
 &cpu0 {
@@ -1374,4 +1754,110 @@
 	operating-points-v2 = <&cpu4_opp_table>;
 	interconnects = <&bimc MASTER_AMPSS_M0 RPM_ACTIVE_TAG
 			 &bimc SLAVE_EBI_CH0 RPM_ACTIVE_TAG>;
+};
+
+&soc {
+	psci_suspend_fallback: psci-suspend-fallback {
+		compatible = "qcom,psci-suspend-fallback";
+		qcom,suspend-state-id = <0x42000343>;
+		qcom,mpm-vmpm = <&apss_mpm>;
+	};
+};
+
+&cluster_0_sleep_0 {
+	arm,psci-suspend-param = <0x41000023>;
+};
+
+&cluster_1_sleep_0 {
+	arm,psci-suspend-param = <0x41000023>;
+};
+
+&cluster_0_sleep_1 {
+	arm,psci-suspend-param = <0x41000043>;
+	entry-latency-us = <640>;
+	exit-latency-us = <1664>;
+	min-residency-us = <8094>;
+};
+
+&cluster_1_sleep_1 {
+	arm,psci-suspend-param = <0x41000043>;
+	entry-latency-us = <800>;
+	exit-latency-us = <2118>;
+	min-residency-us = <7376>;
+};
+
+&little_cpu_sleep_0 {
+	entry-latency-us = <297>;
+	exit-latency-us = <324>;
+	min-residency-us = <1110>;
+};
+
+&big_cpu_sleep_0 {
+	entry-latency-us = <290>;
+	exit-latency-us = <376>;
+	min-residency-us = <1182>;
+};
+
+&{/cpus/domain-idle-states} {
+	cci_ret: cci-ret {
+		compatible = "domain-idle-state";
+		idle-state-name = "cci-ret";
+		arm,psci-suspend-param = <0x42000043>;
+		entry-latency-us = <108>;
+		exit-latency-us = <450>;
+		min-residency-us = <153>;
+	};
+
+	cci_pc: cci-pc {
+		compatible = "domain-idle-state";
+		idle-state-name = "cci-pc";
+		arm,psci-suspend-param = <0x42000343>;
+		entry-latency-us = <10831>;
+		exit-latency-us = <4506>;
+		min-residency-us = <15338>;
+	};
+};
+
+&{/psci} {
+	cci_ret_pd: power-domain-cci-ret {
+		#power-domain-cells = <0>;
+		power-domains = <&cci_pc_pd>;
+		domain-idle-states = <&cci_ret>;
+	};
+
+	cci_pc_pd: power-domain-cci-pc {
+		#power-domain-cells = <0>;
+		domain-idle-states = <&cci_pc>;
+	};
+};
+
+&cluster_0_pd { power-domains = <&cci_ret_pd>; };
+&cluster_1_pd { power-domains = <&cci_ret_pd>; };
+
+&mpm { power-domains = <&cci_pc_pd>; };
+
+&pm6125_rtc {
+	status = "okay";
+};
+
+&rpmpd_opp_table {
+	rpmpd_opp_retention: opp0a {
+		opp-level = <RPM_SMD_LEVEL_RETENTION>;
+	};
+
+	rpmpd_opp_retention_plus: opp0b {
+		opp-level = <RPM_SMD_LEVEL_RETENTION_PLUS>;
+	};
+};
+
+&qup_opp_table {
+	opp-75000000 {
+		required-opps = <&rpmpd_opp_retention>;
+	};
+};
+
+&mdp_opp_table {
+	opp-192000000 {
+		required-opps = <&rpmpd_opp_retention>;
+	};
 };

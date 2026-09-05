@@ -92,6 +92,15 @@ mapping:
     target_event:
       keyboard: KeyF1
 
+  - name: Home Key
+    source_events:
+      - evdev:
+          event_type: KEY
+          event_code: KEY_F24
+          value_type: button
+    target_event:
+      keyboard: KeyHome
+
   - name: Right Trigger
     source_events:
       - evdev:
@@ -142,7 +151,7 @@ mapping:
           value_type: button
     target_event:
       gamepad:
-        button: RightPaddle1
+        button: RightPaddle2
 
   - name: Left Paddle
     source_events:
@@ -152,7 +161,7 @@ mapping:
           value_type: button
     target_event:
       gamepad:
-        button: LeftPaddle1
+        button: LeftPaddle2
 
   - name: Right Stick
     source_events:
