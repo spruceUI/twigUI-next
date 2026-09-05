@@ -314,9 +314,7 @@ post_install() {
   enable_service debugconfig.service
   enable_service userconfig.service
   enable_service usercache.service
-  enable_service network-base.service
   enable_service systemd-timesyncd.service
   enable_service systemd-timesyncd-setup.service
-  enable_service systemd-resolved.service
   enable_service debug-shell.service
 }

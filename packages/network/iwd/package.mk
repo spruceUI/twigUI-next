@@ -35,7 +35,3 @@ post_makeinstall_target() {
       -e 's|^\(ConfigurationDirectory=.*\)$|#\1|g' \
       -i ${INSTALL}/usr/lib/systemd/system/iwd.service
 }
-
-post_install() {
-  enable_service iwd.service
-}

@@ -76,6 +76,5 @@ post_makeinstall_target() {
 }
 
 post_install() {
-  enable_service NetworkManager.service
   enable_service network-online.service
 }
