@@ -44,6 +44,10 @@
     </DDR3>
   </H700>
   <RK3326 dtb_prefix="rockchip">
+    <!-- NOTE: DO NOT ADD ANY NEW RK3326 IMAGES -->
+    <!-- see projects/ROCKNIX/devices/RK3326/packages/u-boot/package.mk, function generate_custom_extlinux_conf_files -->
+    <!-- By just adding a new dts, you get an extlinux.conf.<dev_name>.
+         Replace extlinux.conf with it, it's enough to boot your device. -->
     <a mkimage_options="dtb,bootscr,extlinux,uboot" fdt_type="fdtdir" fdt="/">
       <file>rk3326-anbernic-rg351m</file>
       <file>rk3326-anbernic-rg351v</file>
@@ -64,6 +68,7 @@
       <file>rk3326-batlexp-g350</file>
       <file>rk3326s-gkd-pixel2</file>
     </b>
+    <!-- NOTE: DO NOT ADD ANY NEW RK3326 IMAGES -->
   </RK3326>
   <RK3399 mkimage_options="dtb,extlinux,uboot" fdt="device_trees/rk3399-anbernic-rg552.dtb" fdt_type="fdt" dtb_prefix="rockchip">
     <file>rk3399-anbernic-rg552</file>
@@ -106,7 +111,7 @@
     <file short="airx-mq66b" full="MANGMI Air X MQ66B">sm6115-mangmi-air-x-mq66b</file>
     <file short="airx-mq65" full="MANGMI Air X MQ65">sm6115-mangmi-air-x-mq65</file>
   </SM6115>
-  <SM8250 mkimage_options="grub,dtb,abl" dtb_prefix="qcom">
+  <SM8250 mkimage_options="abl" dtb_prefix="qcom">
     <file short="rp5" full="Retroid Pocket 5" rotation="1">sm8250-retroidpocket-rp5</file>
     <file short="rpflip2" full="Retroid Pocket Flip2" rotation="1">sm8250-retroidpocket-flip2</file>
     <file short="rpmini" full="Retroid Pocket Mini" rotation="1">sm8250-retroidpocket-rpmini</file>
