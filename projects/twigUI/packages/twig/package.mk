@@ -2,10 +2,10 @@
 # Copyright (C) 2023 JELOS (https://github.com/JustEnoughLinuxOS)
 
 PKG_NAME="twig"
-PKG_VERSION="1cbc00f1d966c132ac27b203402ce0fe2e8b5670"
+PKG_VERSION="6343ba99dd33ef8789f7724c1c574b076969e0eb"
 PKG_LICENSE="Public Domain"
-PKG_SITE="https://github.com/Hairo/spruceOS/"
-PKG_URL="https://github.com/Hairo/spruceOS/archive/${PKG_VERSION}.tar.gz"
+PKG_SITE="https://github.com/spruceUI/spruceOS/"
+PKG_URL="https://github.com/spruceUI/spruceOS/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain Python3 emulators systemd"
 PKG_LONGDESC="twigUI SD card package"
 PKG_TOOLCHAIN="manual"
