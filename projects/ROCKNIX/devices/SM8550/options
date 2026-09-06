@@ -60,10 +60,10 @@
   # Additional Firmware to use ( )
   # Space separated list is supported,
   # e.g. FIRMWARE=""
-    FIRMWARE=""
+    FIRMWARE="extra-firmware"
 
   # Additional packages to install
-    ADDITIONAL_PACKAGES="gamepadcalibration screen-switch rocknix-abl inputplumber"
+    ADDITIONAL_PACKAGES="gamepadcalibration rocknix-abl inputplumber"
 
   # Debug tty path
     DEBUG_TTY="/dev/ttyMSM0"

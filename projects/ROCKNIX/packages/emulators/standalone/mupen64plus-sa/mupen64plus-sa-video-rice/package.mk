@@ -5,22 +5,25 @@
 
 PKG_NAME="mupen64plus-sa-video-rice"
 PKG_VERSION="470865c6c64bdb44645faa88eae59cd87ce561b6"
+PKG_SHA256="baa1fc034cc27d6c178d014794f8171817b9c96db5317feaede0d0d22e898676"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/mupen64plus/mupen64plus-video-rice"
 PKG_URL="https://github.com/mupen64plus/mupen64plus-video-rice/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain libpng SDL2 SDL2_net zlib freetype nasm:host mupen64plus-sa-core"
+PKG_DEPENDS_UNPACK="mupen64plus-sa-core"
 PKG_LONGDESC="mupen64plus-video-rice"
 PKG_LONGDESC="Mupen64Plus Standalone Rice Video Driver"
 PKG_TOOLCHAIN="manual"
 
 case ${DEVICE} in
-  RK3588|S922X|RK3399|RK3566*|SM8250|SM8550|SM8650|SM8750)
+  RK3588|S922X|RK3399|RK3566*|SM8250|SM8550|SM8650|SM8750|AMD64)
     PKG_DEPENDS_TARGET+=" mupen64plus-sa-simplecore"
+    PKG_DEPENDS_UNPACK+=" mupen64plus-sa-simplecore"
   ;;
 esac
 
 case ${DEVICE} in
-  SM8250|SM8550|SM8650|SM8750)
+  SM8250|SM8550|SM8650|SM8750|AMD64)
     PKG_DEPENDS_TARGET+=" ${OPENGL} glu libglvnd"
     export USE_GLES=0
   ;;

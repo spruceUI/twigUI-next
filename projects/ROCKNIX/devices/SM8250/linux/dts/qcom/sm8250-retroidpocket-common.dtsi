@@ -214,6 +214,9 @@
 		gpio = <&tlmm 7 GPIO_ACTIVE_HIGH>;
 		enable-active-high;
 
+		pinctrl-names = "default";
+		pinctrl-0 = <&fan_pwr_en_state>;
+
 		regulator-state-mem {
 			regulator-off-in-suspend;
 		};
@@ -836,6 +839,7 @@
 
 &mdss_dp {
 	status = "okay";
+	#sound-dai-cells = <0>;
 };
 
 &mdss_dp_out {
@@ -1094,7 +1098,7 @@
 	fan_pwm_active: fan-pwm-active-state {
 		pins = "gpio6";
 		function = "func1";
-        bias-disable;
+        bias-pull-down;
         power-source = <0>;
         output-low;
         qcom,drive-strength = <3>;
@@ -1127,6 +1131,10 @@
 
 	dai@2 {
 		reg = <2>;
+	};
+
+	dai@3 {
+		reg = <3>;
 	};
 };
 
@@ -1210,6 +1218,13 @@
 		};
 	};
 
+	mm4-dai-link {
+		link-name = "MultiMedia4";
+		cpu {
+			sound-dai = <&q6asmdai  MSM_FRONTEND_DAI_MULTIMEDIA4>;
+		};
+	};
+
 	wcd-playback-dai-link {
 		link-name = "WCD Playback";
 		cpu {
@@ -1245,6 +1260,19 @@
 
 		codec {
 			sound-dai = <&wcd938x 1>, <&swr2 0>, <&txmacro 0>;
+		};
+		platform {
+			sound-dai = <&q6routing>;
+		};
+	};
+
+	displayport-dai-link {
+		link-name = "DisplayPort Playback";
+		cpu {
+			sound-dai = <&q6afedai DISPLAY_PORT_RX>;
+		};
+		codec {
+			sound-dai = <&mdss_dp>;
 		};
 		platform {
 			sound-dai = <&q6routing>;
@@ -1301,6 +1329,13 @@
 		drive-strength = <16>;
 		output-low;
 		bias-pull-up;
+	};
+
+	fan_pwr_en_state: fan-pwr-en-state {
+		pins = "gpio7";
+		function = "gpio";
+		drive-strength = <2>;
+		bias-pull-down;
 	};
 
 	mcu_boot_default: mcu-boot-default-state {

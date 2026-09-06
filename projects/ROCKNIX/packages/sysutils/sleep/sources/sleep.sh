@@ -84,6 +84,11 @@ quirks() {
 case $1 in
   pre)
     if [ "$(get_setting wifi.enabled)" == "1" ]; then
+      # while still associated, so resume rejoins this network and not
+      # whichever saved profile NM happens to pick first
+      log $0 "Preferring the active WIFI network on reconnect."
+      wifictl pin >${EVENTLOG} 2>&1
+
       log $0 "Disabling WIFI."
       nohup wifictl disable >${EVENTLOG} 2>&1
     fi
@@ -114,7 +119,7 @@ case $1 in
     amixer -c 0 -M set "${DEVICE_AUDIO_MIXER}" ${DEVICE_VOLUME}% >${EVENTLOG} 2>&1
 
     BRIGHTNESS=$(get_setting display.brightness)
-    log $0 "Restoring brightness}."
+    log $0 "Restoring brightness to ${BRIGHTNESS}."
     brightness set ${BRIGHTNESS} >${EVENTLOG} 2>&1
 
     BRIGHTNESS_2=$(get_setting display.brightness2)
