@@ -39,6 +39,8 @@ Emu/N64/mupen64plus/libncurses.so.6
 Emu/N64/mupen64plus/libpng16.so.16
 Emu/N64/mupen64plus/libz.so.1
 Emu/NDS/drastic*
+Emu/NDS/dsperate.a30
+Emu/NDS/dsperate.dsperate-headless
 Emu/NDS/cheats/
 Emu/NDS/lib32_Brick/
 Emu/NDS/lib32_Flip/

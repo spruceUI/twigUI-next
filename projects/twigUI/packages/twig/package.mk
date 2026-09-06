@@ -28,7 +28,7 @@ copy_emulators() {
       dest=$(echo "$file" | jq -r '.dest')
       build_dir="$(get_build_dir $package)"
 
-      cp "$build_dir"/"$src" "${SPRUCE_DIR}"/"$dest"
+      cp -f "$build_dir"/"$src" "${SPRUCE_DIR}"/"$dest"
     done
 
   done < <(echo "$jsonf" | jq -c '.emulators[]')
@@ -93,5 +93,5 @@ makeinstall_target() {
 
 post_install() {
   add_user spruce x 0 0 "Root User" "/mnt/SDCARD" "/bin/sh"
-  ln -sf ../twig-splash.target ${INSTALL}/usr/lib/systemd/system/sysinit.target.wants/twig-splash.service
+  enable_service twig-splash.service
 }

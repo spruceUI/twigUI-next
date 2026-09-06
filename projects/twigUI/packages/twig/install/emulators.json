@@ -485,6 +485,12 @@
             ]
         },
         {
+            "package": "dsperate-sa",
+            "files": [
+                {"src": "dsperate", "dest": "/Emu/NDS/"}
+            ]
+        },
+        {
             "package": "drastic-trngaje-sa",
             "files": [
                 {"src": "drastic", "dest": "/Emu/NDS/"},
