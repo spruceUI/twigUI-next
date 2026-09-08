@@ -22,7 +22,6 @@ App/PortMaster/config.py
 App/PortMaster/pillow_offline
 App/PyUI/dll*/
 App/RetroArch32/
-App/Songo#5/
 Emu/A30PORTS/
 Emu/AMIGA/*.so*
 Emu/ARCADE/setalpha
