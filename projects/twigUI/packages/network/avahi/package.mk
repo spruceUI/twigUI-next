@@ -4,6 +4,7 @@
 
 PKG_NAME="avahi"
 PKG_VERSION="0.8"
+PKG_SHA256="c15e750ef7c6df595fb5f2ce10cac0fee2353649600e6919ad08ae8871e4945f"
 PKG_LICENSE="GPL"
 PKG_SITE="http://avahi.org/"
 PKG_URL="https://github.com/lathiat/avahi/archive/v${PKG_VERSION}.tar.gz"
@@ -55,6 +56,7 @@ PKG_CONFIGURE_OPTS_TARGET="py_cv_mod_gtk_=yes \
                            --disable-nls"
 
 pre_configure_target() {
+  cd ${PKG_BUILD}
   NOCONFIGURE=1 ./autogen.sh
 }
 

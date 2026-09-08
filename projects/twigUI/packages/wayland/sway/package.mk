@@ -64,7 +64,3 @@ post_makeinstall_target() {
       ;;
   esac
 }
-
-# post_install() {
-#   enable_service sway-touch.service
-# }

@@ -4,6 +4,7 @@
 
 PKG_NAME="systemd"
 PKG_VERSION="255.8"
+PKG_SHA256="e770b9c4b5e36c1badf94444a27c9cd427931251009e4363f3239ad45ff75f3d"
 PKG_LICENSE="LGPL2.1+"
 PKG_SITE="http://www.freedesktop.org/wiki/Software/systemd"
 PKG_URL="https://github.com/systemd/systemd-stable/archive/v${PKG_VERSION}.tar.gz"
@@ -66,7 +67,7 @@ PKG_MESON_OPTS_TARGET="--libdir=/usr/lib \
                        -Duserdb=false \
                        -Dhomed=false \
                        -Dnetworkd=false \
-                       -Dtimedated=false \
+                       -Dtimedated=true \
                        -Dtimesyncd=true \
                        -Dfirstboot=false \
                        -Drandomseed=false \
@@ -160,9 +161,6 @@ post_makeinstall_target() {
   # remove nspawn
   safe_remove ${INSTALL}/usr/bin/systemd-nspawn
   safe_remove ${INSTALL}/usr/lib/systemd/system/systemd-nspawn@.service
-
-  # remove timedatectl
-  safe_remove ${INSTALL}/usr/bin/timedatectl
 
   # remove unneeded generators
   for gen in ${INSTALL}/usr/lib/systemd/system-generators/*; do

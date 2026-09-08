@@ -8,7 +8,7 @@ PKG_SITE="https://github.com/nyanmisaka/ffmpeg-rockchip"
 PKG_DEPENDS_TARGET="toolchain zlib bzip2 openssl speex"
 PKG_LONGDESC="FFmpeg is a complete, cross-platform solution to record, convert and stream audio and video."
 
-PKG_VERSION="23ae84d74a4f1ac0cf744acb2e4f13f27946eb32"
+PKG_VERSION="d90e3a1c18d7929383cf88c1b3da2e2d1c966cbf"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
 PKG_PATCH_DIRS="rocknix"
 
@@ -153,7 +153,6 @@ configure_target() {
               --enable-avcodec \
               --enable-avformat \
               --enable-swscale \
-              --enable-postproc \
               --enable-avfilter \
               --disable-devices \
               --enable-pthreads \
@@ -162,11 +161,6 @@ configure_target() {
               --disable-gray \
               --enable-swscale-alpha \
               --disable-small \
-              --enable-dct \
-              --enable-fft \
-              --enable-mdct \
-              --enable-rdft \
-              --disable-crystalhd \
               ${PKG_FFMPEG_V4L2} \
               ${PKG_FFMPEG_VAAPI} \
               ${PKG_FFMPEG_VDPAU} \

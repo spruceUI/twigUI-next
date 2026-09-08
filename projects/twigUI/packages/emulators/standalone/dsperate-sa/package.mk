@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 PKG_NAME="dsperate-sa"
-PKG_VERSION="v1.9.0"
+PKG_VERSION="v1.10.0"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/beebono/DSperate/"
 PKG_URL="${PKG_SITE}/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain SDL2 libzip zip wayland"
+PKG_DEPENDS_TARGET="toolchain SDL2 libzip wayland"
 PKG_LONGDESC="An attempt at reimplementing DraStic-level performance with modern features"
 PKG_TOOLCHAIN="cmake"
 

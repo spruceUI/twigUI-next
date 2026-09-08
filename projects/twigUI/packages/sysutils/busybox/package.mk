@@ -5,11 +5,12 @@
 
 PKG_NAME="busybox"
 PKG_VERSION="1.36.1"
+PKG_SHA256="b8cc24c9574d809e7279c3be349795c5d5ceb6fdf19ca709f80cde50e47de314"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.busybox.net"
 PKG_URL="http://busybox.net/downloads/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
 PKG_DEPENDS_HOST="gcc:host"
-PKG_DEPENDS_TARGET="toolchain busybox:host dosfstools e2fsprogs zip usbutils parted procps-ng gptfdisk libtirpc"
+PKG_DEPENDS_TARGET="toolchain busybox:host dosfstools e2fsprogs usbutils parted procps-ng gptfdisk libtirpc"
 PKG_DEPENDS_INIT="toolchain libc:init glibc:init libtirpc"
 PKG_LONGDESC="BusyBox combines tiny versions of many common UNIX utilities into a single small executable."
 # busybox fails to build with GOLD support enabled with binutils-2.25

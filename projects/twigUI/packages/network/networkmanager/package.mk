@@ -3,10 +3,11 @@
 
 PKG_NAME="networkmanager"
 PKG_VERSION="1.51.4"
+PKG_SHA256="865a7cc5686a51d7efe81d7dcb3c5246bfa3b996a58629135354972804ff4d3c"
 PKG_LICENSE="GPL"
 PKG_SITE="https://gitlab.freedesktop.org/NetworkManager/NetworkManager"
 PKG_URL="https://download.gnome.org/sources/NetworkManager/1.51/NetworkManager-${PKG_VERSION}.tar.xz"
-PKG_DEPENDS_TARGET="toolchain glib dbus libndp nss nspr systemd util-linux readline ncurses"
+PKG_DEPENDS_TARGET="toolchain glib dbus libndp gnutls systemd util-linux readline ncurses"
 PKG_LONGDESC="Network connection manager (Ethernet and Wi-Fi; Wi-Fi via iwd backend)"
 PKG_TOOLCHAIN="meson"
 
@@ -53,12 +54,11 @@ PKG_MESON_OPTS_TARGET="
   -Dqt=false
   -Dreadline=auto
   -Dconfig_plugins_default=keyfile
-  -Dcrypto=nss
+  -Dcrypto=gnutls
 "
 
 post_makeinstall_target() {
   rm -rf ${INSTALL}/home
-#   rm -rf ${INSTALL}/mnt
   rm -rf ${INSTALL}/usr/include
   rm -rf ${INSTALL}/usr/lib/pkgconfig
   find ${INSTALL}/usr/lib -name "*.a" -delete

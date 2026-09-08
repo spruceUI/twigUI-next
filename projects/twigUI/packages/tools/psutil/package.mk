@@ -24,5 +24,5 @@ makeinstall_target() {
 }
 
 post_makeinstall_target() {
-  find ${INSTALL}/usr/lib/python*/site-packages/  -name "*.py" -exec rm -rf {} ";"
+  find ${INSTALL}/usr/lib/python*/site-packages/ -name "*.py" -exec rm -rf {} ";"
 }

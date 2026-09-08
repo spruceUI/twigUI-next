@@ -28,7 +28,7 @@ PKG_TOOLS="patchelf i2c-tools evtest rsync show_msg libgpiod"
 
 PKG_DEBUG="debug"
 
-PKG_GAMESUPPORT="rocknix-hotkey jstest-sdl gamecontrollerdb sdljoytest control-gen evsieve gptokeyb2"
+PKG_GAMESUPPORT="rocknix-hotkey jstest-sdl gamecontrollerdb sdljoytest evsieve gptokeyb2"
 
 PKG_NETWORK="iwd networkmanager netbase ethtool openssh iw wireless-regdb"
 
