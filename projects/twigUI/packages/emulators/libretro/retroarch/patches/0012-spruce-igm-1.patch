@@ -1,0 +1,192 @@
+diff --git a/Makefile.common b/Makefile.common
+index 57dabf5..f147cbd 100644
+--- a/Makefile.common
++++ b/Makefile.common
+@@ -238,6 +238,7 @@ endif
+ 
+ OBJ += frontend/frontend_driver.o \
+        retroarch.o \
++       spruce_igm.o \
+        runloop.o \
+        ui/ui_companion_driver.o \
+        camera/camera_driver.o \
+@@ -1049,6 +1050,7 @@ ifeq ($(HAVE_MENU), 1)
+ 
+    ifeq ($(HAVE_GFX_WIDGETS), 1)
+       DEFINES += -DHAVE_GFX_WIDGETS
++      DEFINES += -DHAVE_SPRUCE_IGM
+    endif
+ 
+    ifeq ($(HAVE_RGUI), 1)
+diff --git a/gfx/gfx_widgets.c b/gfx/gfx_widgets.c
+index 17d4b94..bfc4a87 100644
+--- a/gfx/gfx_widgets.c
++++ b/gfx/gfx_widgets.c
+@@ -38,6 +38,9 @@
+ #include "../configuration.h"
+ #include "../file_path_special.h"
+ #include "../msg_hash.h"
++#ifdef HAVE_SPRUCE_IGM
++#include "../spruce_igm.h"
++#endif
+ 
+ #include "../tasks/task_content.h"
+ #include "../tasks/tasks_internal.h"
+@@ -1576,6 +1579,18 @@ void gfx_widgets_frame(void *data)
+       video_st->current_video->set_viewport(
+             video_st->data, video_width, video_height, true, false);
+ 
++#ifdef HAVE_SPRUCE_IGM
++   /* Spruce IGM takes over the entire widget layer when active */
++   if (spruce_igm_is_active())
++   {
++      spruce_igm_frame(p_disp, userdata, video_width, video_height);
++      if (video_st->current_video && video_st->current_video->set_viewport)
++         video_st->current_video->set_viewport(
++               video_st->data, video_width, video_height, false, true);
++      return;
++   }
++#endif
++
+    /* Font setup */
+    font_driver_bind_block(p_dispwidget->gfx_widget_fonts.regular.font,
+          &p_dispwidget->gfx_widget_fonts.regular.raster_block);
+diff --git a/retroarch.c b/retroarch.c
+index b167283..9128500 100644
+--- a/retroarch.c
++++ b/retroarch.c
+@@ -196,6 +196,9 @@
+ #include "core.h"
+ #include "configuration.h"
+ #include "list_special.h"
++#ifdef HAVE_SPRUCE_IGM
++#include "spruce_igm.h"
++#endif
+ #ifdef HAVE_CHEATS
+ #include "cheat_manager.h"
+ #endif
+diff --git a/runloop.c b/runloop.c
+index 679517b..208a181 100644
+--- a/runloop.c
++++ b/runloop.c
+@@ -208,6 +208,9 @@
+ #include "configuration.h"
+ #include "list_special.h"
+ #include "core_option_manager.h"
++#ifdef HAVE_SPRUCE_IGM
++#include "spruce_igm.h"
++#endif
+ #ifdef HAVE_CHEATS
+ #include "cheat_manager.h"
+ #endif
+@@ -6006,15 +6009,26 @@ static enum runloop_state_enum runloop_check_state(
+ 
+       if (pressed && !old_pressed)
+       {
+-         bool core_is_running    = runloop_st->flags & RUNLOOP_FLAG_CORE_RUNNING;
+-
+-         if (menu_st->flags & MENU_ST_FLAG_ALIVE)
++#ifdef HAVE_SPRUCE_IGM
++         /* Spruce IGM intercepts menu toggle when enabled */
++         if (spruce_igm_is_enabled()
++               && !(menu_st->flags & MENU_ST_FLAG_ALIVE))
+          {
+-            if (rarch_is_initialized && !core_type_is_dummy && core_is_running)
+-               retroarch_menu_running_finished(false);
++            spruce_igm_toggle();
+          }
+          else
+-            retroarch_menu_running();
++#endif
++         {
++            bool core_is_running    = runloop_st->flags & RUNLOOP_FLAG_CORE_RUNNING;
++
++            if (menu_st->flags & MENU_ST_FLAG_ALIVE)
++            {
++               if (rarch_is_initialized && !core_type_is_dummy && core_is_running)
++                  retroarch_menu_running_finished(false);
++            }
++            else
++               retroarch_menu_running();
++         }
+       }
+       /* Initial menu toggle on startup */
+       else if (core_type_is_dummy && !(menu_st->flags & MENU_ST_FLAG_ALIVE))
+@@ -7321,6 +7335,11 @@ int runloop_iterate(void)
+          }
+ #endif
+          video_driver_cached_frame();
++#ifdef HAVE_SPRUCE_IGM
++         /* Process deferred IGM actions now that we're back
++          * in the runloop context (outside the render callback). */
++         spruce_igm_process_pending();
++#endif
+          goto end;
+       case RUNLOOP_STATE_MENU:
+ #if defined(HAVE_MENU) && defined(HAVE_NETWORKING)
+--- a/input/input_driver.c
++++ b/input/input_driver.c
+@@ -6525,6 +6525,52 @@
+    return result;
+ }
+ 
++/**
++ * input_driver_state_raw_joypad:
++ *
++ * Reads a joypad button for @port straight from the input driver, skipping
++ * the pipeline input_driver_state_wrapper() runs for the core: input remaps,
++ * port remapping and turbo.
++ *
++ * Anything that draws its own UI over a running game wants the button the
++ * player physically pressed, which is how RetroArch's own menu reads input.
++ * Going through the core path instead means a core or game remap moves the
++ * UI's buttons around, and a port remap sends them to a different port,
++ * leaving the UI unable to see any input at all.
++ **/
++int16_t input_driver_state_raw_joypad(unsigned port, unsigned id)
++{
++   input_driver_state_t *input_st          = &input_driver_st;
++   settings_t *settings                    = config_get_ptr();
++   const input_device_driver_t *joypad     = input_st->primary_joypad;
++#ifdef HAVE_MFI
++   const input_device_driver_t *sec_joypad = input_st->secondary_joypad;
++#else
++   const input_device_driver_t *sec_joypad = NULL;
++#endif
++   rarch_joypad_info_t joypad_info;
++
++   if (!settings || port >= MAX_USERS)
++      return 0;
++
++   joypad_info.joy_idx                     = settings->uints.input_joypad_index[port];
++   joypad_info.auto_binds                  = input_autoconf_binds[joypad_info.joy_idx];
++   joypad_info.axis_threshold              = settings->floats.input_axis_threshold;
++
++   return (int16_t)input_state_wrap(
++         input_st->current_driver,
++         input_st->current_data,
++         joypad,
++         sec_joypad,
++         &joypad_info,
++         (*input_st->libretro_input_binds),
++         (input_st->flags & INP_FLAG_KB_MAPPING_BLOCKED) ? true : false,
++         port,
++         RETRO_DEVICE_JOYPAD,
++         0,
++         id);
++}
++
+ #ifdef HAVE_HID
+ void *hid_driver_get_data(void)
+ {
+--- a/input/input_driver.h
++++ b/input/input_driver.h
+@@ -1152,6 +1152,8 @@
+ int16_t input_driver_state_wrapper(unsigned port, unsigned device,
+       unsigned idx, unsigned id);
+ 
++int16_t input_driver_state_raw_joypad(unsigned port, unsigned id);
++
+ void input_driver_collect_system_input(input_driver_state_t *input_st,
+       settings_t *settings, input_bits_t *current_bits);
+ 

@@ -8,7 +8,7 @@ PKG_SECTION="virtual"
 PKG_LONGDESC="Emulation metapackage."
 PKG_TOOLCHAIN="manual"
 
-PKG_EMUS="retroarch-spruce core-info portmaster dsperate-sa flycast-sa flycast2024-sa drastic-trngaje-sa ppsspp-spruce-sa"
+PKG_EMUS="retroarch core-info portmaster dsperate-sa flycast-sa flycast2024-sa drastic-trngaje-sa ppsspp-spruce-sa"
 
 LIBRETRO_CORES="a5200-lr ardens-lr atari800-lr bluemsx-lr cap32-lr chailove-lr chimerasnes-lr crocods-lr dosbox-pure-lr easyrpg-lr \
                 ecwolf-lr fake08-lr fbalpha2012-lr fbneo-lr fceumm-lr flycast2021-lr fmsx-lr freechaf-lr freeintv-lr fuse-lr \
