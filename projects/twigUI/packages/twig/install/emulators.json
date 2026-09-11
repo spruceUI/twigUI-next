@@ -511,9 +511,17 @@
             ]
         },
         {
-            "package": "ppsspp-spruce-sa",
+            "package": "ppsspp-sa",
             "files": [
-                {"src": "PPSSPPSDL_Pixel2", "dest": "/Emu/PSP/"}
+                {"src": "PPSSPPSDL_Pixel2", "dest": "/Emu/PSP/"},
+                {"src": "cheat.db", "dest": "/Emu/PSP/default_configs/Cheats/"},
+                {"src": "assets/", "dest": "/Emu/PSP/assets/"}
+            ]
+        },
+        {
+            "package": "yabasanshiro-sa",
+            "files": [
+                {"src": "yabasanshiro", "dest": "/Emu/SATURN/"}
             ]
         }
     ]

@@ -64,11 +64,11 @@ Emu/PS/lib*/
 Emu/PS/pcsx_*
 Emu/PS/plugins/
 Emu/PS/skin/
-Emu/PSP/assets/debugger/
+Emu/PSP/assets/
 Emu/PSP/libstdc++.so.6
 Emu/PSP/*(joy*|miyoo282_xpad_inputd|setalpha)
 Emu/PSP/PPSSPPSDL_[!Pi]*
-Emu/SATURN/lib64/!(libboost*|libicu*)
+Emu/SATURN/lib64/
 Emu/SATURN/.yabasanshiro/backup.bin
 Emu/SATURN/.yabasanshiro/yaba_input.cfg
 Emu/SATURN/input.cfg

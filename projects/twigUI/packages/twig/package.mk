@@ -28,7 +28,7 @@ copy_emulators() {
       dest=$(echo "$file" | jq -r '.dest')
       build_dir="$(get_build_dir $package)"
 
-      cp -f "$build_dir"/"$src" "${SPRUCE_DIR}"/"$dest"
+      cp -rf "$build_dir"/"$src" "${SPRUCE_DIR}"/"$dest"
     done
 
   done < <(echo "$jsonf" | jq -c '.emulators[]')
