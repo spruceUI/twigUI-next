@@ -72,12 +72,12 @@ else
   PKG_CONFIGURE_OPTS_TARGET+=" --disable-opengles --disable-opengles3 --disable-opengles3_1 --disable-opengles3_2"
 fi
 
-if [ "${VULKAN_SUPPORT}" = "yes" ]; then
-  PKG_DEPENDS_TARGET+=" ${VULKAN}"
-  PKG_CONFIGURE_OPTS_TARGET+=" --enable-vulkan --enable-vulkan_display"
-else
-  PKG_CONFIGURE_OPTS_TARGET+=" --disable-vulkan"
-fi
+# if [ "${VULKAN_SUPPORT}" = "yes" ]; then
+#   PKG_DEPENDS_TARGET+=" ${VULKAN}"
+#   PKG_CONFIGURE_OPTS_TARGET+=" --enable-vulkan --enable-vulkan_display"
+# else
+#   PKG_CONFIGURE_OPTS_TARGET+=" --disable-vulkan"
+# fi
 
 pre_configure_target() {
   CFLAGS+=" -DHAVE_FILTERS_BUILTIN"
