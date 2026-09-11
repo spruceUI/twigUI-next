@@ -1,0 +1,95 @@
+diff -rupN ppsspp.orig/SDL/SDLMain.cpp ppsspp/SDL/SDLMain.cpp
+--- ppsspp.orig/SDL/SDLMain.cpp	2026-05-16 08:32:13.000000000 -0400
++++ ppsspp/SDL/SDLMain.cpp	2026-09-10 00:39:59.085560133 -0400
+@@ -62,6 +62,12 @@ SDLJoystick *joystick = NULL;
+ #include "Common/Data/Encoding/Utf8.h"
+ #include "Common/Thread/ThreadUtil.h"
+ #include "Common/StringUtils.h"
++// X11 headers (via SDL_syswm.h) #define Status as int, breaking enum class Status in SaveState.h
++#ifdef Status
++#undef Status
++#endif
++#include "Core/SaveState.h"
++#include "Core/ELF/ParamSFO.h"
+ #include "Core/System.h"
+ #include "Core/Core.h"
+ #include "Core/Config.h"
+@@ -94,6 +100,18 @@ GlobalUIState GetUIState();
+ static bool g_QuitRequested = false;
+ static bool g_RestartRequested = false;
+ 
++static volatile sig_atomic_t g_saveAndQuit = 0;
++
++static void saveAndQuitHandler(int) {
++	g_saveAndQuit = 1;
++}
++
++static volatile sig_atomic_t g_togglePauseMenu = 0;
++
++static void togglePauseMenuHandler(int) {
++	g_togglePauseMenu = 1;
++}
++
+ static int g_DesktopWidth = 0;
+ static int g_DesktopHeight = 0;
+ static float g_DesktopDPI = 1.0f;
+@@ -1438,6 +1456,17 @@ int main(int argc, char *argv[]) {
+ 	if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
+ 		perror("Unable to ignore SIGPIPE");
+ 	}
++
++	// Register SIGUSR1 handler for external save-and-quit (spruceOS GameSwitcher)
++	struct sigaction sa = {};
++	sa.sa_handler = saveAndQuitHandler;
++	sa.sa_flags = SA_RESTART;
++	sigemptyset(&sa.sa_mask);
++	sigaction(SIGUSR1, &sa, NULL);
++
++	// Register SIGUSR2 handler for external pause menu toggle (spruceOS home button)
++	sa.sa_handler = togglePauseMenuHandler;
++	sigaction(SIGUSR2, &sa, NULL);
+ #endif // HAVE_LIBNX
+ 
+ 	PROFILE_INIT();
+@@ -1824,6 +1853,21 @@ int main(int argc, char *argv[]) {
+ 			if (g_QuitRequested || g_RestartRequested)
+ 				break;
+ 
++			if (g_saveAndQuit) {
++				g_saveAndQuit = 0;
++				if (PSP_IsInited() && (GetUIState() == UISTATE_INGAME || GetUIState() == UISTATE_PAUSEMENU)) {
++					SaveState::SaveSlot(SaveState::GetGamePrefix(g_paramSFO), g_Config.iCurrentStateSlot,
++						[](auto, auto) { g_QuitRequested = true; });
++				} else {
++					g_QuitRequested = true;
++				}
++			}
++
++			if (g_togglePauseMenu) {
++				g_togglePauseMenu = 0;
++				System_PostUIMessage(UIMessage::REQUEST_GAME_PAUSE);
++			}
++
+ 			UpdateTextFocus();
+ 			UpdateSDLCursor();
+ 
+@@ -1843,6 +1887,19 @@ int main(int argc, char *argv[]) {
+ 				ProcessSDLEvent(window, event, &inputTracker);
+ 			}
+ 		}
++		if (g_saveAndQuit) {
++			g_saveAndQuit = 0;
++			if (PSP_IsInited() && (GetUIState() == UISTATE_INGAME || GetUIState() == UISTATE_PAUSEMENU)) {
++				SaveState::SaveSlot(SaveState::GetGamePrefix(g_paramSFO), g_Config.iCurrentStateSlot,
++					[](auto, auto) { g_QuitRequested = true; });
++			} else {
++				g_QuitRequested = true;
++			}
++		}
++		if (g_togglePauseMenu) {
++			g_togglePauseMenu = 0;
++			System_PostUIMessage(UIMessage::REQUEST_GAME_PAUSE);
++		}
+ 		if (g_QuitRequested || g_RestartRequested)
+ 			break;
+ 		if (emuThreadState == (int)EmuThreadState::DISABLED) {

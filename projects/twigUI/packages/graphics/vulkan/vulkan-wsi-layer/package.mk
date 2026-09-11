@@ -13,7 +13,7 @@ PKG_LONGDESC="Implements Vulkan extensions for Window System Integration inside 
 PKG_TOOLCHAIN="cmake"
 
 pre_configure_target() {
-  HEAP_NAME=cma-uncached
+  HEAP_NAME=linux,cma
 
   if [ "${ARCH}" = "aarch64" ]; then
     INCLUDE_ARCH=arm64
