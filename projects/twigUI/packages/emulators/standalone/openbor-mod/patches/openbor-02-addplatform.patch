@@ -1,0 +1,71 @@
+diff -rupN openbor-mod.orig/engine/Makefile openbor-mod/engine/Makefile
+--- openbor-mod.orig/engine/Makefile	2026-09-12 12:18:43.100224034 -0400
++++ openbor-mod/engine/Makefile	2026-09-12 12:43:15.610276056 -0400
+@@ -91,11 +91,58 @@ ARCHFLAGS       = -m64
+ LIBRARIES       = $(SDKPATH)/lib/$(GCC_TARGET)
+ CFLAGS          += -DAMD64
+ 
++
+ ifeq ($(BUILD_LINUX), 0)
+ BUILD_DEBUG     = 1
+ endif
+ endif
+ 
++ifdef BUILD_LINUX_x86_64
++TARGET 	        = $(VERSION_NAME).elf
++TARGET_FINAL    = $(VERSION_NAME)
++TARGET_PLATFORM = LINUX
++BUILD_SDL       = 1
++BUILD_GFX       = 1
++BUILD_PTHREAD   = 1
++BUILD_SDL_IO    = 1
++BUILD_OPENGL    = 1
++BUILD_LOADGL    = 1
++BUILD_VORBIS    = 1
++BUILD_WEBM      = 1
++BUILDING        = 1
++YASM 	          = nasm
++OBJTYPE         = elf
++INCLUDES        = $(SDKPATH)/usr/include \
++                  $(SDKPATH)/usr/include/SDL2
++TARGET_ARCH     = amd64
++BUILD_AMD64     = 1
++ARCHFLAGS       = -m64
++LIBRARIES       = $(SDKPATH)/usr/lib
++CFLAGS          += -DAMD64
++# Workaround for GCC 9
++CFLAGS          += -Wno-error=format-overflow -Wno-error=stringop-truncation
++endif
++
++ifdef BUILD_LINUX_aarch64
++TARGET 	        = $(VERSION_NAME).elf
++TARGET_FINAL    = $(VERSION_NAME)
++TARGET_PLATFORM = LINUX
++BUILD_LINUX     = 1
++BUILD_SDL       = 1
++BUILD_GFX       = 1
++BUILD_PTHREAD   = 1
++BUILD_SDL_IO    = 1
++BUILD_VORBIS    = 1
++BUILD_WEBM      = 1
++BUILDING        = 1
++INCLUDES        = $(SDKPATH)/usr/include \
++                  $(SDKPATH)/usr/include/SDL2
++OBJTYPE         = elf
++LIBRARIES       = $(SDKPATH)/usr/lib
++# Workaround for GCC 9
++CFLAGS          += -Wno-error=format-overflow -Wno-error=stringop-truncation -Wno-error=implicit-function-declaration -Wno-error=unused-variable -Wno-error=unused-label
++endif
++
+ ifdef BUILD_DARWIN
+ TARGET          = $(VERSION_NAME).elf
+ TARGET_FINAL    = $(VERSION_NAME)
+@@ -208,7 +255,7 @@ ifdef BUILD_WIN
+ STRIP 	        = strip$(EXTENSION) $(TARGET) -o $(TARGET_FINAL)
+ endif
+ ifdef BUILD_LINUX
+-STRIP 	        = strip $(TARGET) -o $(TARGET_FINAL)
++STRIP 	        = $(PREFIX)-strip $(TARGET) -o $(TARGET_FINAL)
+ endif
+ ifdef BUILD_DARWIN
+ STRIP           = $(PREFIX)strip $(TARGET) -o $(TARGET_FINAL)
