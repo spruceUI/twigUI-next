@@ -10,7 +10,7 @@ if [ ! -e "/storage/.configured" ]
 then
   log "Initializing configuration..."
   # Copy config files
-  rsync -a --ignore-existing --exclude={es_features.cfg,es_systems.cfg} /usr/config/* /storage/.config/ >/var/log/configure.log 2>&1
+  rsync -a --ignore-existing /usr/config/* /storage/.config/ >/var/log/configure.log 2>&1
 
   if [ -d "/usr/lib/autostart/quirks/platforms/${HW_DEVICE}/config" ]
   then
@@ -20,38 +20,6 @@ then
   if [ -d "/usr/lib/autostart/quirks/devices/${QUIRK_DEVICE}/config" ]
   then
     rsync -a /usr/lib/autostart/quirks/devices/"${QUIRK_DEVICE}"/config/* /storage/.config/ >>/var/log/configure.log 2>&1
-  fi
-
-  ### Apply developer ssh keys if they exist
-  if [ -e /usr/config/ssh/authorized_keys ]
-  then
-    log "Update developer keys..."
-    cp /usr/config/ssh/authorized_keys /storage/.ssh
-  fi
-  
-  ### Apply developer wifi config if they exist
-  if [ -d /usr/config/iwd ]
-  then
-    tocon "Update developer wifi config..."
-    cp /usr/config/iwd/* /storage/.cache/iwd/
-  fi
-
-  if [ -e "/usr/bin/emulationstation" ]
-  then
-    tocon "Installing themes..."
-    mkdir -p /storage/.config/emulationstation/themes  >/dev/null
-    ln -s /usr/share/themes/es-theme-art-book-next /storage/.config/emulationstation/themes/system-theme  >/dev/null 2>&1
-
-    ### Link the game controller database so it is managed with OS updates.
-    tocon "Configuring controller database..."
-    rm -f /storage/.config/SDL-GameControllerDB/gamecontrollerdb.txt  >/dev/null 2>&1
-    ln -s /usr/config/SDL-GameControllerDB/gamecontrollerdb.txt /storage/.config/SDL-GameControllerDB/gamecontrollerdb.txt  >/dev/null 2>&1
-
-    ### Remove and link es configs so they are managed with OS updates.
-    for es_cfg in es_features.cfg es_systems.cfg
-    do
-      ln -s /usr/config/emulationstation/${es_cfg} /storage/.config/emulationstation/${es_cfg}  >/dev/null 2>&1
-    done
   fi
 
   mkdir -p /storage/.config/modprobe.d  >/dev/null 2>&1
