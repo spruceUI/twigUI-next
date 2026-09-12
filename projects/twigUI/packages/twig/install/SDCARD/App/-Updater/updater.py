@@ -248,9 +248,11 @@ def extract_tar(archive):
     try:
         for m in members:
             if m.name.endswith(".tar"):
+                ui.image_and_text(LOGO, 35, 25, "Extracting ROOTFS/Kernel update files...")
                 tar.extract(m, path="/storage/.update/")
 
             if m.name.endswith(".7z"):
+                ui.image_and_text(LOGO, 35, 25, "Extracting spruceOS update file...")
                 tar.extract(m, path=SD_ROOT)
     except OSError:
         return False
