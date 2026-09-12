@@ -511,6 +511,18 @@
             ]
         },
         {
+            "package": "openbor",
+            "files": [
+                {"src": "OpenBOR_Pixel2", "dest": "/Emu/OPENBOR/"}
+            ]
+        },
+        {
+            "package": "openbor-mod",
+            "files": [
+                {"src": "OpenBOR_64_mod", "dest": "/Emu/OPENBOR/"}
+            ]
+        },
+        {
             "package": "ppsspp-sa",
             "files": [
                 {"src": "PPSSPPSDL_Pixel2", "dest": "/Emu/PSP/"},

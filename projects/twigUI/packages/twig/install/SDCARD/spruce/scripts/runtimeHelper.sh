@@ -147,7 +147,9 @@ unstage_archive() {
     ARC_DIR="/mnt/SDCARD/spruce/archives"
     STAGED_ARCHIVE="$1"
     TARGET="$2"
-    if [ -z "$TARGET_FOLDER" ] || [ "$TARGET_FOLDER" != "preCmd" ]; then TARGET="preMenu"; fi
+    # Only the two unpacker lanes are valid targets; anything else lands in
+    # the pre-menu lane.
+    if [ "$TARGET" != "preCmd" ]; then TARGET="preMenu"; fi
 
     if [ -f "$ARC_DIR/staging/$STAGED_ARCHIVE" ]; then
         log_message "$STAGED_ARCHIVE detected in spruce/archives/staging. Moving into place!"
@@ -155,20 +157,24 @@ unstage_archive() {
     fi
 }
 
+# These archives have always unpacked in the pre-menu lane: the target
+# argument used to be ignored, so "preCmd" here never took effect. Keep them
+# in preMenu; moving any of them to the background pre_cmd lane is a
+# deliberate boot-timing change, not a cleanup.
 unstage_archives_wanted() {
     if [ "$DISPLAY_WIDTH" = "640" ] && [ "$DISPLAY_HEIGHT" = "480" ]; then
-        unstage_archive "overlays_640x480.7z" "preCmd"
+        unstage_archive "overlays_640x480.7z" "preMenu"
     elif [ "$DISPLAY_WIDTH" = "1024" ] && [ "$DISPLAY_HEIGHT" = "768" ]; then
-        unstage_archive "overlays_1024x768.7z" "preCmd"
+        unstage_archive "overlays_1024x768.7z" "preMenu"
     fi
     if [ "$DEVICE_CAN_USE_EXTERNAL_CONTROLLER" = "true" ]; then
-        unstage_archive "autoconfig.7z" "preCmd"
+        unstage_archive "autoconfig.7z" "preMenu"
     fi
     if [ "$DEVICE_USES_64_BIT_RA" = "true" ]; then
-        unstage_archive "cores64.7z" "preCmd"
+        unstage_archive "cores64.7z" "preMenu"
     fi
     if [ "$DEVICE_HAS_32_BIT_RA" = "true" ] || [ "$DEVICE_USES_64_BIT_RA" != "true" ]; then
-        unstage_archive "cores32.7z" "preCmd"
+        unstage_archive "cores32.7z" "preMenu"
     fi
 }
 
@@ -194,6 +200,16 @@ Go to Apps and look for 'Update Available'" --okay
 set_volume_to_config() {
     vol=$(jq -r '.vol // empty' "$SYSTEM_JSON")
     [ -n "$vol" ] && set_volume "$vol"
+}
+
+# hardwareservice and the trimui blobs reset the mixer when they finish init, and
+# how long that takes moves with boot load, so one delayed restore can land first.
+restore_volume_after_audio_service() {
+    for _vol_delay in 1.5 2 4 8; do
+        sleep "$_vol_delay"
+        [ -e /tmp/sleep_helper_started ] && return 0   # a sleep owns the mixer
+        set_volume_to_config
+    done
 }
 
 UNPACK_STATE_FILE="/mnt/SDCARD/Saves/spruce/unpacker_state"
@@ -307,7 +323,7 @@ auto_resume_game() {
     # moving rather than copying prevents you from repeatedly reloading into a corrupted NDS save state;
     # copying is necessary for repeated save+shutdown/autoresume chaining though and is preferred when safe.
     MOVE_OR_COPY=cp
-    if grep -q "Roms/NDS" "${FLAGS_DIR}/lastgame.lock"; then MOVE_OR_COPY=mv; fi
+    # if grep -q "Roms/NDS" "${FLAGS_DIR}/lastgame.lock"; then MOVE_OR_COPY=mv; fi
 
     # runtimeHelper producer contract:
     # stage once and hand off; principal.sh owns execution and cleanup.
@@ -367,6 +383,13 @@ set_up_boot_action() {
                 else
                     log_message "Pico-8 binaries not found; booting to spruceUI instead."
                 fi
+                ;;
+            "NDS firmware")
+                log_message "Attempting to boot into Nintendo DS firmware via DSperate BootMenu.nds"
+                echo "\"/mnt/SDCARD/Emu/NDS/../../spruce/scripts/emu/standard_launch.sh\" \"/mnt/SDCARD/Roms/NDS/BootMenu.nds\"" > /tmp/cmd_to_run.sh
+                ;;
+            "PPSSPP")
+                echo "\"/mnt/SDCARD/App/PPSSPP/launch.sh\"" > /tmp/cmd_to_run.sh
                 ;;
             "Apotris"*)
                 log_message "Sun mode engaged."
