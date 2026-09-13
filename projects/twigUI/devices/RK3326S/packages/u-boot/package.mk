@@ -9,7 +9,7 @@ PKG_SITE="https://github.com/AveyondFly/u-boot"
 PKG_URL="${PKG_SITE}.git"
 PKG_GIT_CLONE_BRANCH="next-dev"
 GET_HANDLER_SUPPORT="git"
-PKG_DEPENDS_TARGET="toolchain Python3:host swig:host pyelftools:host"
+PKG_DEPENDS_TARGET="toolchain ncurses Python3:host swig:host pyelftools:host"
 PKG_LONGDESC="Das U-Boot is a cross-platform bootloader for embedded systems."
 PKG_TOOLCHAIN="manual"
 
@@ -28,6 +28,12 @@ pre_make_target() {
   PKG_BL31="${PKG_RKBIN}/bin/rk33/rk3326_bl31_v1.34.elf"
   PKG_BL32="${PKG_RKBIN}/bin/rk33/rk3326_bl32_v2.19.bin"
   PKG_DDR_BIN="${PKG_RKBIN}/bin/rk33/rk3326_ddr_333MHz_v2.11.bin"
+
+  if [ "${INTERACTIVE_CONFIG}" = "menuconfig" ]; then
+    setup_pkg_config_host
+    cp "${PKG_BUILD}"/configs/${PKG_UBOOT_CONFIG} "${PKG_BUILD}"/.config
+    DEBUG=${PKG_DEBUG} CROSS_COMPILE="${TARGET_KERNEL_PREFIX}" LDFLAGS="" ARCH=arm make menuconfig HOSTCC="${HOST_CC}" ${PKG_UBOOT_CONFIG}
+  fi
 }
 
 make_target() {
