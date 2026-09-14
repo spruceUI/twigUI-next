@@ -1,0 +1,51 @@
+From 340710fbfe37234de6dc6475eb31955b5f7fad06 Mon Sep 17 00:00:00 2001
+From: kk <405437445@qq.com>
+Date: Sun, 29 Mar 2026 18:27:31 +0800
+Subject: [PATCH] Fix GCC 14.2.0 compilation warnings
+
+- Remove -Werror flag to prevent warnings from becoming errors
+- Fix function return type declaration in command.c
+- Initialize variables in charge_animation.c to avoid uninitialized warnings
+
+Signed-off-by: ROCKNIX Builder <builder@rocknix.org>
+---
+ Makefile                         | 4 ++--
+ common/command.c                 | 2 +-
+ drivers/power/charge_animation.c | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 1012b065ad7..a912341f12b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -367,7 +367,7 @@ KBUILD_CPPFLAGS := -D__KERNEL__ -D__UBOOT__
+ KBUILD_CFLAGS   := -Wall -Wstrict-prototypes \
+ 		   -Wno-format-security \
+ 		   -fno-builtin -ffreestanding
+-KBUILD_CFLAGS	+= -fshort-wchar -Werror
++KBUILD_CFLAGS	+= -fshort-wchar 
+ KBUILD_AFLAGS   := -D__ASSEMBLY__
+ 
+ # Read UBOOTRELEASE from include/config/uboot.release (if it exists)
+@@ -622,7 +622,7 @@ endif
+ endif
+ 
+ # Prohibit date/time macros, which would make the build non-deterministic
+-KBUILD_CFLAGS   += $(call cc-option,-Werror=date-time)
++KBUILD_CFLAGS   += $(call cc-option,=date-time)
+ 
+ include scripts/Makefile.extrawarn
+ 
+diff --git a/common/command.c b/common/command.c
+index 71715572659..001238a9fc7 100644
+--- a/common/command.c
++++ b/common/command.c
+@@ -501,7 +501,7 @@ static int cmd_call(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
+ 	return result;
+ }
+ 
+-enum command_ret_t cmd_process(int flag, int argc, char * const argv[],
++int cmd_process(int flag, int argc, char * const argv[],
+ 			       int *repeatable, ulong *ticks)
+ {
+ 	enum command_ret_t rc = CMD_RET_SUCCESS;

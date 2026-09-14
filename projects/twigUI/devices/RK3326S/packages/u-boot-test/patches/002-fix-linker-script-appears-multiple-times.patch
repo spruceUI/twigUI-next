@@ -1,0 +1,12 @@
+diff -rupN u-boot.orig/scripts/Makefile.lib u-boot/scripts/Makefile.lib
+--- u-boot.orig/scripts/Makefile.lib	2026-09-12 17:05:21.688722782 -0400
++++ u-boot/scripts/Makefile.lib	2026-09-12 17:09:00.854070985 -0400
+@@ -392,7 +392,7 @@ cmd_efi_ld = $(LD) -nostdlib -znocombrel
+ 
+ EFI_LDS_PATH = $(srctree)/arch/$(ARCH)/lib/$(EFI_LDS)
+ 
+-$(obj)/helloworld.so: $(EFI_LDS_PATH)
++# $(obj)/helloworld.so: $(EFI_LDS_PATH)
+ 
+ $(obj)/helloworld.so: $(obj)/helloworld.o arch/$(ARCH)/lib/$(EFI_CRT0) \
+ 		arch/$(ARCH)/lib/$(EFI_RELOC)
