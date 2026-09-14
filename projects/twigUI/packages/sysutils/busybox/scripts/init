@@ -456,20 +456,6 @@ set_consolefont() {
   fi
 }
 
-hdmi_con() {
-  if [ -f "/sys/class/extcon/hdmi/state" ]
-  then
-    HDMI="$(cat /sys/class/extcon/hdmi/state)"
-    if [ "${HDMI}" = "HDMI=1" ]
-    then
-      if [ -f "/sys/devices/virtual/graphics/fbcon/rotate" ]
-      then
-        echo 0 >/sys/devices/virtual/graphics/fbcon/rotate
-      fi
-    fi
-  fi
-}
-
 load_splash() {
   /usr/bin/fbv -c -i -y /flash/logo.bmp
 }
@@ -855,8 +841,6 @@ check_update() {
      ! [ -f "${UPDATE_TAR}" -o -f "${UPDATE_IMG_GZ}" -o -f "${UPDATE_IMG}" ]; then
     return 0
   fi
-
-  hdmi_con
 
   echo "${UPDATE_TAR} ${UPDATE_IMG} ${UPDATE_IMG_GZ}" 2>&1 | grep @DISTRONAME@ 2>&1 >/dev/null
   if [ "$?" -ne "0" ]
@@ -1335,14 +1319,6 @@ if [ "${STORAGE_NETBOOT}" = "yes" ]; then
 fi
 
 BACKUP_FILE=$(ls -1 /sysroot/storage/.restore/??????????????.tar 2>/dev/null | head -n 1)
-
-if [ -f /sysroot/storage/.please_resize_me ]; then
-  INIT_UNIT="--unit=fs-resize.target"
-elif [ -f /sysroot/storage/.cache/reset_oe -o -f /sysroot/storage/.cache/reset_xbmc ]; then
-  INIT_UNIT="--unit=factory-reset.target"
-elif [ -f "${BACKUP_FILE}" ]; then
-  INIT_UNIT="--unit=backup-restore.target"
-fi
 
 # stop output redirection
 [ -n "${TEE_PID}" ] && kill ${TEE_PID} &>/dev/null
