@@ -886,7 +886,6 @@
 	status = "disabled";
 };
 
-
 &emmc {
 	no-sdio;
 	no-sd;

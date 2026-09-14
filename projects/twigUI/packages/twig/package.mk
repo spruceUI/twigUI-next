@@ -93,5 +93,4 @@ makeinstall_target() {
 
 post_install() {
   add_user spruce x 0 0 "Root User" "/mnt/SDCARD" "/bin/sh"
-  enable_service twig-splash.service
 }

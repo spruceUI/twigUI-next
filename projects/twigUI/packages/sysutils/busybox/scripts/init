@@ -470,6 +470,10 @@ hdmi_con() {
   fi
 }
 
+load_splash() {
+  /usr/bin/fbv -c -i -y /flash/logo.bmp
+}
+
 do_reboot() {
   echo "System reboots now..."
 
@@ -1278,8 +1282,9 @@ for BOOT_STEP in \
     update_bootmenu \
     mount_sysroot \
     mount_storage \
+    load_splash \
     check_update \
-    prepare_sysroot 
+    prepare_sysroot
 do
   ${BOOT_STEP}
   [ -n "${DEBUG}" ] && break_after ${BOOT_STEP}

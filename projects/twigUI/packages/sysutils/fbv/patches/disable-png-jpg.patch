@@ -1,0 +1,25 @@
+diff -rupN fbv.orig/configure.ac fbv/configure.ac
+--- fbv.orig/configure.ac	2024-02-18 10:13:58.000000000 -0400
++++ fbv/configure.ac	2026-09-13 17:16:24.473037008 -0400
+@@ -20,21 +20,6 @@ AC_FUNC_MALLOC
+ AC_FUNC_MMAP
+ AC_CHECK_FUNCS([munmap select strerror])
+ 
+-# Checks for libraries.
+-AC_SEARCH_LIBS([png_create_read_struct], [png], [
+-	LIBS="-lpng"
+-	CFLAGS="$CFLAGS -DFBV_SUPPORT_PNG"
+-	], [
+-	]
+-)
+-
+-AC_SEARCH_LIBS([jpeg_create_decompress], [jpeg], [
+-	LIBS="-ljpeg"
+-	CFLAGS="$CFLAGS -DFBV_SUPPORT_JPEG"
+-	], [
+-	]
+-)
+-
+ CFLAGS="$CFLAGS -DFBV_SUPPORT_BMP"
+ 
+ AC_CONFIG_FILES([Makefile])

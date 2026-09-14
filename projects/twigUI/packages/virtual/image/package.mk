@@ -14,7 +14,7 @@ PKG_DEPENDS_TARGET="toolchain squashfs-tools:host dosfstools:host fakeroot:host 
                     p7zip file initramfs grep util-linux btrfs-progs zstd lz4 empty lzo libzip \
                     bash coreutils autostart quirks gzip six pyudev rocknix twig"
 
-PKG_UI_TOOLS="grim fbv"
+PKG_UI_TOOLS="grim"
 
 PKG_GRAPHICS="imagemagick SDL_image"
 
