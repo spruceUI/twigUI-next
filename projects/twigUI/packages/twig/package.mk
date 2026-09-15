@@ -2,7 +2,7 @@
 # Copyright (C) 2023 JELOS (https://github.com/JustEnoughLinuxOS)
 
 PKG_NAME="twig"
-PKG_VERSION="70a502b9a8ad534c522d10c1018e16c2a1121632"
+PKG_VERSION="c104be3fd54cb2a22e0f4083671ada31016caaf0"
 PKG_LICENSE="Public Domain"
 PKG_SITE="https://github.com/spruceUI/spruceOS/"
 PKG_URL="https://github.com/spruceUI/spruceOS/archive/${PKG_VERSION}.tar.gz"
