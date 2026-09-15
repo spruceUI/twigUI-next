@@ -1,0 +1,16 @@
+diff -rupN u-boot.orig/arch/arm/mach-rockchip/board.c u-boot/arch/arm/mach-rockchip/board.c
+--- u-boot.orig/arch/arm/mach-rockchip/board.c	2026-09-12 19:01:51.546060155 -0400
++++ u-boot/arch/arm/mach-rockchip/board.c	2026-09-14 21:42:51.752388427 -0400
+@@ -493,9 +493,9 @@ int board_late_init(void)
+ #ifdef CONFIG_ROCKCHIP_USB_BOOT
+ 	boot_from_udisk();
+ #endif
+-#ifdef CONFIG_DM_CHARGE_DISPLAY
+-	charge_display();
+-#endif
++// #ifdef CONFIG_DM_CHARGE_DISPLAY
++// 	charge_display();
++// #endif
+ 
+ #ifdef CONFIG_ROCKCHIP_MINIDUMP
+ 	rk_minidump_init();
