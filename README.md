@@ -77,5 +77,6 @@ It will go through the update process automatically! After it runs and a success
 
 - [The spruceOS team](https://github.com/spruceUI/spruceOS?tab=readme-ov-file#active-team-members)
 - [ROCKNIX](https://github.com/ROCKNIX/distribution), this project is a ROCKNIX fork and wouldn't exist without it.
+- [AURKNIX](https://github.com/AveyondFly/distribution_rocknix) for BSP patches, kernel config and some other device specific packages.
 - [christianhaitian](https://github.com/christianhaitian) for some emulator [build scripts](https://github.com/christianhaitian/rk3326_core_builds).
 - [RetroGFX](https://github.com/RetroGFX) for guidance setting up the build scripts and some patches from [UnofficialOS](https://github.com/RetroGFX/UnofficialOS).
