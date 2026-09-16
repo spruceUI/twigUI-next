@@ -18,10 +18,6 @@ App/Moonlight/
 App/PixelReader/libs*/
 App/PixelReader/reader32
 App/PixelReader/reader.gptk
-App/PortMaster/*.txt
-App/PortMaster/*.7z
-App/PortMaster/config.py
-App/PortMaster/pillow_offline
 App/PyUI/dll*/
 App/RetroArch32/
 Emu/A30PORTS/
@@ -113,7 +109,6 @@ spruce/rg2*/
 spruce/h700/
 spruce/miniloong/
 spruce/miyoomini/
-spruce/portmaster/
 spruce/smartpro/
 spruce/smartpros/
 spruce/zoneinfo/
