@@ -1,5 +1,5 @@
 # twigUI
-spruceOS for the GKD Pixel 2.
+spruceOS for the GKD Pixel 2
 
 In addition to all spruceOS features, there's a handful of changes for this device:
 
@@ -37,7 +37,7 @@ The installation process will wipe everything in your microSD card, make backups
 
 ### Manual Installation
 - Download [balenaEtcher](https://etcher.balena.io//#download-etcher)
-- Download an install image from the [releases page](https://github.com/spruceUI/twigUI/releases) and extract the .img file.
+- Download an install image from the [releases page](https://github.com/spruceUI/twigUI-next/releases) and extract the .img file.
 - Remove the microSD card from your handheld and insert it into a microSD card reader.
 - Run balenaEtcher, click on `Flash from file` and select the previously downloaded twigUI.img file.
 - Click on `Select target` and select the microSD card previously inserted.
@@ -50,7 +50,7 @@ Easiest way to update is using the `Check for updates` App with a compatible USB
 
 ### EZ Updater
 
-- Download the `twigUI_x.x.x_update.7z` file from the [latest release](https://github.com/spruceUI/twigUI/releases) in the releases page.
+- Download the `twigUI_x.x.x_update.7z` file from the [latest release](https://github.com/spruceUI/twigUI-next/releases) in the releases page.
 - Copy/paste this file directly onto the root of your microSD card (DO NOT EXTRACT THIS FILE).
 - Turn on your device.
 - Go to the "Apps" section and find the "EZ Updater" app and click on it.
@@ -61,7 +61,7 @@ It will go through the update process automatically! After it runs and a success
 
 - Turn off your handheld and remove the microSD card
 - Remove the microSD card from your handheld and insert it into a microSD card reader.
-- Download an update image from the [releases page](https://github.com/spruceUI/twigUI/releases) and extract it.
+- Download an update image from the [releases page](https://github.com/spruceUI/twigUI-next/releases) and extract it.
 - Open the `ROMS` partition (labeled as `twigUI` in windows) of your microSD card and remove everything except the following folders:
   - Roms
   - Saves
