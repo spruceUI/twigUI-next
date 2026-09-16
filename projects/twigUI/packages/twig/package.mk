@@ -63,10 +63,6 @@ make_target() {
   cat "${CONF_FILE}" | jq '.menuOptions."Battery Settings".idlemonChargingInMenu.selected = "30s"' | tee "${CONF_FILE}"
   cat "${CONF_FILE}" | jq '.menuOptions."Battery Settings".shutdownFromSleep.selected = "Off"' | tee "${CONF_FILE}"
 
-  # TODO: Check if this is needed
-  PS_CONF="${SPRUCE_DIR}/Emu/PS/config.json"
-  cat "${PS_CONF}" | jq '.menuOptions.Governor.selected = "Performance"' | tee "${PS_CONF}"
-
   # Create spruce 7z file
   ARCHIVE_FILE=${PKG_BUILD}/twigUI_SDCARD.7z
   7z a -t7z -mx=7 -mf- "${ARCHIVE_FILE}" "${SPRUCE_DIR}"/. > /dev/null
