@@ -5,7 +5,7 @@
 IMAGE_PATH="/mnt/SDCARD/spruce/imgs/update.png"
 BAD_IMG="/mnt/SDCARD/spruce/imgs/notfound.png"
 
-OTA_URL="https://api.github.com/repos/spruceUI/twigUI/releases/latest"
+OTA_URL="https://api.github.com/repos/spruceUI/twigUI-next/releases/latest"
 TMP_DIR="/mnt/SDCARD/App/-OTA/tmp"
 
 ##### FUNCTIONS #####
