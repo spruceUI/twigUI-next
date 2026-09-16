@@ -35,6 +35,17 @@ Not all of them were tested, a confirmed to work adapter you can get for cheap i
 > [!CAUTION]
 The installation process will wipe everything in your microSD card, make backups of any data you might want to preserve.
 
+### Automatic Installation
+- [You can use the new All-in-one installer tool!](https://github.com/spruceUI/spruceOS-Installer/releases/latest)
+- It downloads and flashes the latest TwigUI release and it available for Windows, Mac and Linux!
+- Just be sure to select TwigUI from the available options.
+
+> [!CAUTION]
+> After using the installer the first boot process needs to happen before setting up games and such.
+
+<img width="683" height="456" alt="twig" src="https://github.com/user-attachments/assets/afb2c699-11f1-4d10-ac5a-91e76718fd32" />
+
+
 ### Manual Installation
 - Download [balenaEtcher](https://etcher.balena.io//#download-etcher)
 - Download an install image from the [releases page](https://github.com/spruceUI/twigUI-next/releases) and extract the .img file.
