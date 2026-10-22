@@ -1,0 +1,59 @@
+Subject: [PATCH] rocknix-singleadc-joypad: rumble play callback must not sleep
+
+ff-memless calls play_effect under dev->event_lock with IRQs off, and from
+its timer in softirq context. Taking joypad->lock (a mutex) there can
+reschedule with the spinlock held and wedge the CPU. Store the level and
+queue the play worker, which already re-checks rumble_enabled and drives
+the PWM under joypad->lock. Without the mutex, play_effect can store a
+level after rumble_enable has cleared it, so the worker clears it again
+when rumble is disabled; otherwise resume would restart the motor.
+
+Also keep a stop request (both magnitudes zero) at zero, so that
+rumble-boost-weak/strong cannot hold the motor on after an effect ends.
+
+---
+diff --git a/rocknix-singleadc-joypad.c b/rocknix-singleadc-joypad.c
+index 051e7f9..acb40e0 100644
+--- a/rocknix-singleadc-joypad.c
++++ b/rocknix-singleadc-joypad.c
+@@ -298,6 +298,8 @@ static void joypad_vibrator_play_work(struct work_struct *work)
+ 					    struct joypad, play_work);
+ 	mutex_lock(&joypad->lock);
+ 	if (!joypad->rumble_enabled) {
++		/* play_effect may store a level after rumble_enable cleared it */
++		WRITE_ONCE(joypad->level, 0);
+ 		joypad_vibrator_stop(joypad);
+ 		mutex_unlock(&joypad->lock);
+ 		return;
+@@ -1066,20 +1068,23 @@ static int rumble_play_effect(struct input_dev *dev, void *data, struct ff_effec
+ 	if (effect->type != FF_RUMBLE)
+ 		 return 0;
+ 
+-	mutex_lock(&joypad->lock);
+-	if (!joypad->rumble_enabled) {
+-		mutex_unlock(&joypad->lock);
++	/*
++	 * ff-memless calls this under dev->event_lock with IRQs off, and from
++	 * its timer: it must not sleep, so no mutex here. The play worker
++	 * re-checks rumble_enabled and drives the PWM under joypad->lock.
++	 */
++	if (!READ_ONCE(joypad->rumble_enabled))
+ 		return 0; // Ignore rumble effects if disabled
+-	}
+ 
++	/* A stop request must stay zero, or a boost keeps the motor running. */
+ 	if (effect->u.rumble.strong_magnitude)
+ 		boosted_level = effect->u.rumble.strong_magnitude + joypad->boost_strong;
+-	else
++	else if (effect->u.rumble.weak_magnitude)
+ 		boosted_level = effect->u.rumble.weak_magnitude + joypad->boost_weak;
++	else
++		boosted_level = 0;
+ 
+-	joypad->level = (u16)CLAMP(boosted_level, 0, 0xffff);
+-
+-	mutex_unlock(&joypad->lock);
++	WRITE_ONCE(joypad->level, (u16)CLAMP(boosted_level, 0, 0xffff));
+ 
+ 	schedule_work(&joypad->play_work);
+ 	return 0;
