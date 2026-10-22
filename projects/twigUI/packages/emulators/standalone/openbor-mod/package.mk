@@ -7,7 +7,7 @@ PKG_NAME="openbor-mod"
 PKG_VERSION="4c8677c2a747b13dbf0e2f9162509ac14a138c9c"
 PKG_SITE="https://github.com/gonzalomvp/openbor"
 PKG_URL="${PKG_SITE}.git"
-PKG_DEPENDS_TARGET="toolchain SDL2 libogg libvorbisidec libvpx libpng"
+PKG_DEPENDS_TARGET="toolchain SDL2 SDL2_gfx libogg libvorbisidec libvpx libpng"
 PKG_LONGDESC="OpenBOR is the ultimate 2D side scrolling engine for beat em' ups, shooters, and more!"
 PKG_TOOLCHAIN="make"
 
