@@ -3,19 +3,18 @@
 # Copyright (C) 2023 JELOS (https://github.com/JustEnoughLinuxOS)
 
 PKG_NAME="ppsspp-sa"
-PKG_VERSION="1.20.2"
-PKG_LICENSE="GPLv2"
+PKG_VERSION="afbc66a318b86432642b532c575241f3716642ef" # v1.20.2
+CHEAT_DB_VERSION="7c9fe1ae71155626cea767aed53f968de9f4051f" # Update cheat.db (17/01/2026)
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="https://github.com/hrydgard/ppsspp"
-PKG_URL="${PKG_SITE}/releases/download/v${PKG_VERSION}/ppsspp-${PKG_VERSION}.tar.xz"
+PKG_URL="${PKG_SITE}.git"
 PKG_DEPENDS_TARGET="toolchain libzip SDL2 zlib"
-PKG_LONGDESC="A PSP emulator for Android, Windows, Mac, Linux and iOS, written in C++"
+PKG_LONGDESC="PPSSPPDL"
 
-CHEAT_DB_VERSION="7c9fe1ae71155626cea767aed53f968de9f4051f"
-
-PKG_CMAKE_OPTS_TARGET=" -DUSE_SYSTEM_FFMPEG=ON \
-                        -DUSE_FFMPEG=YES \
+PKG_CMAKE_OPTS_TARGET=" -DUSE_SYSTEM_FFMPEG=OFF \
                         -DCMAKE_BUILD_TYPE=Release \
                         -DCMAKE_SYSTEM_NAME=Linux \
+                        -DBUILD_SHARED_LIBS=OFF \
                         -DUSE_SYSTEM_LIBPNG=OFF \
                         -DANDROID=OFF \
                         -DWIN32=OFF \
