@@ -72,7 +72,7 @@
   # Additional packages to install
     EMULATION_DEVICE="no"
     BLUETOOTH_SUPPORT="no"
-    ADDITIONAL_PACKAGES="libmali charge-mode"
+    ADDITIONAL_PACKAGES="libmali charge-mode usb-adb"
     ADDITIONAL_PACKAGES_32BIT="libmali"
 
   # Debug tty path

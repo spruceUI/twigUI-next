@@ -1,0 +1,136 @@
+#!/bin/sh
+# USB adb on the GKD Pixel 2's one USB-C port, under twigUI.
+#
+#   prepare   build the configfs gadget and mount FunctionFS (unit ExecStartPre)
+#   run       exec adbd in the foreground (unit ExecStart)
+#   sync      bind or release the UDC to match the port's role (unit
+#             ExecStartPost, and udev on every PHY extcon change)
+#   settle    sync repeatedly for 3 s (udev on android_usb DISCONNECTED)
+#   teardown  release the UDC, unmount, remove the gadget (unit ExecStopPost)
+#
+# The gadget is bound only while the PHY reports device role with VBUS
+# present. Anywhere else the UDC is left free, so the Wi-Fi dongle, pads and
+# other host-role devices see the port exactly as they do with no gadget.
+# The gadget is named rockchip with config b.1, the names spruce's USB Storage
+# Mode looks for: it adds its mass_storage.0 function to this gadget rather
+# than replacing it, and adb stays up beside the disk. sync binds whatever functions
+# are linked: a bus reset drops the composite gadget exactly as it drops adb
+# alone. A UDC held by any other gadget is never taken over.
+
+G=/sys/kernel/config/usb_gadget/rockchip
+FFS=/dev/usb-ffs/adb
+GADGETS=/sys/kernel/config/usb_gadget
+
+log() { logger -t usb-adb "$*"; }
+
+# Held until the script exits. udev can deliver several changes for one plug,
+# and sync, settle and teardown must not interleave.
+lock() {
+    exec 9>/run/usb-adb.lock
+    flock 9
+}
+
+udc_name() { ls /sys/class/udc 2>/dev/null | head -n1; }
+
+# State of one cable on the USB PHY's extcon device, by name: 1 or 0.
+cable() {
+    for c in /sys/devices/platform/*/*usb2-phy*/extcon/extcon*/cable.*; do
+        [ "$(cat "$c/name" 2>/dev/null)" = "$1" ] && { cat "$c/state"; return; }
+    done
+    echo 0
+}
+
+# The gadget other than ours that holds the UDC, if any.
+udc_holder() {
+    for g in "$GADGETS"/*; do
+        [ "$g" = "$G" ] && continue
+        [ -n "$(cat "$g/UDC" 2>/dev/null)" ] && { echo "${g##*/}"; return; }
+    done
+}
+
+prepare() {
+    grep -q ' /sys/kernel/config ' /proc/mounts || mount -t configfs none /sys/kernel/config
+    mkdir -p $G/strings/0x409 $G/configs/b.1/strings/0x409 $G/functions/ffs.adb || return 1
+    # Rockchip's own adb vendor and product IDs.
+    echo 0x2207 > $G/idVendor
+    echo 0x0006 > $G/idProduct
+    echo 0x0200 > $G/bcdUSB
+    echo "GameKiddy" > $G/strings/0x409/manufacturer
+    echo "Pixel 2" > $G/strings/0x409/product
+    cut -c1-16 /etc/machine-id > $G/strings/0x409/serialnumber
+    echo "adb" > $G/configs/b.1/strings/0x409/configuration
+    [ -e $G/configs/b.1/ffs.adb ] || ln -s $G/functions/ffs.adb $G/configs/b.1/
+    mkdir -p $FFS
+    grep -q " $FFS " /proc/mounts || mount -t functionfs adb $FFS
+}
+
+run() {
+    # adbd serves USB only if FunctionFS ep0 exists when it starts, which
+    # prepare guarantees; otherwise it listens on TCP 5555.
+    exec /usr/bin/adbd
+}
+
+# $1: how many 0.1 s ticks to wait for adbd's descriptors before giving up.
+sync_locked() {
+    udc=$(udc_name)
+    [ -n "$udc" ] || return 0
+    # No gadget means the service is stopped or not yet prepared.
+    [ -d $G ] || return 0
+    bound=$(cat $G/UDC 2>/dev/null)
+    if [ "$(cable USB)" = 1 ] && [ "$(cable USB-HOST)" = 0 ]; then
+        [ -n "$bound" ] && return 0
+        holder=$(udc_holder)
+        if [ -n "$holder" ]; then
+            log "device role, UDC held by $holder; not binding"
+            return 0
+        fi
+        # adbd creates ep1 and ep2 once it has written its descriptors to
+        # ep0. A FunctionFS function cannot bind before that.
+        i=0
+        while [ ! -e $FFS/ep1 ] && [ $i -lt "$1" ]; do sleep 0.1; i=$((i + 1)); done
+        if [ ! -e $FFS/ep1 ]; then
+            [ "$1" -gt 0 ] && log "device role, adbd has not written its descriptors; not binding"
+            return 1
+        fi
+        echo "$udc" > $G/UDC && log "device role: bound $udc"
+    elif [ -n "$bound" ]; then
+        echo "" > $G/UDC && log "USB=$(cable USB) USB-HOST=$(cable USB-HOST): released $udc"
+    fi
+}
+
+sync_port() {
+    lock
+    sync_locked 50
+}
+
+# On a bus reset adbd closes and reopens its FunctionFS files, and closing ep0
+# makes the kernel drop the gadget from the UDC with no extcon change. The
+# android_usb DISCONNECTED uevent may arrive before or after that drop, so
+# keep re-syncing for a short while rather than once. This loop is the wait:
+# each pass waits 0 ticks on adbd, so a stopped adbd cannot hold the lock and
+# the udev worker for 15 full descriptor waits.
+settle() {
+    lock
+    i=0
+    while [ $i -lt 15 ]; do
+        sync_locked 0
+        sleep 0.2
+        i=$((i + 1))
+    done
+}
+
+teardown() {
+    lock
+    echo "" > $G/UDC 2>/dev/null
+    umount $FFS 2>/dev/null
+    rm -f $G/configs/b.1/ffs.adb
+    rmdir $G/configs/b.1/strings/0x409 $G/configs/b.1 $G/functions/ffs.adb $G/strings/0x409 $G 2>/dev/null
+    return 0
+}
+
+case "$1" in
+    prepare|run|teardown) "$1" ;;
+    sync) sync_port ;;
+    settle) settle ;;
+    *) echo "usage: $0 prepare|run|sync|settle|teardown" >&2; exit 2 ;;
+esac

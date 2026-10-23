@@ -1,0 +1,5 @@
+# Bind or release the adb gadget whenever the USB PHY's cable state changes.
+ACTION=="change", SUBSYSTEM=="extcon", DEVPATH=="*usb2-phy*", RUN+="/usr/bin/usb-adb sync"
+# A bus reset makes adbd reopen FunctionFS, which drops the gadget from the
+# UDC. Rebind once adbd has rewritten its descriptors.
+ACTION=="change", SUBSYSTEM=="android_usb", ENV{USB_STATE}=="DISCONNECTED", RUN+="/usr/bin/usb-adb settle"

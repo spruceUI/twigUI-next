@@ -1,0 +1,15 @@
+[Unit]
+Description=adb on the USB-C port
+After=local-fs.target
+
+[Service]
+Type=simple
+ExecStartPre=/usr/bin/usb-adb prepare
+ExecStart=/usr/bin/usb-adb run
+ExecStartPost=-/usr/bin/usb-adb sync
+ExecStopPost=/usr/bin/usb-adb teardown
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
