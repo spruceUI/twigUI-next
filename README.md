@@ -27,9 +27,6 @@ Only single function (no wifi+bluetooth) adapters that use the following chipset
 
 Not all of them were tested, a confirmed to work adapter you can get for cheap is the TL-WN725N. Sleep disables the usb host driver so you need to restart to use wifi after using sleep.
 
-## Known issues
-- Charging with the device off doesn't work properly, please turn on the device to charge it.
-
 ## Installation
 
 > [!CAUTION]
@@ -83,6 +80,17 @@ It will go through the update process automatically! After it runs and a success
 - Copy the extracted files from the update .7z file into the `ROMS`  partition (labeled as `twigUI` in windows) of the microSD card.
 - When prompted, allow the new files to replace the existing ones.
 - Once the copying process is done remove the microSD card from the reader, insert it into your handheld and long press the power button to power it up.
+
+## Build
+
+To build twigUI clone the repo and run:
+
+```
+make docker-image-build
+make docker-RK3326S
+```
+
+First build can take several hours and 120GB+ storage, subsequent builds will be faster.
 
 ## Special thanks
 
