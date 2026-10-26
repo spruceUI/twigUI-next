@@ -58,7 +58,8 @@ Emu/NDS/resources/bg/1024x768/
 Emu/NDS/resources/bg/1280x720/
 Emu/OPENBOR/lib*/
 Emu/OPENBOR/OpenBOR_*
-Emu/PICO8/lib-*
+Emu/PICO8/lib-[!igm]*
+Emu/PICO8/lib-igm/pico8-igm-armhf.so
 Emu/PS/.pcsx/
 Emu/PS/lib*/
 Emu/PS/pcsx_*
@@ -102,6 +103,7 @@ spruce/bin64/*(7zr|busybox|curl|evtest|fb*|gesftpserver|gpiowait|htop|iperf*|joy
 spruce/bin64/*(ldd|mkfs.fat|nsupdate|*nano|rsync|scp|sdl2imgshow|setsharedm*|ssh-*|tcpdump|wget|xz|zip*)
 spruce/a30/
 spruce/brick/
+spruce/brickpro/
 spruce/FIRMWARE_UPDATE/
 spruce/flip/
 spruce/rg3*/
