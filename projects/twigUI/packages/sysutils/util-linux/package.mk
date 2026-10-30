@@ -58,6 +58,8 @@ PKG_CONFIGURE_OPTS_TARGET="${UTILLINUX_CONFIG_DEFAULT} \
                            --enable-blkdiscard \
                            --enable-schedutils \
                            --enable-lscpu \
+                           --enable-libfdisk \
+                           --enable-fdisks \
                            --enable-fallocate"
 
 if [ "${SWAP_SUPPORT}" = "yes" ]; then
