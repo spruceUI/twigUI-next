@@ -14,47 +14,41 @@ show_msg 640 480 "${MSG1}" &
 sleep 2
 
 # Get partition info
-echo "INFO:" >> $LOG 2>&1
-echo $(grep "/mnt/SDCARD " /proc/mounts) >> $LOG
-PART=$(grep "/mnt/SDCARD " /proc/mounts | cut -d" " -f1 | grep '[0-9]$')
-PARTNUM="${PART: -1}"
+echo "INFO:" >> $LOG
+echo $(grep "/mnt/SDCARD " /proc/mounts) >> $LOG 2>&1
+
+PART="/dev/mmcblk0p3"
 DISK=$(echo $PART | sed s/p[0-9]$//g)
+END=$(parted -m $DISK print | grep "ext4" | cut -d":" -f3)
 
 # Start process
-echo "DISK: $DISK  PART: $PART" >> $LOG
+echo "DISK: $DISK  PART: $PART  END: $END" >> $LOG
 
-umount $PART
-echo "Running parted..." >> $LOG 2>&1
-parted -s -f -m $DISK resizepart $PARTNUM 100% >> $LOG 2>&1
+echo "Creating partition..." >> $LOG
+parted -s -f -m $DISK mkpart primary fat32 $END 100% >> $LOG 2>&1
 
-echo "Running e2fsck..." >> $LOG 2>&1
-e2fsck -f -p $PART >> $LOG 2>&1
-
-echo "Running resize2fs..." >> $LOG 2>&1
-resize2fs $PART >> $LOG 2>&1
-
-echo "Running mkfs.fat..." >> $LOG 2>&1
+echo "Formatting partition to FAT32..." >> $LOG
 mkfs.fat -F32 -n TWIGUI $PART >> $LOG 2>&1
 
 echo "Syncing..." >> $LOG 2>&1
-
 sync
+
 pkill show_msg
 
 # -------------------------------- Extract .7z
 show_msg 640 480 "${MSG2}" &
 
-echo "Mounting filesystem..." >> $LOG 2>&1
+echo "Mounting filesystem..." >> $LOG
 mount -o "rw,noatime" LABEL=TWIGUI /mnt/SDCARD
 
-echo "Extracting install file..." >> $LOG 2>&1
+echo "Extracting install file..." >> $LOG
 7zr x -o/mnt/SDCARD/ /flash/twigUI_SDCARD.7z >> $LOG 2>&1
 
-echo "Cleaning up install file..." >> $LOG 2>&1
+echo "Cleaning up install file..." >> $LOG
 rm /flash/twigUI_SDCARD.7z
 
 # -------------------------------- Cleanup
-echo "Done." >> $LOG 2>&1
+echo "Done." >> $LOG
 rm /flash/first_run.txt
 mount -o remount,ro /flash
 

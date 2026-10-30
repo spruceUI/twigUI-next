@@ -75,18 +75,14 @@ echo "image: creating partitions..."
 SYSTEM_PART_END=$((${SYSTEM_PART_START} + (${SYSTEM_SIZE} * 1024 * 1024 / 512) - 1))
 STORAGE_PART_START=$((${SYSTEM_PART_END} + 1))
 STORAGE_PART_END=$((${STORAGE_PART_START} + (${STORAGE_SIZE} * 1024 * 1024 / 512) - 1))
-ROMS_PART_START=$((${STORAGE_PART_END} + 1))
-ROMS_PART_END=$((${ROMS_PART_START} + (32 * 1024 * 1024 / 512) - 1))
 
 if [ "${DISK_LABEL}" = "gpt" ]; then
   parted -s "${DISK}" -a min unit s mkpart system fat32 ${SYSTEM_PART_START} ${SYSTEM_PART_END}
   parted -s "${DISK}" -a min unit s mkpart storage ext4 ${STORAGE_PART_START} ${STORAGE_PART_END}
-  parted -s "${DISK}" -a min unit s mkpart storage ext4 ${ROMS_PART_START} ${ROMS_PART_END}
   parted -s "${DISK}" set 1 legacy_boot on
 else
   parted -s "${DISK}" -a min unit s mkpart primary fat32 ${SYSTEM_PART_START} ${SYSTEM_PART_END}
   parted -s "${DISK}" -a min unit s mkpart primary ext4 ${STORAGE_PART_START} ${STORAGE_PART_END}
-  parted -s "${DISK}" -a min unit s mkpart primary ext4 ${ROMS_PART_START} ${ROMS_PART_END}
   parted -s "${DISK}" set 1 boot on
 fi
 sync
@@ -96,19 +92,6 @@ if [ "${BOOTLOADER}" = "syslinux" ]; then
   echo "image: writing mbr..."
   dd bs=440 count=1 conv=fsync,notrunc if="${TOOLCHAIN}/share/syslinux/gptmbr.bin" of="${DISK}" >"${SAVE_ERROR}" 2>&1 || show_error
 fi
-
-# create part3 to format and copy files
-echo "image: creating sparse file for part3..."
-ROMS_PART_COUNT=$((${ROMS_PART_END} - ${ROMS_PART_START} + 1))
-sync
-dd if="${DISK}" of="${IMG_TMP}/part3.ext4" bs=512 count=0 seek="${ROMS_PART_COUNT}" conv=fsync >"${SAVE_ERROR}" 2>&1 || show_error
-
-# create filesystem on part3
-echo "image: creating filesystem on part3..."
-mke2fs -F -q -t ext4 -T ext4 -O ^orphan_file -m 0 "${IMG_TMP}/part3.ext4"
-tune2fs -L "TWIGUI" -U ${UUID_STORAGE} "${IMG_TMP}/part3.ext4" >"${SAVE_ERROR}" 2>&1 || show_error
-e2fsck -n "${IMG_TMP}/part3.ext4" >"${SAVE_ERROR}" 2>&1 || show_error
-sync
 
 # create part2 to format and copy files
 echo "image: creating sparse file for part2..."
@@ -130,10 +113,6 @@ sync
 # populatefs -U -d "${IMG_TMP}/part2.fs" "${IMG_TMP}/part2.ext4" >"${SAVE_ERROR}" 2>&1 || show_error
 # sync
 # e2fsck -n "${IMG_TMP}/part2.ext4" >"${SAVE_ERROR}" 2>&1 || show_error
-
-# merge part3 into disk image
-echo "image: merging part3 into disk image..."
-dd if="${IMG_TMP}/part3.ext4" of="${DISK}" bs=512 seek="${ROMS_PART_START}" conv=fsync,notrunc >"${SAVE_ERROR}" 2>&1 || show_error
 
 # merge part2 into disk image
 echo "image: merging part2 into disk image..."
