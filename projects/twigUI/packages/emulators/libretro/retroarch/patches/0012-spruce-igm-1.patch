@@ -2,11 +2,13 @@ diff --git a/Makefile.common b/Makefile.common
 index 57dabf5..f147cbd 100644
 --- a/Makefile.common
 +++ b/Makefile.common
-@@ -238,6 +238,7 @@ endif
+@@ -238,6 +238,9 @@ endif
  
  OBJ += frontend/frontend_driver.o \
         retroarch.o \
 +       spruce_igm.o \
++       spruce_igm_theme.o \
++       spruce_igm_items.o \
         runloop.o \
         ui/ui_companion_driver.o \
         camera/camera_driver.o \
@@ -112,18 +114,6 @@ index 679517b..208a181 100644
        }
        /* Initial menu toggle on startup */
        else if (core_type_is_dummy && !(menu_st->flags & MENU_ST_FLAG_ALIVE))
-@@ -7321,6 +7335,11 @@ int runloop_iterate(void)
-          }
- #endif
-          video_driver_cached_frame();
-+#ifdef HAVE_SPRUCE_IGM
-+         /* Process deferred IGM actions now that we're back
-+          * in the runloop context (outside the render callback). */
-+         spruce_igm_process_pending();
-+#endif
-          goto end;
-       case RUNLOOP_STATE_MENU:
- #if defined(HAVE_MENU) && defined(HAVE_NETWORKING)
 --- a/input/input_driver.c
 +++ b/input/input_driver.c
 @@ -6525,6 +6525,52 @@
@@ -190,3 +180,4 @@ index 679517b..208a181 100644
  void input_driver_collect_system_input(input_driver_state_t *input_st,
        settings_t *settings, input_bits_t *current_bits);
  
+ #if defined(HAVE_MENU) && defined(HAVE_NETWORKING)

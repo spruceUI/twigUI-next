@@ -1,0 +1,50 @@
+diff --git a/libretro-common/include/net/net_socket_ssl.h b/libretro-common/include/net/net_socket_ssl.h
+index 1ed9ce1..2f02d5b 100644
+--- a/libretro-common/include/net/net_socket_ssl.h
++++ b/libretro-common/include/net/net_socket_ssl.h
+@@ -29,6 +29,12 @@
+ 
+ RETRO_BEGIN_DECLS
+ 
++/* Longest a TLS handshake read waits for the server before failing, so
++ * a silent peer cannot hold the thread forever. */
++#ifndef SSL_SOCKET_IO_TIMEOUT_MS
++#define SSL_SOCKET_IO_TIMEOUT_MS 30000
++#endif
++
+ void* ssl_socket_init(int fd, const char *domain);
+ 
+ int ssl_socket_connect(void *state_data, void *data, bool timeout_enable, bool nonblock);
+diff --git a/libretro-common/net/net_socket_ssl_mbed.c b/libretro-common/net/net_socket_ssl_mbed.c
+index 52ddd93..8a04955 100644
+--- a/libretro-common/net/net_socket_ssl_mbed.c
++++ b/libretro-common/net/net_socket_ssl_mbed.c
+@@ -175,11 +175,28 @@ int ssl_socket_connect(void *state_data,
+ 
+    mbedtls_ssl_set_bio(&state->ctx, &state->net_ctx, mbedtls_net_send, mbedtls_net_recv, NULL);
+ 
++   /* Run the handshake non-blocking with each wait bounded: on a blocking
++    * socket a server that goes silent (WiFi dropped mid-handshake) holds
++    * recv() forever, and RetroArch's exit then hangs waiting on the
++    * RetroAchievements thread. Backport of upstream
++    * https://github.com/libretro/RetroArch/commit/70ba39a934 */
++   if (!socket_set_block(state->net_ctx.fd, false))
++      return -1;
+    while ((ret = mbedtls_ssl_handshake(&state->ctx)) != 0)
+    {
++      bool rd, wr;
++
+       if (ret != MBEDTLS_ERR_SSL_WANT_READ && ret != MBEDTLS_ERR_SSL_WANT_WRITE)
+          return -1;
++
++      rd = (ret == MBEDTLS_ERR_SSL_WANT_READ);
++      wr = !rd;
++      if (     !socket_wait(state->net_ctx.fd, &rd, &wr, SSL_SOCKET_IO_TIMEOUT_MS)
++            || !(rd || wr))
++         return -1;
+    }
++   if (!socket_set_block(state->net_ctx.fd, true))
++      return -1;
+ 
+    if ((flags = mbedtls_ssl_get_verify_result(&state->ctx)) != 0)
+    {

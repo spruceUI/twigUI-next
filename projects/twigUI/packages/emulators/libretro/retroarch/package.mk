@@ -80,7 +80,7 @@ fi
 # fi
 
 pre_configure_target() {
-  CFLAGS+=" -DHAVE_FILTERS_BUILTIN"
+  CFLAGS+=" -DHAVE_FILTERS_BUILTIN -DIGM_VARIANT_PIXEL2"
   TARGET_CONFIGURE_OPTS=""
   cd ${PKG_BUILD}
 }

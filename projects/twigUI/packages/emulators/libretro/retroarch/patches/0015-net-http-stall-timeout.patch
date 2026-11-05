@@ -1,0 +1,101 @@
+diff --git a/libretro-common/net/net_http.c b/libretro-common/net/net_http.c
+index c5c63f6..89ed39b 100644
+--- a/libretro-common/net/net_http.c
++++ b/libretro-common/net/net_http.c
+@@ -66,6 +66,20 @@ enum bodytype
+ #define NET_HTTP_POOL_MAX_IDLE      8
+ #define NET_HTTP_POOL_IDLE_TTL      ((retro_time_t)30 * 1000000)
+ 
++/* A transfer that moves nothing - no DNS answer, no connection, no byte
++ * received - for this long fails.  A peer that goes silent mid-request
++ * reports no error of its own, so this is the only end such a transfer
++ * has.  Only time the caller spends driving the transfer counts: a gap
++ * of NET_HTTP_STALL_POLL_GAP between two calls is a caller that was not
++ * driving it (a suspended app, a paused queue), not a silent peer.
++ * Backport of upstream 70ba39a934. */
++#ifndef NET_HTTP_STALL_TIMEOUT
++#define NET_HTTP_STALL_TIMEOUT      ((retro_time_t)60 * 1000000)
++#endif
++#ifndef NET_HTTP_STALL_POLL_GAP
++#define NET_HTTP_STALL_POLL_GAP     ((retro_time_t)1000000)
++#endif
++
+ struct conn_pool_entry
+ {
+    char *domain;
+@@ -122,6 +136,13 @@ struct http_t
+    bool ssl;
+    bool request_sent;
+ 
++   /* For the stall bound: when the transfer last moved and how far it
++    * had got, and when it was last driven. */
++   retro_time_t moved_at;
++   retro_time_t polled_at;
++   size_t       moved_rx;
++   unsigned     moved_stage;
++
+    request_t request;
+    response_t response;
+ };
+@@ -915,6 +936,9 @@ struct http_t *net_http_new(struct http_connection_t *conn)
+    state->response.data    = (char*)malloc(state->response.buflen);
+    state->response.headers = string_list_new();
+ 
++   state->moved_at  = cpu_features_get_time_usec();
++   state->polled_at = state->moved_at;
++
+    return state;
+ }
+ 
+@@ -1473,6 +1497,33 @@ static bool net_http_redirect(struct http_t *state, const char *location)
+    return false;
+ }
+ 
++/* True when the transfer has moved nothing for NET_HTTP_STALL_TIMEOUT
++ * of the time it was driven.  Moving is any change in how far it got:
++ * a connection, a byte received, a stage passed.  The request goes out
++ * in one blocking send here, so sending is not tracked. */
++static bool net_http_stalled(struct http_t *state)
++{
++   retro_time_t now   = cpu_features_get_time_usec();
++   size_t       rx    = state->response.pos;
++   unsigned     stage = (state->conn ? 1u : 0u)
++      | ((state->conn && state->conn->connected) ? 2u : 0u)
++      | (state->request_sent ? 4u : 0u)
++      | ((unsigned)state->response.part << 4);
++
++   if (now - state->polled_at > NET_HTTP_STALL_POLL_GAP)
++      state->moved_at += now - state->polled_at;
++   state->polled_at = now;
++
++   if (rx != state->moved_rx || stage != state->moved_stage)
++   {
++      state->moved_rx    = rx;
++      state->moved_stage = stage;
++      state->moved_at    = now;
++      return false;
++   }
++   return now - state->moved_at > NET_HTTP_STALL_TIMEOUT;
++}
++
+ /**
+  * net_http_update:
+  *
+@@ -1487,6 +1538,17 @@ bool net_http_update(struct http_t *state, size_t* progress, size_t* total)
+    if (!state || state->err)
+       return true;
+ 
++   if (net_http_stalled(state))
++   {
++      if (state->conn)
++         net_http_conn_pool_remove(state->conn);
++      state->conn            = NULL;
++      state->err             = true;
++      state->response.part   = P_DONE;
++      state->response.status = -1;
++      return true;
++   }
++
+    if (!state->conn)
+    {
+       state->conn = net_http_conn_pool_find(state->request.domain, state->request.port);
