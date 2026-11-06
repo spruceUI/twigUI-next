@@ -24,9 +24,10 @@ Emu/A30PORTS/
 Emu/AMIGA/*.so*
 Emu/ARCADE/setalpha
 Emu/ARCADE/advmame-[!Pi]*.rc
-Emu/EASYRPG/lib-*
+Emu/COCO/libs.aarch64/libbsd.so.0
 Emu/DC/flycast
 Emu/DC/lib64/
+Emu/EASYRPG/lib-*
 Emu/MEDIA/open_gvu_browser.sh
 Emu/MEDIA/bin*/
 Emu/MEDIA/lib*/
@@ -79,9 +80,7 @@ Emu/SATURN/input.cfg
 Emu/SATURN/xx-pad/
 Emu/SCUMMVM/.config/scummvm-[!pi]*/
 Emu/SCUMMVM/fixjoy
-Emu/SCUMMVM/liba30/
-Emu/SCUMMVM/libmini/
-Emu/SCUMMVM/lib/!(liba52*|libbsd*|libfaad*|libgif*|libmad*|libmikmod*|libsndio*|libspeechd*|libmpeg2*|libfribidi*)
+Emu/SCUMMVM/lib*/
 Emu/SCUMMVM/scummvm_a30.7z
 Emu/SCUMMVM/scummvm_mini.7z
 Emu/SCUMMVM/scummvm_mini_plugins.7z

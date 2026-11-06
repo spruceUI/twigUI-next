@@ -19,4 +19,6 @@ makeinstall_target() {
     curl -Lo ${PKG_BUILD}/compat.tar.gz ${COMPAT_URL}
     tar -xvf ${PKG_BUILD}/compat.tar.gz -C ${INSTALL}/usr/lib
     rm -rf ${INSTALL}/usr/lib/compat/libSDL2-2.0.so.0*
+
+    cp -r ${PKG_BUILD}/extra/* ${INSTALL}/usr/lib/compat/
 }
