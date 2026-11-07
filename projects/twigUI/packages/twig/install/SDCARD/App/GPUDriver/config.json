@@ -1,7 +1,7 @@
 {
   "label": "Switch GPU Driver",
   "icon": "fnkey.png",
-  "launch": "launch.sh",
+  "pyuiEntry": "gpu:main",
   "description": "Switch between libmali and panfrost",
   "devices": ["GKD_PIXEL2"],
   "hideInSimpleMode": true
