@@ -350,6 +350,12 @@
             ]
         },
         {
+            "package": "pokedaisy-lr",
+            "files": [
+                {"src": "pokedaisy_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"}
+            ]
+        },
+        {
             "package": "pokemini-lr",
             "files": [
                 {"src": "pokemini_libretro.so", "dest": "/RetroArch/.retroarch/cores64/"},

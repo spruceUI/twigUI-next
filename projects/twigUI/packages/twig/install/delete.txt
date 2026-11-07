@@ -87,7 +87,7 @@ Emu/SCUMMVM/scummvm_mini_plugins.7z
 miyoo*/
 RetroArch/.retroarch/cores/
 RetroArch/.retroarch/cores64/!(mkxp-z*|gloopy*)
-RetroArch/.retroarch/info/*
+RetroArch/.retroarch/info/!(pokedaisy*|mkxp-z*|gloopy*)
 RetroArch/joypad
 RetroArch/platform/retroarch-[!Pi]*.cfg*
 RetroArch/ra32.*
