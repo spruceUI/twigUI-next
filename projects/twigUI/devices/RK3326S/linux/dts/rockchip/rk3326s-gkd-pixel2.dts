@@ -560,11 +560,25 @@
 		interrupt-parent = <&gpio0>;
 		interrupts = <RK_PB2 IRQ_TYPE_LEVEL_LOW>;
 		clock-output-names = "rk808-clkout1", "xin32k";
-		pinctrl-names = "default";
+		/*
+		 * Without a pmic-sleep state the PMIC never enters sleep, so no
+		 * regulator-state-mem below takes effect. Each state must also name
+		 * a pin of the PMIC's own pinctrl: with only SoC pins, the driver
+		 * core binds them first and rk808 skips its sleep setup. The PMIC
+		 * pin also re-arms the sleep function, which rk808 clears before
+		 * selecting a state at suspend and resume.
+		 */
+		pinctrl-names = "default", "pmic-sleep",
+				"pmic-power-off", "pmic-reset";
 		pinctrl-0 = <&pmic_int>;
+		pinctrl-1 = <&soc_slppin_slp>, <&rk817_slppin_slp>;
+		pinctrl-2 = <&soc_slppin_gpio>, <&rk817_slppin_pwrdn>;
+		pinctrl-3 = <&soc_slppin_rst>, <&rk817_slppin_rst>;
 		rockchip,system-power-controller;
 		wakeup-source;
 		#clock-cells = <1>;
+		/* 1: reset only the RST-related registers, 0: reset the PMIC */
+		pmic-reset-func = <1>;
 
 		vcc1-supply = <&vccsys>;
 		vcc2-supply = <&vccsys>;
@@ -575,6 +589,31 @@
 		vcc7-supply = <&vcc_3v0>;
 		vcc8-supply = <&vccsys>;
 		vcc9-supply = <&usb_midu>;
+
+		pinctrl_rk8xx: pinctrl_rk8xx {
+			gpio-controller;
+			#gpio-cells = <2>;
+
+			rk817_slppin_null: rk817_slppin_null {
+				pins = "gpio_slp";
+				function = "pin_fun0";
+			};
+
+			rk817_slppin_slp: rk817_slppin_slp {
+				pins = "gpio_slp";
+				function = "pin_fun1";
+			};
+
+			rk817_slppin_pwrdn: rk817_slppin_pwrdn {
+				pins = "gpio_slp";
+				function = "pin_fun2";
+			};
+
+			rk817_slppin_rst: rk817_slppin_rst {
+				pins = "gpio_slp";
+				function = "pin_fun3";
+			};
+		};
 
 		regulators {
 			vdd_logic: DCDC_REG1 {
@@ -640,7 +679,7 @@
 				regulator-max-microvolt = <1000000>;
 
 				regulator-state-mem {
-					regulator-on-in-suspend;
+					regulator-off-in-suspend;
 					regulator-suspend-microvolt = <1000000>;
 				};
 			};
@@ -684,6 +723,10 @@
 				};
 			};
 
+			/*
+			 * The card holds the root filesystem. Both card rails stay on in
+			 * suspend: cutting them hangs the system shortly after resume.
+			 */
 			vccio_sd: LDO_REG5 {
 				regulator-name = "vccio_sd";
 				regulator-min-microvolt = <1800000>;
@@ -753,6 +796,11 @@
 				regulator-max-microvolt = <5000000>;
 				regulator-always-on;
 				regulator-boot-on;
+
+				/* No 5 V on the USB port in suspend. */
+				regulator-state-mem {
+					regulator-off-in-suspend;
+				};
 			};
 
 			otg_switch: OTG_SWITCH {
@@ -798,7 +846,7 @@
 			chrg_finish_cur = <200>;
 			virtual_power = <0>;
 			dc_det_adc = <0>;
-			otg5v_suspend_enable = <1>;
+			otg5v_suspend_enable = <0>;
 			power_dc2otg = <0>;
 			gate_function_disable = <1>;
 			extcon = <&u2phy>;
