@@ -2,7 +2,7 @@
 # Copyright (C) 2023 JELOS (https://github.com/JustEnoughLinuxOS)
 
 PKG_NAME="twig"
-PKG_VERSION="2d7c9cc3552b8c17ea0eb634f4198b3304b7d1c6"
+PKG_VERSION="04d2bdf97b755533df8b94bd79f7d1b753aba552"
 PKG_LICENSE="Public Domain"
 PKG_SITE="https://github.com/spruceUI/spruceOS/"
 PKG_URL="https://github.com/spruceUI/spruceOS/archive/${PKG_VERSION}.tar.gz"
@@ -49,9 +49,6 @@ make_target() {
   copy_emulators
 
   if [ "$RELEASE" = "true" ]; then
-    # Remove developer_mode flag if needed
-    rm "${SPRUCE_DIR}"/spruce/flags/developer_mode
-
     # Download themes
     wget -nc -P ${SPRUCE_DIR}/Themes/ -i ${PKG_DIR}/install/themes.txt
   fi

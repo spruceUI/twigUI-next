@@ -26,6 +26,7 @@ Emu/ARCADE/setalpha
 Emu/ARCADE/advmame-[!Pi]*.rc
 Emu/COCO/libs.aarch64/libbsd.so.0
 Emu/DC/flycast
+Emu/DC/default_configs/flycast/pads/[!Pi]*/
 Emu/DC/lib64/
 Emu/EASYRPG/lib-*
 Emu/MEDIA/open_gvu_browser.sh
@@ -88,7 +89,13 @@ miyoo*/
 RetroArch/.retroarch/cores/
 RetroArch/.retroarch/cores64/!(mkxp-z*|gloopy*)
 RetroArch/.retroarch/info/!(pokedaisy*|mkxp-z*|gloopy*)
+RetroArch/.retroarch/autoconfig/linuxraw/
+RetroArch/.retroarch/autoconfig/sdl2/
+RetroArch/.retroarch/autoconfig/udev/
+RetroArch/.retroarch/autoconfig/[!pi]*.cfg
 RetroArch/joypad
+RetroArch/platform/autoconfig/linuxraw/
+RetroArch/platform/autoconfig/sdl2/
 RetroArch/platform/retroarch-[!Pi]*.cfg*
 RetroArch/ra32.*
 RetroArch/ra64.universal
